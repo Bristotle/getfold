@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/*
+  Fold brand tokens.
+  Inherits the Manuel Technologies purple as an ACCENT only — not a
+  dominant surface color. Background is warm and neutral so the product
+  reads as calm/institutional rather than "dev tool dashboard."
+  Numbers (attendance, GHS amounts, counts) use --font-mono throughout;
+  it's the one piece of the original brand system worth keeping as-is,
+  since precise figures matter a lot in a finance-heavy product.
+*/
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "Cascadia Code", monospace;
+
+  --color-background: #faf9f6;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f5f2ec;
+  --color-border: #e7e2da;
+
+  --color-foreground: #1a1033;
+  --color-muted-foreground: #6b6478;
+
+  --color-primary: #6b2fd9;
+  --color-primary-foreground: #ffffff;
+  --color-primary-soft: #f0eafb;
+
+  --color-success: #0cce6b;
+  --color-warning: #ffa400;
+  --color-danger: #ff4e42;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

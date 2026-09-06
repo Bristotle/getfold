@@ -1,0 +1,531 @@
+// Fold — multi-tenant church management data model.
+//
+// Design principle: ONE Supabase project, ONE codebase, many churches.
+// Every tenant-scoped table carries organization_id, and Postgres
+// Row-Level Security (see supabase/migrations/0001_init.sql) is what
+// actually stops one church from ever seeing another's data — this
+// schema alone is not the security boundary.
+//
+// Tables/columns are explicitly @@map / @map'd to snake_case to match
+// standard Postgres/Supabase convention and the raw SQL in the RLS
+// migration — Prisma's default is camelCase/PascalCase, which would
+// silently mismatch that SQL if left unmapped.
+//
+// "Organization" is deliberately generic (not "Church") because some
+// denominations have a hierarchy above the local congregation
+// (e.g. Diocese > Circuit > Society in Methodist polity). A local
+// church is an Organization with type=local_church; a circuit or
+// diocese is an Organization with type=circuit / type=diocese and
+// child organizations pointing up at it via parent_organization_id.
+// Independent, non-denominational churches simply have no parent.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Tenancy & identity ----------
+
+enum OrganizationType {
+  local_church
+  circuit
+  diocese
+  denomination_hq
+}
+
+model Organization {
+  id       String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name     String
+  slug     String           @unique
+  type     OrganizationType @default(local_church)
+  timezone String           @default("Africa/Accra")
+
+  // e.g. "methodist", "presbyterian", "pentecostal", "independent" —
+  // drives which statistical-return template and member-type set
+  // this org defaults to. Kept as a free string, not an enum, on
+  // purpose: new denominations shouldn't require a migration.
+  denomination String?
+
+  parentOrganizationId String?        @map("parent_organization_id") @db.Uuid
+  parentOrganization   Organization?  @relation("OrgHierarchy", fields: [parentOrganizationId], references: [id])
+  childOrganizations   Organization[] @relation("OrgHierarchy")
+
+  address String?
+  phone   String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  organizationMembers OrganizationMember[]
+  invitations         OrganizationInvitation[]
+  memberGroups        MemberGroup[]
+  members             Member[]
+  visitors            Visitor[]
+  attendanceRecords   AttendanceRecord[]
+  attendanceCheckIns  AttendanceCheckIn[]
+  notifications       Notification[]
+  payments            Payment[]
+  funds               Fund[]
+  contributions       Contribution[]
+  vitalRecords        VitalRecord[]
+  memberTransfersFrom MemberTransfer[]         @relation("TransferFrom")
+  memberTransfersTo   MemberTransfer[]         @relation("TransferTo")
+
+  @@index([parentOrganizationId])
+  @@map("organizations")
+}
+
+// Mirrors auth.users (Supabase-managed). id MUST equal the auth.users.id
+// of the corresponding Supabase Auth user. Created via a DB trigger —
+// see the migration file.
+model Profile {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fullName  String   @map("full_name")
+  phone     String?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organizationMemberships OrganizationMember[]
+  sentInvitations         OrganizationInvitation[] @relation("InvitedBy")
+  recordedContributions   Contribution[]           @relation("RecordedBy")
+  recordedAttendance      AttendanceRecord[]       @relation("RecordedBy")
+
+  @@map("profiles")
+}
+
+enum OrgRole {
+  super_admin // Manuel Technologies / platform-level support access
+  admin // church-level administrator (e.g. "Society Admin")
+  minister
+  finance_officer
+  class_leader
+  member // congregant with self-service portal access, if any
+}
+
+// A staff/system USER's access to a given Organization. Distinct from
+// "Member" below, which is the congregant record — a Member usually
+// has no login at all.
+model OrganizationMember {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  profileId      String       @map("profile_id") @db.Uuid
+  profile        Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  role           OrgRole      @default(member)
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  @@unique([organizationId, profileId])
+  @@index([profileId])
+  @@map("organization_members")
+}
+
+// ---------- Congregation ----------
+
+enum GroupType {
+  bible_class
+  fellowship
+  choir
+  ministry
+  other
+}
+
+// Configurable groupings — Bible classes, fellowships, choirs, etc.
+// Deliberately NOT a fixed enum of group names (unlike PewPoint's
+// hardcoded "Bible Classes" concept) so any denomination's structure
+// fits without a schema change.
+model MemberGroup {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  type           GroupType    @default(other)
+  leaderId       String?      @map("leader_id") @db.Uuid
+  leader         Member?      @relation("GroupLeader", fields: [leaderId], references: [id])
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  members Member[] @relation("GroupMembers")
+
+  @@index([organizationId])
+  @@map("member_groups")
+}
+
+// An invitation is keyed by EMAIL, not by user id, because the person being
+// invited usually has no account yet. When they sign up (or sign in) with a
+// matching address, accept_pending_invitations() turns this into a real
+// organization_members row — see supabase/migrations/0007_invitations.sql.
+model OrganizationInvitation {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  email String
+  role  OrgRole @default(member)
+
+  invitedByProfileId String?  @map("invited_by_profile_id") @db.Uuid
+  invitedBy          Profile? @relation("InvitedBy", fields: [invitedByProfileId], references: [id])
+
+  createdAt  DateTime  @default(now()) @map("created_at")
+  acceptedAt DateTime? @map("accepted_at")
+
+  @@unique([organizationId, email])
+  @@index([email])
+  @@map("organization_invitations")
+}
+
+enum MemberStatus {
+  active
+  transferred_out
+  archived
+}
+
+enum Gender {
+  male
+  female
+}
+
+model Member {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  fullName    String    @map("full_name")
+  gender      Gender?
+  dateOfBirth DateTime? @map("date_of_birth")
+  phone       String?
+  email       String?
+  address     String?
+  photoUrl    String?   @map("photo_url")
+
+  // Free-text on purpose: "Full Member", "Junior Member", "Adherent",
+  // "Catechumen" for Methodist orgs; "Covenant Member", "New Convert"
+  // for a Pentecostal assembly — configurable per organization rather
+  // than a fixed enum baked into the schema.
+  memberType String? @map("member_type")
+
+  status MemberStatus @default(active)
+
+  memberGroupId String?       @map("member_group_id") @db.Uuid
+  memberGroup   MemberGroup?  @relation("GroupMembers", fields: [memberGroupId], references: [id])
+  ledGroups     MemberGroup[] @relation("GroupLeader")
+
+  joinedAt   DateTime  @default(now()) @map("joined_at")
+  archivedAt DateTime? @map("archived_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  contributions Contribution[]
+  vitalRecords  VitalRecord[]
+  transfersOut  MemberTransfer[]    @relation("TransferMember")
+  checkIns      AttendanceCheckIn[]
+  notifications Notification[]
+  payments      Payment[]
+  convertedFrom Visitor?            @relation("ConvertedMember")
+
+  @@index([organizationId])
+  @@index([memberGroupId])
+  @@map("members")
+}
+
+model Visitor {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  fullName    String   @map("full_name")
+  gender      Gender?
+  phone       String?
+  dateOfVisit DateTime @default(now()) @map("date_of_visit")
+  howHeard    String?  @map("how_heard")
+
+  convertedMemberId String? @unique @map("converted_member_id") @db.Uuid
+  convertedMember   Member? @relation("ConvertedMember", fields: [convertedMemberId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([organizationId])
+  @@map("visitors")
+}
+
+enum TransferStatus {
+  pending
+  approved
+  rejected
+}
+
+model MemberTransfer {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation("TransferFrom", fields: [organizationId], references: [id], onDelete: Cascade)
+
+  memberId String @map("member_id") @db.Uuid
+  member   Member @relation("TransferMember", fields: [memberId], references: [id])
+
+  toOrganizationId String?       @map("to_organization_id") @db.Uuid
+  toOrganization   Organization? @relation("TransferTo", fields: [toOrganizationId], references: [id])
+
+  status      TransferStatus @default(pending)
+  requestedAt DateTime       @default(now()) @map("requested_at")
+  resolvedAt  DateTime?      @map("resolved_at")
+
+  @@index([organizationId])
+  @@index([memberId])
+  @@map("member_transfers")
+}
+
+// ---------- Attendance ----------
+
+enum ServiceType {
+  sunday_service
+  bible_class
+  prayer_meeting
+  communion_service
+  youth_service
+  children_service
+  other
+}
+
+// Aggregate headcounts (M/F totals per service), matching how Ghanaian
+// churches actually record attendance today — a class leader counts
+// heads, not a per-member checklist. Per-member QR check-in is a
+// phase-2 OPTIONAL add-on (see README roadmap), never the only path.
+model AttendanceRecord {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  serviceType ServiceType @map("service_type")
+  date        DateTime
+  maleCount   Int         @default(0) @map("male_count")
+  femaleCount Int         @default(0) @map("female_count")
+
+  recordedByProfileId String  @map("recorded_by_profile_id") @db.Uuid
+  recordedBy          Profile @relation("RecordedBy", fields: [recordedByProfileId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  checkIns AttendanceCheckIn[]
+
+  @@index([organizationId, date])
+  @@map("attendance_records")
+}
+
+// ---------- Finance ----------
+
+model Fund {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  name          String
+  description   String?
+  targetAmount  Decimal? @map("target_amount") @db.Decimal(12, 2)
+  currentAmount Decimal  @default(0) @map("current_amount") @db.Decimal(12, 2)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  contributions Contribution[]
+
+  @@index([organizationId])
+  @@map("funds")
+}
+
+// Individual check-in against a service. Optional by design: a church can
+// keep recording aggregate head-counts alone, and many will. But without
+// knowing WHO attended, "this member is drifting away" is unanswerable —
+// so anything that wants per-member engagement (attrition detection, QR
+// check-in, class-leader follow-up lists) reads this table.
+model AttendanceCheckIn {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  attendanceRecordId String           @map("attendance_record_id") @db.Uuid
+  attendanceRecord   AttendanceRecord @relation(fields: [attendanceRecordId], references: [id], onDelete: Cascade)
+
+  memberId String @map("member_id") @db.Uuid
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([attendanceRecordId, memberId])
+  @@index([organizationId, memberId])
+  @@map("attendance_check_ins")
+}
+
+enum ContributionType {
+  tithe
+  offering
+  pledge
+  donation
+  other
+}
+
+enum PaymentStatus {
+  pending // charge initiated, awaiting the member's PIN on their handset
+  success
+  failed
+  abandoned
+}
+
+// A mobile-money collection attempt.
+//
+// Kept separate from Contribution on purpose: an initiated charge is NOT
+// money received. Most attempts sit in `pending` while the member decides
+// whether to approve the prompt on their phone, and plenty are simply
+// abandoned. Only a verified `charge.success` webhook creates the
+// contribution — so the giving figures never count money that did not
+// arrive.
+model Payment {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  memberId String? @map("member_id") @db.Uuid
+  member   Member? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  // Our own idempotency key, sent to Paystack and echoed back on the
+  // webhook. Unique so a replayed webhook cannot be processed twice.
+  reference String @unique
+
+  amount   Decimal @db.Decimal(12, 2)
+  currency String  @default("GHS")
+
+  provider String // mtn | vod | atl
+  phone    String
+
+  type   ContributionType @default(tithe)
+  status PaymentStatus    @default(pending)
+
+  // What Paystack last told us, kept verbatim for support conversations.
+  gatewayResponse String? @map("gateway_response")
+
+  // Set once a successful payment has been turned into a contribution.
+  // Unique, so the same payment can never produce two contribution rows.
+  contributionId String?       @unique @map("contribution_id") @db.Uuid
+  contribution   Contribution? @relation(fields: [contributionId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([organizationId, createdAt])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  cash
+  momo
+  bank_transfer
+  cheque
+  card
+}
+
+model Contribution {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  memberId String? @map("member_id") @db.Uuid
+  member   Member? @relation(fields: [memberId], references: [id])
+
+  fundId String? @map("fund_id") @db.Uuid
+  fund   Fund?   @relation(fields: [fundId], references: [id])
+
+  type          ContributionType
+  amount        Decimal          @db.Decimal(12, 2)
+  currency      String           @default("GHS")
+  paymentMethod PaymentMethod    @default(cash) @map("payment_method")
+  note          String?
+
+  // Nullable: a mobile-money contribution is recorded by the payment
+  // gateway via webhook, where there is no signed-in person to attribute
+  // it to. Everything entered by hand still carries a profile.
+  recordedByProfileId String?  @map("recorded_by_profile_id") @db.Uuid
+  recordedBy          Profile? @relation("RecordedBy", fields: [recordedByProfileId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  payment Payment?
+
+  @@index([organizationId, createdAt])
+  @@index([memberId])
+  @@map("contributions")
+}
+
+// ---------- Vital records ----------
+
+enum NotificationType {
+  welcome
+  contribution_receipt
+  absence_followup
+}
+
+enum NotificationChannel {
+  sms
+  whatsapp
+}
+
+enum NotificationStatus {
+  queued // written, not yet handed to a provider
+  sent
+  failed
+  no_provider // nothing configured to send it — kept, not silently dropped
+}
+
+// An outbound message and what happened to it.
+//
+// Messages are RECORDED here first and delivered second, deliberately. A
+// church needs to answer "did we tell her?" long after the fact, and a
+// provider outage must not lose the intent to send. It also means the
+// product works end-to-end before any SMS provider exists: messages queue
+// with status `no_provider` rather than vanishing.
+model Notification {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  memberId String? @map("member_id") @db.Uuid
+  member   Member? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  type      NotificationType
+  channel   NotificationChannel @default(sms)
+  recipient String
+  body      String
+  status    NotificationStatus  @default(queued)
+  error     String?
+
+  sentAt    DateTime? @map("sent_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([organizationId, createdAt])
+  @@index([status])
+  @@map("notifications")
+}
+
+enum VitalRecordType {
+  baptism
+  confirmation
+  wedding
+  death
+}
+
+model VitalRecord {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  memberId String? @map("member_id") @db.Uuid
+  member   Member? @relation(fields: [memberId], references: [id])
+
+  type VitalRecordType
+  date DateTime
+  note String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([organizationId, type])
+  @@map("vital_records")
+}
