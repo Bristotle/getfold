@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -61,17 +61,17 @@ export default async function AttendancePage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load attendance: {loadError.message}
         </p>
       )}
@@ -128,7 +128,7 @@ export default async function AttendancePage({
             />
           </label>
           <div className="flex items-end sm:col-span-2 lg:col-span-5">
-            <Button type="submit">Record attendance</Button>
+            <SubmitButton>Record attendance</SubmitButton>
           </div>
         </form>
       </Card>
@@ -162,11 +162,11 @@ export default async function AttendancePage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Date</th>
-                  <th className="px-5 py-3 font-semibold">Service</th>
-                  <th className="px-5 py-3 text-right font-semibold">Male</th>
-                  <th className="px-5 py-3 text-right font-semibold">Female</th>
-                  <th className="px-5 py-3 text-right font-semibold">Total</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Date</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Service</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">Male</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">Female</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">Total</th>
                 </tr>
               </thead>
               <tbody>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { ownsRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { SERVICE_TYPES, values } from "@/lib/constants";
 
@@ -79,6 +80,14 @@ export async function toggleCheckIn(formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  // Both references come from the form and are otherwise unchecked.
+  if (
+    !(await ownsRow("attendance_records", recordId, membership.organization.id)) ||
+    !(await ownsRow("members", memberId, membership.organization.id))
+  ) {
+    redirect(`/attendance?error=${encodeURIComponent("That service or member is not in your church.")}`);
+  }
 
   if (wasPresent) {
     const { error } = await supabase

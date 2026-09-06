@@ -1,5 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input, StatusBanner } from "@/components/ui/field";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { signIn, signUp } from "./actions";
 
 export default async function LoginPage({
@@ -10,74 +11,68 @@ export default async function LoginPage({
   const { error, message } = await searchParams;
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
+    <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <Card className="w-full max-w-sm">
         <h1 className="text-xl font-bold text-foreground">Sign in to Fold</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Or create an account for your church below.
         </p>
 
-        {error && (
-          <p className="mt-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
-            {error}
-          </p>
-        )}
-        {message && (
-          <p className="mt-4 rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
-            {message}
-          </p>
-        )}
+        <div className="mt-4 flex flex-col gap-2 empty:mt-0">
+          <StatusBanner error={error} message={message} />
+        </div>
 
-        <form action={signIn} className="mt-6 flex flex-col gap-3">
-          <input
+        <form action={signIn} className="mt-6 flex flex-col gap-4">
+          <Input
+            label="Email"
             name="email"
             type="email"
-            placeholder="Email"
+            autoComplete="email"
             required
-            className="h-10 rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
           />
-          <input
+          <Input
+            label="Password"
             name="password"
             type="password"
-            placeholder="Password"
+            autoComplete="current-password"
             required
-            className="h-10 rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
           />
-          <Button type="submit" className="mt-1">
+          <SubmitButton className="mt-1" pendingLabel="Signing in…">
             Sign in
-          </Button>
+          </SubmitButton>
         </form>
 
-        <details className="mt-6 text-sm text-muted-foreground">
-          <summary className="cursor-pointer font-medium text-foreground">
+        <details className="mt-8 text-sm text-muted-foreground">
+          <summary className="cursor-pointer rounded font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
             New church? Create an account
           </summary>
-          <form action={signUp} className="mt-3 flex flex-col gap-3">
-            <input
+          <form action={signUp} className="mt-4 flex flex-col gap-4">
+            <Input
+              label="Your full name"
               name="fullName"
               type="text"
-              placeholder="Your full name"
+              autoComplete="name"
               required
-              className="h-10 rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
             />
-            <input
+            <Input
+              label="Email"
               name="email"
               type="email"
-              placeholder="Email"
+              autoComplete="email"
               required
-              className="h-10 rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
             />
-            <input
+            <Input
+              label="Password"
               name="password"
               type="password"
-              placeholder="Password (min 6 characters)"
+              autoComplete="new-password"
               minLength={6}
               required
-              className="h-10 rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              hint="At least 6 characters."
             />
-            <Button type="submit" variant="secondary">
+            <SubmitButton variant="secondary" pendingLabel="Creating…">
               Create account
-            </Button>
+            </SubmitButton>
           </form>
         </details>
       </Card>

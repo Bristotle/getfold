@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
 import { templates, toE164 } from "@/lib/messaging";
@@ -37,6 +38,13 @@ export async function recordContribution(formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  // The member id arrives from the form. Without this the row could point at
+  // another church's member.
+  if (!(await ownsOptionalRow("members", memberId || null, membership.organization.id))) {
+    redirect(`/contributions?error=${encodeURIComponent("That member is not in your church.")}`);
+  }
+
   const { error } = await supabase.from("contributions").insert({
     organization_id: membership.organization.id,
     // Anonymous giving is normal, an offering collected in a bowl has no

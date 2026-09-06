@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -26,9 +26,9 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  sent: "bg-success/10 text-success",
+  sent: "bg-success/10 text-success-text",
   queued: "bg-primary/10 text-primary",
-  failed: "bg-danger/10 text-danger",
+  failed: "bg-danger/10 text-danger-text",
   no_provider: "bg-surface-soft text-muted-foreground",
 };
 
@@ -84,17 +84,17 @@ export default async function MessagesPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load messages: {loadError.message}
         </p>
       )}
@@ -143,9 +143,9 @@ export default async function MessagesPage({
 
       {canSend && unsent > 0 && (
         <form action={sendQueued}>
-          <Button type="submit" disabled={!status.configured}>
+          <SubmitButton disabled={!status.configured}>
             Send {unsent} waiting message{unsent === 1 ? "" : "s"}
-          </Button>
+          </SubmitButton>
           {!status.configured && (
             <span className="ml-3 text-xs text-muted-foreground">
               Connect a provider first.
@@ -176,11 +176,11 @@ export default async function MessagesPage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">When</th>
-                  <th className="px-5 py-3 font-semibold">To</th>
-                  <th className="px-5 py-3 font-semibold">Kind</th>
-                  <th className="px-5 py-3 font-semibold">Message</th>
-                  <th className="px-5 py-3 text-right font-semibold">Status</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">When</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">To</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Kind</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Message</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -201,7 +201,7 @@ export default async function MessagesPage({
                     <td className="max-w-md px-5 py-3 text-muted-foreground">
                       {r.body}
                       {r.error && (
-                        <span className="block text-xs text-danger">
+                        <span className="block text-xs text-danger-text">
                           {r.error}
                         </span>
                       )}

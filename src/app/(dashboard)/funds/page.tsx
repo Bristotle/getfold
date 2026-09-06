@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
@@ -58,17 +60,17 @@ export default async function FundsPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load funds: {loadError.message}
         </p>
       )}
@@ -115,9 +117,9 @@ export default async function FundsPage({
             <input name="description" className={inputClass} />
           </label>
           <div className="flex items-end">
-            <Button type="submit" className="w-full">
+            <SubmitButton className="w-full">
               Create fund
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </Card>
@@ -168,15 +170,15 @@ export default async function FundsPage({
                       className={`${inputClass} font-numeric`}
                     />
                     <div className="flex gap-2">
-                      <Button type="submit" size="sm">
+                      <SubmitButton size="sm">
                         Save
-                      </Button>
-                      <a
+                      </SubmitButton>
+                      <Link
                         href="/funds"
                         className="inline-flex h-8 items-center px-3 text-sm text-muted-foreground hover:text-foreground"
                       >
                         Cancel
-                      </a>
+                      </Link>
                     </div>
                   </form>
                 ) : (
@@ -193,12 +195,12 @@ export default async function FundsPage({
                         )}
                       </div>
                       {canWrite && (
-                        <a
+                        <Link
                           href={`/funds?edit=${f.id}`}
                           className="text-xs font-medium text-muted-foreground hover:text-foreground"
                         >
                           Edit
-                        </a>
+                        </Link>
                       )}
                     </div>
 
@@ -236,9 +238,9 @@ export default async function FundsPage({
                     {canWrite && (
                       <form action={deleteFund} className="mt-4">
                         <input type="hidden" name="id" value={f.id} />
-                        <button className="text-xs font-medium text-muted-foreground hover:text-danger">
+                        <Button type="submit" variant="destructive" size="xs">
                           Delete fund
-                        </button>
+                        </Button>
                       </form>
                     )}
                   </>

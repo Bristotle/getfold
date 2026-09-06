@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
@@ -83,17 +85,17 @@ export default async function RecordsPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load records: {loadError.message}
         </p>
       )}
@@ -164,16 +166,16 @@ export default async function RecordsPage({
             />
           </label>
           <div className="flex items-end">
-            <Button type="submit" className="w-full">
+            <SubmitButton className="w-full">
               Save record
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </Card>
       )}
 
       <div className="flex flex-wrap gap-1">
-        <a
+        <Link
           href="/records"
           className={
             validFilter
@@ -182,9 +184,9 @@ export default async function RecordsPage({
           }
         >
           All
-        </a>
+        </Link>
         {VITAL_RECORD_TYPES.map((t) => (
-          <a
+          <Link
             key={t.value}
             href={`/records?type=${t.value}`}
             className={
@@ -194,7 +196,7 @@ export default async function RecordsPage({
             }
           >
             {t.label}s
-          </a>
+          </Link>
         ))}
       </div>
 
@@ -208,11 +210,11 @@ export default async function RecordsPage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Date</th>
-                  <th className="px-5 py-3 font-semibold">Type</th>
-                  <th className="px-5 py-3 font-semibold">Member</th>
-                  <th className="px-5 py-3 font-semibold">Note</th>
-                  <th className="px-5 py-3" />
+                  <th scope="col" className="px-5 py-3 font-semibold">Date</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Type</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Member</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Note</th>
+                  <th scope="col" className="px-5 py-3"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -233,9 +235,9 @@ export default async function RecordsPage({
                     <td className="px-5 py-3 text-right">
                       <form action={deleteVitalRecord}>
                         <input type="hidden" name="id" value={r.id} />
-                        <button className="text-xs font-medium text-muted-foreground hover:text-danger">
+                        <Button type="submit" variant="destructive" size="xs">
                           Delete
-                        </button>
+                        </Button>
                       </form>
                     </td>
                   </tr>

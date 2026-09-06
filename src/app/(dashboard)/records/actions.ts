@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { VITAL_RECORD_TYPES, values } from "@/lib/constants";
 
@@ -27,6 +28,11 @@ export async function createVitalRecord(formData: FormData) {
   if (!date) redirect("/records?error=Pick the date.");
 
   const supabase = await createClient();
+
+  if (!(await ownsOptionalRow("members", memberId || null, membership.organization.id))) {
+    redirect(`/records?error=${encodeURIComponent("That member is not in your church.")}`);
+  }
+
   const { error } = await supabase.from("vital_records").insert({
     organization_id: membership.organization.id,
     // Optional on purpose: a wedding may involve someone not on the register,

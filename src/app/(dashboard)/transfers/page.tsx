@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -33,7 +33,7 @@ const one = <T,>(v: T | T[] | null): T | null =>
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-primary/10 text-primary",
-  approved: "bg-success/10 text-success",
+  approved: "bg-success/10 text-success-text",
   rejected: "bg-surface-soft text-muted-foreground",
 };
 
@@ -80,17 +80,17 @@ export default async function TransfersPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load transfers: {loadError.message}
         </p>
       )}
@@ -121,7 +121,7 @@ export default async function TransfersPage({
                 </option>
               ))}
             </select>
-            <Button type="submit">Request transfer</Button>
+            <SubmitButton>Request transfer</SubmitButton>
           </form>
         )}
         <p className="mt-3 text-xs text-muted-foreground">
@@ -153,15 +153,15 @@ export default async function TransfersPage({
                 <div className="flex gap-2">
                   <form action={approveTransfer}>
                     <input type="hidden" name="id" value={t.id} />
-                    <Button type="submit" size="sm">
+                    <SubmitButton size="sm">
                       Approve
-                    </Button>
+                    </SubmitButton>
                   </form>
                   <form action={rejectTransfer}>
                     <input type="hidden" name="id" value={t.id} />
-                    <Button type="submit" size="sm" variant="secondary">
+                    <SubmitButton size="sm" variant="secondary">
                       Reject
-                    </Button>
+                    </SubmitButton>
                   </form>
                 </div>
               </div>
@@ -180,10 +180,10 @@ export default async function TransfersPage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Member</th>
-                  <th className="px-5 py-3 font-semibold">Requested</th>
-                  <th className="px-5 py-3 font-semibold">Resolved</th>
-                  <th className="px-5 py-3 text-right font-semibold">Status</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Member</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Requested</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Resolved</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>

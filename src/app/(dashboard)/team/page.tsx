@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
@@ -93,17 +94,17 @@ export default async function TeamPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load the team: {loadError.message}
         </p>
       )}
@@ -140,9 +141,9 @@ export default async function TeamPage({
             </select>
           </label>
           <div className="flex items-end">
-            <Button type="submit" className="w-full">
+            <SubmitButton className="w-full">
               Send invitation
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </Card>
@@ -170,9 +171,9 @@ export default async function TeamPage({
                   <td className="px-5 py-3 text-right">
                     <form action={revokeInvitation}>
                       <input type="hidden" name="id" value={i.id} />
-                      <button className="text-xs font-medium text-muted-foreground hover:text-danger">
-                        Revoke
-                      </button>
+                      <Button type="submit" variant="destructive" size="xs">
+                          Revoke
+                        </Button>
                     </form>
                   </td>
                 </tr>
@@ -192,10 +193,10 @@ export default async function TeamPage({
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
-                <th className="px-5 py-3 font-semibold">Name</th>
-                <th className="px-5 py-3 font-semibold">Role</th>
-                <th className="px-5 py-3 font-semibold">Joined</th>
-                <th className="px-5 py-3" />
+                <th scope="col" className="px-5 py-3 font-semibold">Name</th>
+                <th scope="col" className="px-5 py-3 font-semibold">Role</th>
+                <th scope="col" className="px-5 py-3 font-semibold">Joined</th>
+                <th scope="col" className="px-5 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody>
@@ -233,9 +234,9 @@ export default async function TeamPage({
                           ))}
                         </select>
                         {!isLastAdmin && (
-                          <Button type="submit" size="sm" variant="secondary">
+                          <SubmitButton size="sm" variant="secondary">
                             Save
-                          </Button>
+                          </SubmitButton>
                         )}
                       </form>
                     </td>
@@ -250,9 +251,9 @@ export default async function TeamPage({
                       ) : (
                         <form action={removeMember}>
                           <input type="hidden" name="id" value={m.id} />
-                          <button className="text-xs font-medium text-muted-foreground hover:text-danger">
-                            Remove
-                          </button>
+                          <Button type="submit" variant="destructive" size="xs">
+                          Remove
+                        </Button>
                         </form>
                       )}
                     </td>

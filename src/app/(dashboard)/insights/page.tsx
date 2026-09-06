@@ -4,7 +4,7 @@ import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { queueAbsenceFollowUps } from "../messages/actions";
 
 type Watch = {
@@ -34,7 +34,7 @@ const pct = (v: string | number | null) =>
 function RiskBadge({ risk }: { risk: number }) {
   const [label, style] =
     risk >= 4
-      ? ["Needs a visit", "bg-danger/10 text-danger"]
+      ? ["Needs a visit", "bg-danger/10 text-danger-text"]
       : risk >= 2
         ? ["Drifting", "bg-primary/10 text-primary"]
         : ["Watch", "bg-surface-soft text-muted-foreground"];
@@ -76,7 +76,7 @@ export default async function InsightsPage() {
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not build the watchlist: {error.message}
         </p>
       )}
@@ -136,9 +136,9 @@ export default async function InsightsPage() {
               </p>
               <form action={queueAbsenceFollowUps} className="mt-3">
                 <input type="hidden" name="minRisk" value="2" />
-                <Button type="submit" variant="secondary">
+                <SubmitButton variant="secondary">
                   Queue follow-up messages
-                </Button>
+                </SubmitButton>
               </form>
             </Card>
           )}
@@ -154,14 +154,14 @@ export default async function InsightsPage() {
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                     <tr>
-                      <th className="px-5 py-3 font-semibold">Member</th>
-                      <th className="px-5 py-3 font-semibold">Last seen</th>
-                      <th className="px-5 py-3 font-semibold">Was attending</th>
-                      <th className="px-5 py-3 font-semibold">Now</th>
+                      <th scope="col" className="px-5 py-3 font-semibold">Member</th>
+                      <th scope="col" className="px-5 py-3 font-semibold">Last seen</th>
+                      <th scope="col" className="px-5 py-3 font-semibold">Was attending</th>
+                      <th scope="col" className="px-5 py-3 font-semibold">Now</th>
                       {seesGiving && (
-                        <th className="px-5 py-3 font-semibold">Last gave</th>
+                        <th scope="col" className="px-5 py-3 font-semibold">Last gave</th>
                       )}
-                      <th className="px-5 py-3 text-right font-semibold">
+                      <th scope="col" className="px-5 py-3 text-right font-semibold">
                         Status
                       </th>
                     </tr>

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -60,17 +60,17 @@ export default async function VisitorsPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load visitors: {loadError.message}
         </p>
       )}
@@ -132,7 +132,7 @@ export default async function VisitorsPage({
             />
           </label>
           <div className="flex items-end sm:col-span-2 lg:col-span-5">
-            <Button type="submit">Record visitor</Button>
+            <SubmitButton>Record visitor</SubmitButton>
           </div>
         </form>
       </Card>
@@ -148,11 +148,11 @@ export default async function VisitorsPage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Name</th>
-                  <th className="px-5 py-3 font-semibold">Visited</th>
-                  <th className="px-5 py-3 font-semibold">Phone</th>
-                  <th className="px-5 py-3 font-semibold">How they heard</th>
-                  <th className="px-5 py-3 text-right font-semibold">Status</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Name</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Visited</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Phone</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">How they heard</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,15 +172,15 @@ export default async function VisitorsPage({
                     </td>
                     <td className="px-5 py-3 text-right">
                       {v.converted_member_id ? (
-                        <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success">
+                        <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success-text">
                           Member
                         </span>
                       ) : (
                         <form action={convertVisitor}>
                           <input type="hidden" name="id" value={v.id} />
-                          <button className="text-xs font-semibold text-primary hover:underline">
+                          <SubmitButton variant="quiet" size="xs" pendingLabel="Converting…">
                             Convert to member
-                          </button>
+                          </SubmitButton>
                         </form>
                       )}
                     </td>

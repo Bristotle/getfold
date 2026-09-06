@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { ownsRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 
 export async function requestTransfer(formData: FormData) {
@@ -18,6 +19,10 @@ export async function requestTransfer(formData: FormData) {
   if (!memberId) redirect("/transfers?error=Pick the member transferring.");
 
   const supabase = await createClient();
+
+  if (!(await ownsRow("members", memberId, membership.organization.id))) {
+    redirect(`/transfers?error=${encodeURIComponent("That member is not in your church.")}`);
+  }
 
   // One open request per member: a second pending row would make the
   // approve/reject outcome ambiguous.

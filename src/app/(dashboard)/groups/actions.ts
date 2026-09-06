@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { ownsRow, ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { GROUP_TYPES, values } from "@/lib/constants";
 
@@ -23,6 +24,11 @@ export async function createGroup(formData: FormData) {
   if (!name) redirect("/groups?error=Give the group a name.");
 
   const supabase = await createClient();
+
+  if (!(await ownsOptionalRow("members", leaderId || null, membership.organization.id))) {
+    redirect(`/groups?error=${encodeURIComponent("That leader is not in your church.")}`);
+  }
+
   const { error } = await supabase.from("member_groups").insert({
     organization_id: membership.organization.id,
     name,
@@ -89,6 +95,15 @@ export async function assignMember(formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  // Both ends must be ours: the group being joined and the member joining.
+  if (
+    !(await ownsRow("member_groups", groupId, membership.organization.id)) ||
+    !(await ownsRow("members", memberId, membership.organization.id))
+  ) {
+    redirect(`/groups?error=${encodeURIComponent("That member or group is not in your church.")}`);
+  }
+
   const { error } = await supabase
     .from("members")
     .update({ member_group_id: groupId })

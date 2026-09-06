@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load statistics: {error.message}
         </p>
       )}

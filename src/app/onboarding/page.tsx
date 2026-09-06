@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card } from "@/components/ui/card";
 import { getMembership } from "@/lib/org";
 import { signOut } from "@/app/(auth)/login/actions";
@@ -65,7 +65,7 @@ export default async function OnboardingPage({
         </p>
 
         {error && (
-          <p className="mt-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+          <p className="mt-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
             {error}
           </p>
         )}
@@ -80,7 +80,7 @@ export default async function OnboardingPage({
               You don&rsquo;t need to create a church.
             </p>
             <form action={acceptInvitations} className="mt-3">
-              <Button type="submit">Join {inviteOrg.name}</Button>
+              <SubmitButton>Join {inviteOrg.name}</SubmitButton>
             </form>
           </div>
         )}
@@ -167,9 +167,9 @@ export default async function OnboardingPage({
             </label>
           </div>
 
-          <Button type="submit" size="lg" className="mt-2">
+          <SubmitButton size="lg" className="mt-2">
             Create church
-          </Button>
+          </SubmitButton>
         </form>
 
         <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
@@ -177,9 +177,9 @@ export default async function OnboardingPage({
             Signed in as {email}
           </span>
           <form action={signOut}>
-            <button className="text-xs font-medium text-muted-foreground hover:text-foreground">
-              Sign out
-            </button>
+            <SubmitButton variant="quiet" size="xs">
+                          Sign out
+                        </SubmitButton>
           </form>
         </div>
       </Card>

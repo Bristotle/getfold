@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
@@ -75,12 +76,12 @@ export default async function GroupDetailPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
@@ -132,9 +133,9 @@ export default async function GroupDetailPage({
             </select>
           </label>
           <div className="flex items-end">
-            <Button type="submit" className="w-full">
+            <SubmitButton className="w-full">
               Save changes
-            </Button>
+            </SubmitButton>
           </div>
         </form>
         {memberRows.length === 0 && (
@@ -168,9 +169,9 @@ export default async function GroupDetailPage({
                 </option>
               ))}
             </select>
-            <Button type="submit" variant="secondary">
+            <SubmitButton variant="secondary">
               Add to group
-            </Button>
+            </SubmitButton>
           </form>
         )}
       </Card>
@@ -185,9 +186,9 @@ export default async function GroupDetailPage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Member</th>
-                  <th className="px-5 py-3 font-semibold">Phone</th>
-                  <th className="px-5 py-3" />
+                  <th scope="col" className="px-5 py-3 font-semibold">Member</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Phone</th>
+                  <th scope="col" className="px-5 py-3"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -208,9 +209,9 @@ export default async function GroupDetailPage({
                       <form action={unassignMember}>
                         <input type="hidden" name="groupId" value={group.id} />
                         <input type="hidden" name="memberId" value={m.id} />
-                        <button className="text-xs font-medium text-muted-foreground hover:text-danger">
+                        <Button type="submit" variant="destructive" size="xs">
                           Remove
-                        </button>
+                        </Button>
                       </form>
                     </td>
                   </tr>
@@ -228,7 +229,7 @@ export default async function GroupDetailPage({
         </p>
         <form action={deleteGroup} className="mt-3">
           <input type="hidden" name="id" value={group.id} />
-          <button className="text-sm font-medium text-danger hover:underline">
+          <button className="text-sm font-medium text-danger-text hover:underline">
             Delete {group.name}
           </button>
         </form>

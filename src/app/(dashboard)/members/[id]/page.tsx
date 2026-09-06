@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -90,12 +90,12 @@ export default async function MemberDetailPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
@@ -211,7 +211,7 @@ export default async function MemberDetailPage({
             />
           </label>
           <div className="flex items-end sm:col-span-2 lg:col-span-3">
-            <Button type="submit">Save changes</Button>
+            <SubmitButton>Save changes</SubmitButton>
           </div>
         </form>
       </Card>
@@ -260,7 +260,7 @@ export default async function MemberDetailPage({
             className={
               isArchived
                 ? "text-sm font-medium text-primary hover:underline"
-                : "text-sm font-medium text-danger hover:underline"
+                : "text-sm font-medium text-danger-text hover:underline"
             }
           >
             {isArchived

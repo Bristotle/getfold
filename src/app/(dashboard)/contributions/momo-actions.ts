@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { toE164 } from "@/lib/messaging";
 import {
@@ -59,6 +60,34 @@ export async function collectByMomo(formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  if (!(await ownsOptionalRow("members", memberId || null, membership.organization.id))) {
+    redirect(`/contributions?error=${encodeURIComponent("That member is not in your church.")}`);
+  }
+
+  // Server-side duplicate guard. SubmitButton disables on the client, but a
+  // dropped response, a retried request or a second tab can still deliver
+  // two identical submissions, and each one charges a member's phone for
+  // real. If the same number is already being asked for the same amount,
+  // treat the second attempt as the duplicate it almost certainly is.
+  const since = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+  const { data: inFlight } = await supabase
+    .from("payments")
+    .select("id")
+    .eq("phone", phone)
+    .eq("amount", amount.toFixed(2))
+    .eq("status", "pending")
+    .gte("created_at", since)
+    .limit(1);
+
+  if (inFlight && inFlight.length > 0) {
+    redirect(
+      `/contributions?error=${encodeURIComponent(
+        "A prompt for that amount was already sent to this number in the last few minutes. Ask them to check their phone, or use Check status below."
+      )}`
+    );
+  }
+
   const reference = newReference(membership.organization.slug);
 
   // The payment row is written BEFORE calling Paystack. If the request

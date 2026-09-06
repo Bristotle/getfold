@@ -25,9 +25,20 @@
   --color-primary-foreground: #ffffff;
   --color-primary-soft: #f0eafb;
 
+  /*
+    Two variants per status colour. The bright value is for FILLS (tinted
+    backgrounds, dots, progress bars) where contrast rules do not apply.
+    The -text value is the only one allowed on type: the bright ones measure
+    1.98:1, 3.11:1 and 1.89:1 on our background, all failing WCAG AA, and
+    they carry every error and confirmation in the product.
+    Verified >= 4.5:1 on background, surface and surface-soft.
+  */
   --color-success: #0cce6b;
+  --color-success-text: #0a7a41;
   --color-warning: #ffa400;
+  --color-warning-text: #8a5a00;
   --color-danger: #ff4e42;
+  --color-danger-text: #b3241a;
 }
 
 body {

@@ -47,7 +47,9 @@ export default async function DashboardLayout({
         </div>
         <Nav role={role} />
       </header>
-      <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+      <main id="main" className="mx-auto max-w-6xl px-6 py-8">
+        {children}
+      </main>
     </div>
   );
 }

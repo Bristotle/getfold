@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -89,17 +89,17 @@ export default async function MembersPage({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           {error}
         </p>
       )}
       {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
         </p>
       )}
       {loadError && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load members: {loadError.message}
         </p>
       )}
@@ -169,9 +169,9 @@ export default async function MembersPage({
               <input name="address" className={inputClass} />
             </label>
             <div className="flex items-end">
-              <Button type="submit" className="w-full">
+              <SubmitButton className="w-full">
                 Add member
-              </Button>
+              </SubmitButton>
             </div>
           </form>
         </Card>
@@ -189,12 +189,12 @@ export default async function MembersPage({
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Name</th>
-                  <th className="px-5 py-3 font-semibold">Type</th>
-                  <th className="px-5 py-3 font-semibold">Group</th>
-                  <th className="px-5 py-3 font-semibold">Phone</th>
-                  <th className="px-5 py-3 font-semibold">Joined</th>
-                  <th className="px-5 py-3" />
+                  <th scope="col" className="px-5 py-3 font-semibold">Name</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Type</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Group</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Phone</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Joined</th>
+                  <th scope="col" className="px-5 py-3"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -235,7 +235,7 @@ export default async function MembersPage({
                           className={
                             showArchived
                               ? "text-xs font-medium text-muted-foreground hover:text-primary"
-                              : "text-xs font-medium text-muted-foreground hover:text-danger"
+                              : "text-xs font-medium text-muted-foreground hover:text-danger-text"
                           }
                         >
                           {showArchived ? "Restore" : "Archive"}
