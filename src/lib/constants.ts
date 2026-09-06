@@ -1,7 +1,7 @@
 /**
  * Labels for the Postgres enums in prisma/schema.prisma.
  *
- * The `value` of every entry must stay in sync with its enum — Postgres
+ * The `value` of every entry must stay in sync with its enum, Postgres
  * rejects anything else on insert. Kept in one place so a new service type
  * or payment method is added once, not in each form.
  */
@@ -16,7 +16,7 @@ export const SERVICE_TYPES = [
   { value: "other", label: "Other" },
 ] as const;
 
-// Naming varies by denomination — a Methodist "Bible class" and a
+// Naming varies by denomination, a Methodist "Bible class" and a
 // Pentecostal "fellowship" are the same structural thing. The enum stays
 // broad; the group's free-text `name` carries the church's own wording.
 export const GROUP_TYPES = [
@@ -61,7 +61,7 @@ export const TRANSFER_STATUSES = [
 export const labelFor = (
   list: ReadonlyArray<{ value: string; label: string }>,
   value: string | null
-) => list.find((i) => i.value === value)?.label ?? value ?? "—";
+) => list.find((i) => i.value === value)?.label ?? value ?? "-";
 
 export const values = (list: ReadonlyArray<{ value: string }>) =>
   list.map((i) => i.value);

@@ -1,4 +1,4 @@
--- Fold — restrict finance to finance roles. Apply SIXTH.
+-- Fold, restrict finance to finance roles. Apply SIXTH.
 --
 -- 0002_rls.sql gave contributions and funds the same policy as every other
 -- tenant table: any member of the org can READ them, and any of the five
@@ -6,7 +6,7 @@
 -- church's entire giving history, and a plain member could too.
 --
 -- The product intent (README, Phase 2) is that finance is visible only to
--- those who need it. Doing that in the UI alone would be cosmetic — the
+-- those who need it. Doing that in the UI alone would be cosmetic, the
 -- table is still readable through PostgREST with the same anon key. So the
 -- restriction belongs here.
 --
@@ -76,5 +76,5 @@ create policy "member_transfers: admins update"
   using (public.org_role(organization_id) in ('super_admin','admin'));
 
 -- NOTE: dashboard_stats() is SECURITY INVOKER, so its tithe figure now
--- returns 0 for anyone without finance read access. That is intended — the
+-- returns 0 for anyone without finance read access. That is intended, the
 -- dashboard hides the tile for those roles rather than showing a false zero.

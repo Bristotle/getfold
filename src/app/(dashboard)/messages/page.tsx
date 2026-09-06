@@ -78,7 +78,7 @@ export default async function MessagesPage({
       <div>
         <h1 className="text-2xl font-bold text-foreground">Messages</h1>
         <p className="text-sm text-muted-foreground">
-          Texts sent to members — a welcome when they join, a receipt when they
+          Texts sent to members, a welcome when they join, a receipt when they
           give, and a gentle check-in when they haven&rsquo;t been seen.
         </p>
       </div>
@@ -105,7 +105,7 @@ export default async function MessagesPage({
             No SMS provider connected yet
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Messages are still being written down — you can see below exactly
+            Messages are still being written down, you can see below exactly
             what would go out, and nothing is lost. They will send as soon as a
             provider is configured.
           </p>
@@ -158,7 +158,7 @@ export default async function MessagesPage({
         <p className="rounded-lg border border-border bg-surface-soft px-3 py-2 text-xs text-muted-foreground">
           <strong className="text-foreground">&ldquo;Sent&rdquo; means accepted by {status.provider}</strong>, not
           confirmed delivered. The first message from a new sender name is
-          held for review — it can take an hour or so to arrive, with no
+          held for review, it can take an hour or so to arrive, with no
           error shown. After that, messages from{" "}
           <span className="font-numeric">{process.env.SMS_SENDER_ID}</span> go
           straight out.
@@ -190,7 +190,7 @@ export default async function MessagesPage({
                       {dateFmt.format(new Date(r.created_at))}
                     </td>
                     <td className="px-5 py-3 text-foreground">
-                      {one(r.members)?.full_name ?? "—"}
+                      {one(r.members)?.full_name ?? "-"}
                       <span className="block font-numeric text-xs text-muted-foreground">
                         {r.recipient}
                       </span>

@@ -1,14 +1,14 @@
-// Fold — multi-tenant church management data model.
+// Fold, multi-tenant church management data model.
 //
 // Design principle: ONE Supabase project, ONE codebase, many churches.
 // Every tenant-scoped table carries organization_id, and Postgres
 // Row-Level Security (see supabase/migrations/0001_init.sql) is what
-// actually stops one church from ever seeing another's data — this
+// actually stops one church from ever seeing another's data, this
 // schema alone is not the security boundary.
 //
 // Tables/columns are explicitly @@map / @map'd to snake_case to match
 // standard Postgres/Supabase convention and the raw SQL in the RLS
-// migration — Prisma's default is camelCase/PascalCase, which would
+// migration, Prisma's default is camelCase/PascalCase, which would
 // silently mismatch that SQL if left unmapped.
 //
 // "Organization" is deliberately generic (not "Church") because some
@@ -43,8 +43,7 @@ model Organization {
   type     OrganizationType @default(local_church)
   timezone String           @default("Africa/Accra")
 
-  // e.g. "methodist", "presbyterian", "pentecostal", "independent" —
-  // drives which statistical-return template and member-type set
+  // e.g. "methodist", "presbyterian", "pentecostal", "independent", // drives which statistical-return template and member-type set
   // this org defaults to. Kept as a free string, not an enum, on
   // purpose: new denominations shouldn't require a migration.
   denomination String?
@@ -79,8 +78,7 @@ model Organization {
 }
 
 // Mirrors auth.users (Supabase-managed). id MUST equal the auth.users.id
-// of the corresponding Supabase Auth user. Created via a DB trigger —
-// see the migration file.
+// of the corresponding Supabase Auth user. Created via a DB trigger, // see the migration file.
 model Profile {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   fullName  String   @map("full_name")
@@ -106,7 +104,7 @@ enum OrgRole {
 }
 
 // A staff/system USER's access to a given Organization. Distinct from
-// "Member" below, which is the congregant record — a Member usually
+// "Member" below, which is the congregant record, a Member usually
 // has no login at all.
 model OrganizationMember {
   id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -132,7 +130,7 @@ enum GroupType {
   other
 }
 
-// Configurable groupings — Bible classes, fellowships, choirs, etc.
+// Configurable groupings, Bible classes, fellowships, choirs, etc.
 // Deliberately NOT a fixed enum of group names (unlike PewPoint's
 // hardcoded "Bible Classes" concept) so any denomination's structure
 // fits without a schema change.
@@ -155,7 +153,7 @@ model MemberGroup {
 // An invitation is keyed by EMAIL, not by user id, because the person being
 // invited usually has no account yet. When they sign up (or sign in) with a
 // matching address, accept_pending_invitations() turns this into a real
-// organization_members row — see supabase/migrations/0007_invitations.sql.
+// organization_members row, see supabase/migrations/0007_invitations.sql.
 model OrganizationInvitation {
   id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   organizationId String       @map("organization_id") @db.Uuid
@@ -201,7 +199,7 @@ model Member {
 
   // Free-text on purpose: "Full Member", "Junior Member", "Adherent",
   // "Catechumen" for Methodist orgs; "Covenant Member", "New Convert"
-  // for a Pentecostal assembly — configurable per organization rather
+  // for a Pentecostal assembly, configurable per organization rather
   // than a fixed enum baked into the schema.
   memberType String? @map("member_type")
 
@@ -289,7 +287,7 @@ enum ServiceType {
 }
 
 // Aggregate headcounts (M/F totals per service), matching how Ghanaian
-// churches actually record attendance today — a class leader counts
+// churches actually record attendance today, a class leader counts
 // heads, not a per-member checklist. Per-member QR check-in is a
 // phase-2 OPTIONAL add-on (see README roadmap), never the only path.
 model AttendanceRecord {
@@ -334,8 +332,7 @@ model Fund {
 
 // Individual check-in against a service. Optional by design: a church can
 // keep recording aggregate head-counts alone, and many will. But without
-// knowing WHO attended, "this member is drifting away" is unanswerable —
-// so anything that wants per-member engagement (attrition detection, QR
+// knowing WHO attended, "this member is drifting away" is unanswerable, // so anything that wants per-member engagement (attrition detection, QR
 // check-in, class-leader follow-up lists) reads this table.
 model AttendanceCheckIn {
   id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -376,7 +373,7 @@ enum PaymentStatus {
 // money received. Most attempts sit in `pending` while the member decides
 // whether to approve the prompt on their phone, and plenty are simply
 // abandoned. Only a verified `charge.success` webhook creates the
-// contribution — so the giving figures never count money that did not
+// contribution, so the giving figures never count money that did not
 // arrive.
 model Payment {
   id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -472,7 +469,7 @@ enum NotificationStatus {
   queued // written, not yet handed to a provider
   sent
   failed
-  no_provider // nothing configured to send it — kept, not silently dropped
+  no_provider // nothing configured to send it, kept, not silently dropped
 }
 
 // An outbound message and what happened to it.

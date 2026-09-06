@@ -2,7 +2,7 @@
  * A recreation of the real dashboard, built in CSS rather than screenshotted.
  *
  * Sharper than an image at any density, adapts to mobile, works in both
- * themes, and stays honest — the figures and labels below mirror what the
+ * themes, and stays honest, the figures and labels below mirror what the
  * product actually shows. Marked as an example so nobody mistakes it for a
  * particular church's real numbers.
  */

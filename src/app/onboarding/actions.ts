@@ -25,7 +25,7 @@ export async function createOrganization(formData: FormData) {
 
   // Goes through the create_organization SECURITY DEFINER function rather
   // than a direct insert. RLS gives `organizations` no INSERT policy, so a
-  // plain .insert() here would always be refused — see
+  // plain .insert() here would always be refused, see
   // supabase/migrations/0003_onboarding.sql for why.
   const { data, error } = await supabase.rpc("create_organization", {
     org_name: name,

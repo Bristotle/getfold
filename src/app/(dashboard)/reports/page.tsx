@@ -37,7 +37,7 @@ const longDate = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
-/** Defaults to the current calendar year — the usual reporting period. */
+/** Defaults to the current calendar year, the usual reporting period. */
 function defaultRange() {
   const now = new Date();
   return {
@@ -101,7 +101,7 @@ export default async function ReportsPage({
 
   const r = (data?.[0] ?? null) as Return | null;
 
-  // Membership by class/group — the breakdown a circuit usually asks for
+  // Membership by class/group, the breakdown a circuit usually asks for
   // alongside the totals.
   const byGroup = new Map<string, number>();
   for (const row of (groupRows ?? []) as {
@@ -123,7 +123,7 @@ export default async function ReportsPage({
         </h1>
         <p className="text-sm text-muted-foreground">
           Figures for a chosen period, ready to submit upward. Everything is
-          drawn from what your team has recorded — nothing is entered twice.
+          drawn from what your team has recorded, nothing is entered twice.
         </p>
       </div>
 
@@ -247,7 +247,7 @@ export default async function ReportsPage({
         <p className="mt-8 border-t border-border pt-4 text-xs text-muted-foreground">
           Prepared from records held in Fold on{" "}
           {longDate.format(new Date())}.
-          {!showFinance && " Income figures omitted — not visible to your role."}
+          {!showFinance && " Income figures omitted, not visible to your role."}
         </p>
       </div>
     </div>

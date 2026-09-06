@@ -68,7 +68,7 @@ export default async function GroupsPage({
         <h1 className="text-2xl font-bold text-foreground">Groups</h1>
         <p className="text-sm text-muted-foreground">
           Bible classes, fellowships, choirs and ministries. Name them however
-          your church does — the type is only for grouping.
+          your church does, the type is only for grouping.
         </p>
       </div>
 

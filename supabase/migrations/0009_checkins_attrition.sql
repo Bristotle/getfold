@@ -1,4 +1,4 @@
--- Fold — per-member check-in + silent attrition detection. Apply NINTH.
+-- Fold, per-member check-in + silent attrition detection. Apply NINTH.
 
 alter table public.attendance_check_ins enable row level security;
 
@@ -24,7 +24,7 @@ create policy "check_ins: staff delete"
 --
 -- The question a pastor actually asks: "who used to be here and quietly
 -- isn't any more?" That is deliberately NOT the same as "who has low
--- attendance" — someone who has never attended much is not drifting, they
+-- attendance", someone who has never attended much is not drifting, they
 -- are simply not very involved. Attrition is a CHANGE against a person's
 -- own baseline.
 --

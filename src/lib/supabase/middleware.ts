@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // /onboarding is as protected as /dashboard — it creates an organization
+  // /onboarding is as protected as /dashboard, it creates an organization
   // and makes the caller its admin, so it must never be reachable anonymously.
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith("/dashboard") ||

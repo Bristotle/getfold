@@ -19,7 +19,7 @@ type Queue = {
  * member on the register with no welcome text than lose the member because
  * a messaging provider was down.
  *
- * Returns null when there is no usable phone number — nothing is stored,
+ * Returns null when there is no usable phone number, nothing is stored,
  * because a message that can never be delivered is noise in the log rather
  * than a record of intent.
  */

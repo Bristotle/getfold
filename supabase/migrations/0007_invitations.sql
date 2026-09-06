@@ -1,4 +1,4 @@
--- Fold — inviting people and assigning roles. Apply SEVENTH.
+-- Fold, inviting people and assigning roles. Apply SEVENTH.
 --
 -- Same bootstrap problem as 0003: accepting an invitation means inserting
 -- into organization_members, but that table's INSERT policy requires you to
@@ -89,7 +89,7 @@ grant execute on function public.accept_pending_invitations() to authenticated;
 
 -- ---------- Guard against locking a church out of itself ----------
 -- Demoting or removing the last admin would leave an organization with
--- nobody who can manage it — and no way back through the UI.
+-- nobody who can manage it, and no way back through the UI.
 create or replace function public.prevent_last_admin_removal()
 returns trigger
 language plpgsql
@@ -126,7 +126,7 @@ begin
      and om.id <> old.id;
 
   if remaining = 0 then
-    raise exception 'This is the last administrator — promote someone else first.'
+    raise exception 'This is the last administrator, promote someone else first.'
       using errcode = '23514';
   end if;
 

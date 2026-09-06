@@ -108,7 +108,7 @@ export default async function MembersPage({
         <Card>
           <h2 className="text-sm font-bold text-foreground">Add a member</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Only the name is required — the rest can be filled in later.
+            Only the name is required, the rest can be filled in later.
           </p>
           <form
             action={createMember}
@@ -217,13 +217,13 @@ export default async function MembersPage({
                       )}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
-                      {m.member_type ?? "—"}
+                      {m.member_type ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
-                      {one(m.member_groups)?.name ?? "—"}
+                      {one(m.member_groups)?.name ?? "-"}
                     </td>
                     <td className="px-5 py-3 font-numeric text-muted-foreground">
-                      {m.phone ?? "—"}
+                      {m.phone ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
                       {dateFmt.format(new Date(m.joined_at))}

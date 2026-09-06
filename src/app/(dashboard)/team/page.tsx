@@ -263,7 +263,7 @@ export default async function TeamPage({
           </table>
         </div>
         <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
-          A church must always keep at least one administrator — the database
+          A church must always keep at least one administrator, the database
           refuses the change otherwise, so you cannot lock yourself out.
         </p>
       </Card>

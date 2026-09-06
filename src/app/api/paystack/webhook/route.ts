@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { verifyWebhookSignature } from "@/lib/paystack";
 
 /**
- * Paystack webhook — the authoritative signal that money actually moved.
+ * Paystack webhook, the authoritative signal that money actually moved.
  *
  * Three things this endpoint must get right:
  *
@@ -20,7 +20,7 @@ import { verifyWebhookSignature } from "@/lib/paystack";
  *    own status and its unique contribution_id.
  *
  * It runs with the service role because there is no user session on a
- * webhook — RLS cannot be satisfied by an incoming HTTP call from Paystack.
+ * webhook, RLS cannot be satisfied by an incoming HTTP call from Paystack.
  */
 
 export async function POST(request: Request) {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
   if (!verifyWebhookSignature(raw, signature)) {
     // 401, not 400: this is an authentication failure. Paystack does not
-    // retry 4xx, which is correct — a forged request should not be retried.
+    // retry 4xx, which is correct, a forged request should not be retried.
     return new Response("Invalid signature", { status: 401 });
   }
 
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
   // but change nothing.
   if (!payment) return new Response("Unknown reference", { status: 200 });
 
-  // Already settled — a duplicate delivery. Acknowledge and stop.
+  // Already settled, a duplicate delivery. Acknowledge and stop.
   if (payment.status === "success" && payment.contribution_id) {
     return new Response("Already processed", { status: 200 });
   }

@@ -125,7 +125,7 @@ export default async function TransfersPage({
           </form>
         )}
         <p className="mt-3 text-xs text-muted-foreground">
-          The receiving church does not need to use Fold — this records the
+          The receiving church does not need to use Fold, this records the
           request either way.
         </p>
       </Card>
@@ -198,7 +198,7 @@ export default async function TransfersPage({
                     <td className="px-5 py-3 text-muted-foreground">
                       {t.resolved_at
                         ? dateFmt.format(new Date(t.resolved_at))
-                        : "—"}
+                        : "-"}
                     </td>
                     <td className="px-5 py-3 text-right">
                       <span

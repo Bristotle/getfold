@@ -17,7 +17,7 @@ type Row = {
   id: string;
   type: string;
   // DECIMAL(12,2) comes back as a number here but as a string from the
-  // dashboard_stats RPC — always coerce with Number() rather than trusting
+  // dashboard_stats RPC, always coerce with Number() rather than trusting
   // one shape.
   amount: string | number;
   payment_method: string;
@@ -114,7 +114,7 @@ export default async function ContributionsPage({
       <div>
         <h1 className="text-2xl font-bold text-foreground">Contributions</h1>
         <p className="text-sm text-muted-foreground">
-          Tithes, offerings and donations. Cash is the default — nothing here
+          Tithes, offerings and donations. Cash is the default, nothing here
           requires mobile money.
         </p>
       </div>

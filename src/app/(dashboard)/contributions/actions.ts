@@ -39,10 +39,10 @@ export async function recordContribution(formData: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.from("contributions").insert({
     organization_id: membership.organization.id,
-    // Anonymous giving is normal — an offering collected in a bowl has no
+    // Anonymous giving is normal, an offering collected in a bowl has no
     // member attached, so member_id stays null rather than being required.
     member_id: memberId || null,
-    // Earmarking is optional — general offerings belong to no fund. When a
+    // Earmarking is optional, general offerings belong to no fund. When a
     // fund IS set, the contributions_sync_fund trigger updates its running
     // total; nothing here writes funds.current_amount directly.
     fund_id: fundId || null,
@@ -59,7 +59,7 @@ export async function recordContribution(formData: FormData) {
     redirect(`/contributions?error=${encodeURIComponent(error.message)}`);
   }
 
-  // Only attributed giving gets a receipt — an anonymous offering has
+  // Only attributed giving gets a receipt, an anonymous offering has
   // nobody to thank, and we must never guess at a recipient.
   if (memberId) {
     const { data: m } = await supabase

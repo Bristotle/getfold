@@ -18,7 +18,7 @@ export type Membership = {
  *
  * Reads go through supabase-js (anon key + the user's JWT), so RLS applies:
  * this can only ever return an organization the caller is actually a member
- * of. Never use the Prisma client for this — it connects with full database
+ * of. Never use the Prisma client for this, it connects with full database
  * privileges and bypasses RLS entirely.
  *
  * A user with no membership is a normal state, not an error: it's what a
@@ -49,7 +49,7 @@ export async function getMembership(): Promise<{
     | undefined;
 
   // PostgREST returns an embedded to-one relation as an object, but the
-  // shape is only guaranteed once generated DB types exist — normalise
+  // shape is only guaranteed once generated DB types exist, normalise
   // both forms so callers never have to care.
   const org = Array.isArray(row?.organizations)
     ? row?.organizations[0]

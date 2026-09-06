@@ -55,7 +55,7 @@ export default async function AttendancePage({
       <div>
         <h1 className="text-2xl font-bold text-foreground">Attendance</h1>
         <p className="text-sm text-muted-foreground">
-          Head counts per service. Aggregate figures only — no per-member
+          Head counts per service. Aggregate figures only, no per-member
           check-in required.
         </p>
       </div>
@@ -154,7 +154,7 @@ export default async function AttendancePage({
       <Card className="p-0">
         {rows.length === 0 ? (
           <p className="p-5 text-sm text-muted-foreground">
-            No services recorded yet. Add your first one above — this is what
+            No services recorded yet. Add your first one above, this is what
             fills the weekly figure on your dashboard.
           </p>
         ) : (

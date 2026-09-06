@@ -30,7 +30,7 @@ export default async function OnboardingPage({
   // where the session expires between the middleware check and render.
   if (!email) redirect("/login");
 
-  // Onboarding is a one-time step — someone who already has a church has
+  // Onboarding is a one-time step, someone who already has a church has
   // no business here.
   if (membership) redirect("/dashboard");
 

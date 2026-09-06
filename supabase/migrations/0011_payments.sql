@@ -1,10 +1,10 @@
--- Fold — mobile money collection attempts. Apply ELEVENTH.
+-- Fold, mobile money collection attempts. Apply ELEVENTH.
 --
 -- Finance roles only, matching contributions (0006). Note there is NO
 -- insert/update policy for ordinary users on status: the webhook is the
 -- only thing that may mark a payment successful, and it runs server-side
 -- with the service role, bypassing RLS. A member-facing client can create
--- a pending charge and read its own org's payments — nothing more.
+-- a pending charge and read its own org's payments, nothing more.
 
 alter table public.payments enable row level security;
 

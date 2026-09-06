@@ -1,4 +1,4 @@
--- Fold — statistical return figures. Apply EIGHTH.
+-- Fold, statistical return figures. Apply EIGHTH.
 --
 -- Shaped on a Methodist society's return to its circuit (membership,
 -- attendance, vital records, income). The field NAMES are generic enough to

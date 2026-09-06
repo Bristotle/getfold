@@ -39,7 +39,7 @@ export async function queueAbsenceFollowUps(formData: FormData) {
     risk: number;
   }[]).filter((r) => r.risk >= minRisk && r.phone);
 
-  // Don't message the same person twice in a fortnight — a follow-up that
+  // Don't message the same person twice in a fortnight, a follow-up that
   // arrives repeatedly reads as automated nagging, which is worse than
   // saying nothing.
   const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
@@ -77,14 +77,14 @@ export async function queueAbsenceFollowUps(formData: FormData) {
   redirect(
     `/messages?message=${encodeURIComponent(
       `${queued} follow-up${queued === 1 ? "" : "s"} queued.` +
-        (skipped ? ` ${skipped} skipped — contacted within the last 14 days.` : "")
+        (skipped ? ` ${skipped} skipped, contacted within the last 14 days.` : "")
     )}`
   );
 }
 
 /**
  * Attempts delivery of everything not yet sent. Each message records its own
- * outcome, so a provider failure never loses the message — it stays visible
+ * outcome, so a provider failure never loses the message, it stays visible
  * and can be retried.
  */
 export async function sendQueued() {

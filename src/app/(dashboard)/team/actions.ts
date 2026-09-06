@@ -49,7 +49,7 @@ export async function inviteMember(formData: FormData) {
   });
 
   if (error) {
-    // (organization_id, email) is UNIQUE — a repeat invite is a duplicate,
+    // (organization_id, email) is UNIQUE, a repeat invite is a duplicate,
     // not a mysterious failure.
     const msg =
       error.code === "23505"
@@ -115,7 +115,7 @@ export async function changeRole(formData: FormData) {
 
   if (error) {
     // The prevent_last_admin_removal trigger raises 23514 with a message
-    // written for a human — pass it straight through.
+    // written for a human, pass it straight through.
     redirect(`/team?error=${encodeURIComponent(error.message)}`);
   }
 

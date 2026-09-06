@@ -1,7 +1,7 @@
 import { type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function Card({ className,...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -14,8 +14,7 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
 }
 
 export function CardLabel({
-  className,
-  ...props
+  className,...props
 }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
@@ -29,8 +28,7 @@ export function CardLabel({
 }
 
 export function CardStat({
-  className,
-  ...props
+  className,...props
 }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p

@@ -63,7 +63,7 @@ export async function collectByMomo(formData: FormData) {
 
   // The payment row is written BEFORE calling Paystack. If the request
   // succeeds but the response is lost, the webhook still finds a record to
-  // settle against — the alternative loses real money.
+  // settle against, the alternative loses real money.
   const { error: insertError } = await supabase.from("payments").insert({
     organization_id: membership.organization.id,
     member_id: memberId || null,
@@ -80,7 +80,7 @@ export async function collectByMomo(formData: FormData) {
   }
 
   // Paystack requires an email, but most members have none. We fall back to
-  // an address on example.com — reserved by RFC 2606, so it can never reach
+  // an address on example.com, reserved by RFC 2606, so it can never reach
   // a real person, while still passing Paystack's validator.
   //
   // NOT example.invalid: that TLD is equally reserved but Paystack rejects
@@ -113,7 +113,7 @@ export async function collectByMomo(formData: FormData) {
   redirect(
     `/contributions?message=${encodeURIComponent(
       result.displayText ??
-        "Prompt sent. Ask them to approve it on their phone — it will appear here once confirmed."
+        "Prompt sent. Ask them to approve it on their phone, it will appear here once confirmed."
     )}`
   );
 }
@@ -121,8 +121,8 @@ export async function collectByMomo(formData: FormData) {
 /**
  * Asks Paystack what happened to a pending payment, and settles it.
  *
- * A webhook can be missed — a deploy mid-flight, a transient 500, a URL not
- * yet configured — so the record must never depend solely on receiving one.
+ * A webhook can be missed, a deploy mid-flight, a transient 500, a URL not
+ * yet configured, so the record must never depend solely on receiving one.
  * This is the manual reconciliation path, and it must be able to complete a
  * payment, not merely report on it.
  */
@@ -214,7 +214,7 @@ export async function refreshPayment(formData: FormData) {
     .select("id");
 
   if (!claimed || claimed.length === 0) {
-    // The webhook won the race — remove the duplicate we just created.
+    // The webhook won the race, remove the duplicate we just created.
     await supabase.from("contributions").delete().eq("id", contribution.id);
     revalidatePath("/contributions");
     redirect(`/contributions?message=${encodeURIComponent("Already recorded.")}`);

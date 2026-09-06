@@ -77,7 +77,7 @@ export default async function RecordsPage({
       <div>
         <h1 className="text-2xl font-bold text-foreground">Vital records</h1>
         <p className="text-sm text-muted-foreground">
-          Baptisms, confirmations, weddings and deaths — the register a church
+          Baptisms, confirmations, weddings and deaths, the register a church
           is most often asked to produce.
         </p>
       </div>
@@ -225,10 +225,10 @@ export default async function RecordsPage({
                       {labelFor(VITAL_RECORD_TYPES, r.type)}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
-                      {one(r.members)?.full_name ?? "—"}
+                      {one(r.members)?.full_name ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
-                      {r.note ?? "—"}
+                      {r.note ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-right">
                       <form action={deleteVitalRecord}>

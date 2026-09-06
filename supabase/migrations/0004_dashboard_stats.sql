@@ -1,4 +1,4 @@
--- Fold — dashboard aggregates. Apply FOURTH.
+-- Fold, dashboard aggregates. Apply FOURTH.
 --
 -- Deliberately SECURITY INVOKER (the default), unlike create_organization:
 -- the queries below run as the CALLER, so the RLS policies from 0002 apply

@@ -28,7 +28,7 @@ export default async function DashboardPage() {
 
   // dashboard_stats is SECURITY INVOKER, so the tithe figure comes back as 0
   // for roles without finance read access. Showing a confident "GHS 0" would
-  // be a lie — hide the tile instead.
+  // be a lie, hide the tile instead.
   const showFinance = can(membership.role, "finance.view");
 
   const supabase = await createClient();
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
-          {organization.name} — live figures, updated as your team records
+          {organization.name}, live figures, updated as your team records
           them.
         </p>
       </div>
@@ -92,7 +92,7 @@ export default async function DashboardPage() {
           </h2>
           <ol className="mt-3 flex list-decimal flex-col gap-2 pl-5 text-sm text-muted-foreground">
             <li>
-              Add your members — the register everything else is built on.
+              Add your members, the register everything else is built on.
             </li>
             <li>
               Record a service&rsquo;s attendance to start the weekly count.
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
           </ol>
           <p className="mt-4 text-xs text-muted-foreground">
             Every figure above is scoped to {organization.name} by
-            row-level security — no other church can see your data, and you
+            row-level security, no other church can see your data, and you
             cannot see theirs.
           </p>
         </Card>

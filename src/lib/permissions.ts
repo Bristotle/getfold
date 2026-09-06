@@ -7,7 +7,7 @@
  * not stop anyone who types the URL or calls PostgREST directly.
  *
  * So every capability here MUST correspond to a policy in the database. If
- * you add one, add the matching policy — otherwise the UI is promising a
+ * you add one, add the matching policy, otherwise the UI is promising a
  * restriction the database will happily ignore.
  */
 
@@ -39,7 +39,7 @@ const FINANCE_VIEWERS: Role[] = [
   "finance_officer",
 ];
 
-// Ministers can see the figures but not enter them — separating pastoral
+// Ministers can see the figures but not enter them, separating pastoral
 // oversight from handling the money is the point of a finance officer.
 const FINANCE_WRITERS: Role[] = ["super_admin", "admin", "finance_officer"];
 

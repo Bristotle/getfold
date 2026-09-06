@@ -1,10 +1,10 @@
--- Fold — organization bootstrap. Apply THIRD (after 0002_rls.sql).
+-- Fold, organization bootstrap. Apply THIRD (after 0002_rls.sql).
 --
 -- THE PROBLEM THIS SOLVES
 -- RLS creates a chicken-and-egg on signup: `organizations` has no INSERT
 -- policy, and the `organization_members` INSERT policy demands that you
 -- already be an admin of the org you are joining. So a brand-new user can
--- never create their first church — every direct INSERT is refused.
+-- never create their first church, every direct INSERT is refused.
 --
 -- Rather than punch a permissive INSERT policy into `organizations` (which
 -- would let any authenticated user insert arbitrary rows, and any user add

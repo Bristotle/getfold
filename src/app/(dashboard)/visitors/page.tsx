@@ -55,7 +55,7 @@ export default async function VisitorsPage({
         <h1 className="text-2xl font-bold text-foreground">Visitors</h1>
         <p className="text-sm text-muted-foreground">
           First-timers and returning guests. Convert someone to a member when
-          they commit — their details carry over.
+          they commit, their details carry over.
         </p>
       </div>
 
@@ -165,10 +165,10 @@ export default async function VisitorsPage({
                       {dateFmt.format(new Date(v.date_of_visit))}
                     </td>
                     <td className="px-5 py-3 font-numeric text-muted-foreground">
-                      {v.phone ?? "—"}
+                      {v.phone ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
-                      {v.how_heard ?? "—"}
+                      {v.how_heard ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-right">
                       {v.converted_member_id ? (

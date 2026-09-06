@@ -29,7 +29,7 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", {
 });
 
 const pct = (v: string | number | null) =>
-  v === null ? "—" : `${Math.round(Number(v) * 100)}%`;
+  v === null ? "-" : `${Math.round(Number(v) * 100)}%`;
 
 function RiskBadge({ risk }: { risk: number }) {
   const [label, style] =
@@ -71,7 +71,7 @@ export default async function InsightsPage() {
         <h1 className="text-2xl font-bold text-foreground">Insights</h1>
         <p className="text-sm text-muted-foreground">
           People who used to be here regularly and quietly aren&rsquo;t any
-          more — before they disappear altogether.
+          more, before they disappear altogether.
         </p>
       </div>
 
@@ -101,7 +101,7 @@ export default async function InsightsPage() {
             </Link>{" "}
             and tick off who was present. After a few weeks there is enough
             history to spot a change. Head counts alone stay perfectly valid
-            for your returns — this is an extra, not a replacement.
+            for your returns, this is an extra, not a replacement.
           </p>
         </Card>
       ) : (
@@ -204,7 +204,7 @@ export default async function InsightsPage() {
                           <td className="px-5 py-3 text-muted-foreground">
                             {r.last_gave
                               ? dateFmt.format(new Date(r.last_gave))
-                              : "—"}
+                              : "-"}
                           </td>
                         )}
                         <td className="px-5 py-3 text-right">
@@ -219,7 +219,7 @@ export default async function InsightsPage() {
             <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
               Compares the last 6 weeks against the 18 before them, as a share
               of services actually held. Someone who never attended much
-              isn&rsquo;t listed — this looks for a{" "}
+              isn&rsquo;t listed, this looks for a{" "}
               <em>change</em> in a person&rsquo;s own pattern, not for low
               attendance.
               {!seesGiving && " Giving signals are excluded from your view."}

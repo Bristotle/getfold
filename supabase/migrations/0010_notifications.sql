@@ -1,4 +1,4 @@
--- Fold — outbound message log. Apply TENTH.
+-- Fold, outbound message log. Apply TENTH.
 --
 -- Read by any staff member (a class leader should be able to see that a
 -- welcome went out), written only by admins/ministers, and never updated

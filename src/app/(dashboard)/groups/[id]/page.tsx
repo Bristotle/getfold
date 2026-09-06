@@ -38,8 +38,8 @@ export default async function GroupDetailPage({
     .eq("id", id)
     .maybeSingle();
 
-  // RLS makes another church's group indistinguishable from a deleted one —
-  // both come back empty, which is exactly the behaviour we want.
+  // RLS makes another church's group indistinguishable from a deleted one.
+  // Both come back empty, which is exactly the behaviour we want.
   if (!group) notFound();
 
   const [{ data: inGroup }, { data: available }] = await Promise.all([
@@ -202,7 +202,7 @@ export default async function GroupDetailPage({
                       )}
                     </td>
                     <td className="px-5 py-3 font-numeric text-muted-foreground">
-                      {m.phone ?? "—"}
+                      {m.phone ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-right">
                       <form action={unassignMember}>
@@ -224,7 +224,7 @@ export default async function GroupDetailPage({
       <Card>
         <h2 className="text-sm font-bold text-foreground">Delete this group</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Members are never deleted — they simply stop belonging to a group.
+          Members are never deleted, they simply stop belonging to a group.
         </p>
         <form action={deleteGroup} className="mt-3">
           <input type="hidden" name="id" value={group.id} />

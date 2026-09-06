@@ -107,7 +107,7 @@ export default async function AttendanceDetailPage({
       <Card>
         <h2 className="text-sm font-bold text-foreground">Who was here</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Optional. The head count above stands on its own — naming people is
+          Optional. The head count above stands on its own, naming people is
           what makes it possible to notice someone quietly drifting away.
         </p>
 

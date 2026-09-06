@@ -1,4 +1,4 @@
--- Fold — Row-Level Security setup. Apply this SECOND.
+-- Fold, Row-Level Security setup. Apply this SECOND.
 --
 -- Step 1: `npx prisma migrate deploy` creates the tables
 --         (prisma/migrations/20260904000000_init).
@@ -8,7 +8,7 @@
 -- application code. Every tenant-scoped table gets a policy that
 -- checks the requesting user has an organization_member row for that
 -- organization_id. This means even a bug in the Next.js app can't leak
--- one church's data into another's — Postgres refuses the query.
+-- one church's data into another's, Postgres refuses the query.
 
 -- ---------- 1. Auto-create a profile row when a new auth user signs up ----------
 
@@ -123,8 +123,7 @@ create policy "organization_members: admins delete"
   using (public.org_role(organization_id) in ('super_admin', 'admin'));
 
 -- Generic tenant-table policy generator, applied per table below.
--- (Written out explicitly per table for clarity in a starter scaffold —
--- once the pattern is proven, wrap this in a plpgsql loop.)
+-- (Written out explicitly per table for clarity in a starter scaffold, -- once the pattern is proven, wrap this in a plpgsql loop.)
 
 do $$
 declare

@@ -104,7 +104,7 @@ export async function convertVisitor(formData: FormData) {
 
   if (linkError) {
     // The member exists but the link failed. Say so plainly rather than
-    // implying nothing happened — otherwise a retry creates a duplicate.
+    // implying nothing happened, otherwise a retry creates a duplicate.
     redirect(
       `/visitors?error=${encodeURIComponent(
         `${visitor.full_name} was added to members, but could not be linked back to the visitor record: ${linkError.message}`

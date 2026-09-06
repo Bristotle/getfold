@@ -11,7 +11,7 @@ function amountOrNull(formData: FormData, key: string) {
   if (!raw) return null;
   const n = Number(raw);
   if (!Number.isFinite(n) || n <= 0) return null;
-  // DECIMAL(12,2) — send a fixed-2dp string, never a float.
+  // DECIMAL(12,2), send a fixed-2dp string, never a float.
   return n.toFixed(2);
 }
 
@@ -33,7 +33,7 @@ export async function createFund(formData: FormData) {
     name,
     description: String(formData.get("description") ?? "").trim() || null,
     target_amount: amountOrNull(formData, "targetAmount"),
-    // current_amount is deliberately not set here — the
+    // current_amount is deliberately not set here, the
     // contributions_sync_fund trigger owns it.
   });
 
@@ -89,7 +89,7 @@ export async function deleteFund(formData: FormData) {
   const supabase = await createClient();
 
   // contributions_fund_id_fkey is ON DELETE SET NULL, so the money stays on
-  // record — those contributions simply stop being earmarked. Nothing is lost.
+  // record, those contributions simply stop being earmarked. Nothing is lost.
   const { error } = await supabase
     .from("funds")
     .delete()

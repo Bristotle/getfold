@@ -51,7 +51,7 @@ export default async function FundsPage({
       <div>
         <h1 className="text-2xl font-bold text-foreground">Funds</h1>
         <p className="text-sm text-muted-foreground">
-          Building projects, missions, welfare — anything you collect towards.
+          Building projects, missions, welfare, anything you collect towards.
           Totals update automatically as contributions are recorded against
           them.
         </p>

@@ -2,17 +2,18 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
+import { Logo } from "@/components/marketing/logo";
 
 export const metadata: Metadata = {
-  title: "Fold — Church management built for Ghanaian churches",
+  title: "Fold, church management built for Ghanaian churches",
   description:
-    "Members, attendance, tithes and statistical returns — configurable to your denomination's structure. Cash-first, with mobile money and SMS as options.",
+    "Members, attendance, tithes and statistical returns, configurable to your denomination's structure. Cash first, with mobile money and SMS as options. 30 day free trial.",
 };
 
 const FEATURES = [
   {
     title: "The register, properly kept",
-    body: "Members, Bible classes and fellowships, visitors, transfers. Member types are your words — Full Member, Catechumen, Covenant Member — not a fixed list someone else chose.",
+    body: "Members, Bible classes and fellowships, visitors, transfers. Member types are your words. Full Member, Catechumen, Covenant Member, not a fixed list someone else chose.",
   },
   {
     title: "Attendance in seconds",
@@ -24,8 +25,19 @@ const FEATURES = [
   },
   {
     title: "Returns without the spreadsheet",
-    body: "Membership, attendance averages, baptisms and income for any period — laid out to print or save as PDF, drawn from what your team already recorded.",
+    body: "Membership, attendance averages, baptisms and income for any period, laid out to print or save as PDF. Drawn from what your team already recorded.",
   },
+];
+
+const RETURN_ROWS = [
+  ["Total active members", "248"],
+  ["Male / Female", "104 / 144"],
+  ["Joined in period", "31"],
+  ["Average attendance", "312"],
+  ["Baptisms", "17"],
+  ["Confirmations", "9"],
+  ["Weddings", "4"],
+  ["Total income", "GHS 61,240"],
 ];
 
 export default function LandingPage() {
@@ -34,9 +46,7 @@ export default function LandingPage() {
       {/* ---------- header ---------- */}
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <span className="text-lg font-bold tracking-tight text-foreground">
-            Fold
-          </span>
+          <Logo />
           <Link href="/login">
             <Button size="sm" variant="secondary">
               Sign in
@@ -52,26 +62,26 @@ export default function LandingPage() {
             Built for how Ghanaian churches actually operate
           </p>
           <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-            Church management that fits your church — not a template.
+            Church management that fits your church, not a template.
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
             Keep your membership register, attendance, tithes and vital records
-            in one place — and produce the return your circuit asks for without
+            in one place, and produce the return your circuit asks for without
             rebuilding it in a spreadsheet every quarter.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link href="/login">
-              <Button size="lg">Get started</Button>
+              <Button size="lg">Start your 30 day free trial</Button>
             </Link>
             <span className="text-sm text-muted-foreground">
-              Set up your church in under a minute.
+              No credit card. No commitment.
             </span>
           </div>
 
           <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-6">
             {[
-              ["Cash-first", "Mobile money optional"],
+              ["Cash first", "Mobile money optional"],
               ["Works on phones", "Not just office computers"],
               ["Your structure", "Society, circuit or diocese"],
             ].map(([term, desc]) => (
@@ -104,7 +114,7 @@ export default function LandingPage() {
               It assumes card payments, weekly small groups and a membership
               model that does not match a Methodist society, a Presbyterian
               congregation or an independent assembly. Fold starts from how your
-              church is actually organised — and stays out of the way of the
+              church is actually organised, and stays out of the way of the
               parts that already work.
             </p>
           </div>
@@ -136,7 +146,7 @@ export default function LandingPage() {
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Membership by class, attendance averages, baptisms and
-              confirmations, income by type — for whatever period you choose.
+              confirmations, income by type, for whatever period you choose.
               Print it, or save it as a PDF. Nothing is entered twice, because
               it comes from the records your team kept through the quarter.
             </p>
@@ -152,23 +162,14 @@ export default function LandingPage() {
               Shekinah Prayer Ministry International
             </p>
             <p className="text-xs text-muted-foreground">
-              Statistical return · 1 January to 30 September
+              Statistical return, 1 January to 30 September
             </p>
             <div className="mt-5 grid gap-x-8 gap-y-1 sm:grid-cols-2">
-              {[
-                ["Total active members", "248"],
-                ["Male / Female", "104 / 144"],
-                ["Joined in period", "31"],
-                ["Average attendance", "312"],
-                ["Baptisms", "17"],
-                ["Confirmations", "9"],
-                ["Weddings", "4"],
-                ["Total income", "GHS 61,240"],
-              ].map(([label, value], i, arr) => (
+              {RETURN_ROWS.map(([label, value], i) => (
                 <div
                   key={label}
                   className={`flex items-baseline justify-between gap-4 py-2 ${
-                    i < arr.length - 2 ? "border-b border-border" : ""
+                    i < RETURN_ROWS.length - 2 ? "border-b border-border" : ""
                   }`}
                 >
                   <span className="text-sm text-muted-foreground">{label}</span>
@@ -196,17 +197,20 @@ export default function LandingPage() {
             ready. Nothing is compulsory, and nothing depends on mobile money or
             a fast connection.
           </p>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex flex-col items-center gap-3">
             <Link href="/login">
-              <Button size="lg">Get started</Button>
+              <Button size="lg">Start your 30 day free trial</Button>
             </Link>
+            <span className="text-sm text-muted-foreground">
+              Free for 30 days. No credit card required, and no commitment.
+            </span>
           </div>
         </div>
       </section>
 
       <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
-          <span className="font-bold text-foreground">Fold</span>
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
+          <Logo size="sm" showTagline />
           <span>Church management for Ghanaian churches.</span>
         </div>
       </footer>

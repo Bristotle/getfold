@@ -1,8 +1,8 @@
--- Fold — keep funds.current_amount honest. Apply FIFTH.
+-- Fold, keep funds.current_amount honest. Apply FIFTH.
 --
 -- `funds.current_amount` duplicates information already in `contributions`
 -- (sum of amounts where fund_id = the fund). Denormalised totals drift the
--- moment anything writes without remembering to update them — a correction,
+-- moment anything writes without remembering to update them, a correction,
 -- a deletion, a contribution moved between funds, a future import script.
 --
 -- So the total is never written by application code. This trigger recomputes

@@ -35,7 +35,7 @@ export async function createMember(formData: FormData) {
   const supabase = await createClient();
 
   // organization_id is set from the server-side membership, never from the
-  // form — a client-supplied value would be an obvious tenant-crossing hole.
+  // form, a client-supplied value would be an obvious tenant-crossing hole.
   // RLS would reject it anyway (the insert policy checks org_role against
   // this column), but not sending it at all is the stronger guarantee.
   const { error } = await supabase.from("members").insert({

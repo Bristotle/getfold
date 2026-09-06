@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { can, type Capability } from "@/lib/permissions";
 
-// `as const` keeps the href literals narrow — typedRoutes is enabled in
+// `as const` keeps the href literals narrow, typedRoutes is enabled in
 // next.config.mjs, so Link rejects a widened `string`.
 //
 // `cap` hides a destination the role cannot use. This is convenience, not
-// security — the matching RLS policy is what actually refuses the data.
+// security, the matching RLS policy is what actually refuses the data.
 const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/members", label: "Members" },
@@ -36,7 +36,7 @@ export function Nav({ role }: { role: string }) {
 
   return (
     // These destinations don't fit a phone's width, and a church secretary
-    // on a small screen still needs every one of them — so the bar scrolls
+    // on a small screen still needs every one of them, so the bar scrolls
     // horizontally rather than wrapping into a tall stack or hiding items
     // behind a menu.
     <nav

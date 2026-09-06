@@ -2,7 +2,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 /**
- * Paystack — mobile money collection for Ghana.
+ * Paystack, mobile money collection for Ghana.
  *
  * Chosen over Stripe (the only Marketplace payments option) because Stripe
  * does not support MTN MoMo in Ghana. See the README for the comparison
@@ -60,7 +60,7 @@ type ChargeResult =
  *
  * In Ghana the response comes back as `pay_offline`: the member gets a
  * prompt on their handset and approves it with their PIN. Nothing is
- * confirmed here — the webhook is the authoritative signal that money moved.
+ * confirmed here, the webhook is the authoritative signal that money moved.
  */
 export async function initiateMomoCharge(params: {
   email: string;
@@ -147,7 +147,7 @@ export function verifyWebhookSignature(
 /**
  * Asks Paystack directly what happened to a transaction.
  *
- * Used as a fallback when a payment is stuck pending — a webhook can be
+ * Used as a fallback when a payment is stuck pending, a webhook can be
  * missed, so the record must never depend solely on receiving one.
  */
 export async function verifyTransaction(reference: string): Promise<

@@ -5,9 +5,9 @@ import "server-only";
  *
  * Two things are kept apart on purpose:
  *
- *   1. WHAT we say and to whom — templates and phone formatting. This is
+ *   1. WHAT we say and to whom, templates and phone formatting. This is
  *      church logic and does not change with the provider.
- *   2. HOW it leaves the building — one `deliver()` function behind an env
+ *   2. HOW it leaves the building, one `deliver()` function behind an env
  *      var. Ghana has no SMS provider on the Vercel Marketplace, so this
  *      will be Arkesel, Hubtel, mNotify or Twilio depending on what you
  *      sign up for. Swapping means editing one function, not the app.
@@ -72,7 +72,7 @@ const cedis = (n: number) =>
  * Templates.
  *
  * Kept short because SMS is billed per 160-character segment and these go
- * to whole congregations — a stray sentence is a real recurring cost. Each
+ * to whole congregations, a stray sentence is a real recurring cost. Each
  * one names the church, because a number the member doesn't recognise
  * otherwise reads as spam.
  */
