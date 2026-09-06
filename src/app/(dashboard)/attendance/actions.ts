@@ -62,7 +62,14 @@ export async function recordAttendance(formData: FormData) {
   );
 }
 
-export async function toggleCheckIn(formData: FormData) {
+/**
+ * Saves the whole attendance roll for one service in a single request.
+ *
+ * Replaces the previous per-member toggle, which cost a full page reload per
+ * tick. Only the difference is written: a service where two people changed
+ * costs two rows, not the entire register.
+ */
+export async function saveCheckIns(formData: FormData) {
   const { membership } = await getMembership();
   if (!membership) redirect("/onboarding");
   if (!can(membership.role, "attendance.write")) {
@@ -72,48 +79,84 @@ export async function toggleCheckIn(formData: FormData) {
   }
 
   const recordId = String(formData.get("recordId") ?? "");
-  const memberId = String(formData.get("memberId") ?? "");
-  const wasPresent = String(formData.get("present") ?? "0") === "1";
+  if (!recordId) {
+    redirect(`/attendance?error=${encodeURIComponent("Missing service.")}`);
+  }
 
-  if (!recordId || !memberId) {
-    redirect(`/attendance?error=${encodeURIComponent("Missing service or member.")}`);
+  // The service must be ours before anything is written against it.
+  if (!(await ownsRow("attendance_records", recordId, membership.organization.id))) {
+    redirect(
+      `/attendance?error=${encodeURIComponent("That service is not in your church.")}`
+    );
+  }
+
+  let requested: string[];
+  try {
+    const parsed = JSON.parse(String(formData.get("present") ?? "[]"));
+    requested = Array.isArray(parsed) ? parsed.filter((v) => typeof v === "string") : [];
+  } catch {
+    redirect(`/attendance/${recordId}?error=${encodeURIComponent("Could not read the attendance list.")}`);
   }
 
   const supabase = await createClient();
 
-  // Both references come from the form and are otherwise unchecked.
-  if (
-    !(await ownsRow("attendance_records", recordId, membership.organization.id)) ||
-    !(await ownsRow("members", memberId, membership.organization.id))
-  ) {
-    redirect(`/attendance?error=${encodeURIComponent("That service or member is not in your church.")}`);
+  // Only members of this church count. RLS already hides everyone else, so
+  // this both validates the submission and silently drops anything foreign
+  // rather than failing the whole save.
+  const { data: ourMembers } = await supabase
+    .from("members")
+    .select("id")
+    .eq("status", "active");
+
+  const allowed = new Set((ourMembers ?? []).map((m) => m.id as string));
+  const present = new Set(requested.filter((id) => allowed.has(id)));
+
+  const { data: existingRows } = await supabase
+    .from("attendance_check_ins")
+    .select("member_id")
+    .eq("attendance_record_id", recordId);
+
+  const existing = new Set((existingRows ?? []).map((r) => r.member_id as string));
+
+  const toAdd = [...present].filter((id) => !existing.has(id));
+  const toRemove = [...existing].filter((id) => !present.has(id));
+
+  if (toAdd.length > 0) {
+    const { error } = await supabase.from("attendance_check_ins").insert(
+      toAdd.map((memberId) => ({
+        organization_id: membership.organization.id,
+        attendance_record_id: recordId,
+        member_id: memberId,
+      }))
+    );
+    // 23505 is the unique constraint: someone else saved the same person
+    // while this page was open, which is the desired end state anyway.
+    if (error && error.code !== "23505") {
+      redirect(`/attendance/${recordId}?error=${encodeURIComponent(error.message)}`);
+    }
   }
 
-  if (wasPresent) {
+  if (toRemove.length > 0) {
     const { error } = await supabase
       .from("attendance_check_ins")
       .delete()
       .eq("attendance_record_id", recordId)
-      .eq("member_id", memberId)
-      .eq("organization_id", membership.organization.id);
+      .in("member_id", toRemove);
     if (error) {
-      redirect(`/attendance/${recordId}?error=${encodeURIComponent(error.message)}`);
-    }
-  } else {
-    // (attendance_record_id, member_id) is UNIQUE, so a double-click races
-    // into a duplicate-key error rather than a second row. Treat that as
-    // already-done instead of surfacing it.
-    const { error } = await supabase.from("attendance_check_ins").insert({
-      organization_id: membership.organization.id,
-      attendance_record_id: recordId,
-      member_id: memberId,
-    });
-    if (error && error.code !== "23505") {
       redirect(`/attendance/${recordId}?error=${encodeURIComponent(error.message)}`);
     }
   }
 
   revalidatePath(`/attendance/${recordId}`);
   revalidatePath("/insights");
-  redirect(`/attendance/${recordId}`);
+  revalidatePath("/dashboard");
+
+  const changed = toAdd.length + toRemove.length;
+  redirect(
+    `/attendance/${recordId}?message=${encodeURIComponent(
+      changed === 0
+        ? "Nothing to save."
+        : `Attendance saved. ${present.size} present.`
+    )}`
+  );
 }

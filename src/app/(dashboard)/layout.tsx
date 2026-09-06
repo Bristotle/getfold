@@ -22,7 +22,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen">
       <header className="border-b border-border bg-surface">
-        <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <div>
             <p className="text-sm font-bold text-foreground">
               {organization.name}
@@ -47,7 +47,9 @@ export default async function DashboardLayout({
         </div>
         <Nav role={role} />
       </header>
-      <main id="main" className="mx-auto max-w-6xl px-6 py-8">
+      {/* pb-24 on phones keeps the fixed bottom bar from covering the last
+          row of any list. */}
+      <main id="main" className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6 sm:pb-8 sm:pt-8">
         {children}
       </main>
     </div>

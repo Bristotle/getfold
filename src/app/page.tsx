@@ -45,7 +45,7 @@ export default function LandingPage() {
     <div className="min-h-screen">
       {/* ---------- header ---------- */}
       <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <Logo />
           <Link href="/login">
             <Button size="sm" variant="secondary">
@@ -56,7 +56,7 @@ export default function LandingPage() {
       </header>
 
       {/* ---------- hero ---------- */}
-      <section className="mx-auto grid max-w-6xl gap-12 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
+      <section className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
             Built for how Ghanaian churches actually operate
@@ -105,7 +105,7 @@ export default function LandingPage() {
 
       {/* ---------- the argument ---------- */}
       <section className="border-y border-border bg-surface">
-        <div className="mx-auto max-w-6xl px-6 py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Most church software is built for somewhere else, then translated.
@@ -135,7 +135,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---------- the differentiator ---------- */}
-      <section className="mx-auto max-w-6xl px-6 py-16 lg:py-20">
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
@@ -188,7 +188,7 @@ export default function LandingPage() {
 
       {/* ---------- close ---------- */}
       <section className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-6xl px-6 py-16 text-center lg:py-20">
+        <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16 lg:py-20">
           <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Set up your church tonight, use it on Sunday.
           </h2>
@@ -209,7 +209,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 sm:px-6 text-sm text-muted-foreground sm:flex-row">
           <Logo size="sm" showTagline />
           <span>Church management for Ghanaian churches.</span>
         </div>

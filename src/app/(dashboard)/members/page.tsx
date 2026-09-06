@@ -185,8 +185,51 @@ export default async function MembersPage({
               : "No members yet. Add your first one above."}
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            {/* Phone: one card per member. A six column table on a 390px
+                screen means horizontal scrolling to reach the action, which
+                is the wrong shape for the device most of these users have. */}
+            <ul className="m-0 flex list-none flex-col p-0 sm:hidden">
+              {members.map((m) => (
+                <li
+                  key={m.id}
+                  className="flex items-start justify-between gap-3 border-b border-border px-4 py-3 last:border-0"
+                >
+                  <div className="min-w-0">
+                    <Link
+                      href={`/members/${m.id}`}
+                      className="block truncate font-medium text-foreground hover:text-primary hover:underline"
+                    >
+                      {m.full_name}
+                    </Link>
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                      {[
+                        m.member_type,
+                        one(m.member_groups)?.name,
+                        m.phone,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ") || "No details yet"}
+                    </p>
+                  </div>
+                  <form action={showArchived ? restoreMember : archiveMember}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <SubmitButton
+                      variant={showArchived ? "quiet" : "destructive"}
+                      size="xs"
+                      pendingLabel="…"
+                    >
+                      {showArchived ? "Restore" : "Archive"}
+                    </SubmitButton>
+                  </form>
+                </li>
+              ))}
+            </ul>
+
+            {/* Tablet and up: the full table. */}
+            <div className="hidden overflow-x-auto sm:block">
             <table className="w-full text-left text-sm">
+
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-5 py-3 font-semibold">Name</th>
@@ -231,22 +274,21 @@ export default async function MembersPage({
                     <td className="px-5 py-3 text-right">
                       <form action={showArchived ? restoreMember : archiveMember}>
                         <input type="hidden" name="id" value={m.id} />
-                        <button
-                          className={
-                            showArchived
-                              ? "text-xs font-medium text-muted-foreground hover:text-primary"
-                              : "text-xs font-medium text-muted-foreground hover:text-danger-text"
-                          }
+                        <SubmitButton
+                          variant={showArchived ? "quiet" : "destructive"}
+                          size="xs"
+                          pendingLabel="…"
                         >
                           {showArchived ? "Restore" : "Archive"}
-                        </button>
+                        </SubmitButton>
                       </form>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+                      </div>
+          </>
         )}
       </Card>
 

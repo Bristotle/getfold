@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
+import { StatusBanner } from "@/components/ui/field";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
 import { SERVICE_TYPES, labelFor } from "@/lib/constants";
-import { toggleCheckIn } from "../actions";
+import { saveCheckIns } from "../actions";
+import { CheckInList } from "./check-in-list";
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", {
   weekday: "long",
@@ -78,16 +80,7 @@ export default async function AttendanceDetailPage({
         </p>
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
-          {error}
-        </p>
-      )}
-      {message && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
-          {message}
-        </p>
-      )}
+      <StatusBanner error={error} message={message} />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Card>
@@ -107,65 +100,21 @@ export default async function AttendanceDetailPage({
       <Card>
         <h2 className="text-sm font-bold text-foreground">Who was here</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Optional. The head count above stands on its own, naming people is
+          Optional. The head count above stands on its own. Naming people is
           what makes it possible to notice someone quietly drifting away.
         </p>
-
-        {members.length === 0 ? (
-          <p className="mt-4 text-sm text-muted-foreground">
-            No active members yet.
-          </p>
-        ) : (
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {members.map((m) => {
-              const isPresent = present.has(m.id);
-              const group = Array.isArray(m.member_groups)
-                ? m.member_groups[0]
-                : m.member_groups;
-              return (
-                <form key={m.id} action={toggleCheckIn}>
-                  <input type="hidden" name="recordId" value={record.id} />
-                  <input type="hidden" name="memberId" value={m.id} />
-                  <input
-                    type="hidden"
-                    name="present"
-                    value={isPresent ? "1" : "0"}
-                  />
-                  <button
-                    disabled={!canWrite}
-                    className={`flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
-                      isPresent
-                        ? "border-primary/40 bg-primary/5 font-medium text-foreground"
-                        : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
-                    }`}
-                  >
-                    <span>
-                      {m.full_name}
-                      {group && (
-                        <span className="block text-xs font-normal text-muted-foreground">
-                          {group.name}
-                        </span>
-                      )}
-                    </span>
-                    <span
-                      aria-hidden
-                      className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border text-xs ${
-                        isPresent
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border"
-                      }`}
-                    >
-                      {isPresent ? "✓" : ""}
-                    </span>
-                    <span className="sr-only">
-                      {isPresent ? "Mark absent" : "Mark present"}
-                    </span>
-                  </button>
-                </form>
-              );
+        <div className="mt-4">
+          <CheckInList
+            recordId={record.id}
+            members={members.map((m) => {
+              const g = Array.isArray(m.member_groups) ? m.member_groups[0] : m.member_groups;
+              return { id: m.id, full_name: m.full_name, group_name: g?.name ?? null };
             })}
-          </div>
-        )}
+            initiallyPresent={[...present]}
+            canWrite={canWrite}
+            saveAction={saveCheckIns}
+          />
+        </div>
       </Card>
     </div>
   );

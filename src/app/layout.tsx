@@ -4,13 +4,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Fold, Church Management",
   description: "Configurable church management for Ghanaian churches.",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#6b2fd9",
+  // Not maximumScale or userScalable: pinch zoom must keep working. A church
+  // secretary reading a giving figure on a phone may well need it, and
+  // disabling it fails WCAG 1.4.4.
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf9f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#6b2fd9" },
+  ],
 };
 
 export default function RootLayout({
