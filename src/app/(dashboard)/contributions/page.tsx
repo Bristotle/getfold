@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -412,7 +413,27 @@ export default async function ContributionsPage({
             figure on your dashboard.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {rows.map((r) => (
+                <DataRow
+                  key={r.id}
+                  title={labelFor(CONTRIBUTION_TYPES, r.type)}
+                  meta={metaLine(
+                    dateFmt.format(new Date(r.created_at)),
+                    nameOf(r.members),
+                    labelFor(PAYMENT_METHODS, r.payment_method),
+                    r.note
+                  )}
+                  trailing={
+                    <span className="font-numeric text-sm font-bold text-foreground">
+                      {cedis.format(Number(r.amount))}
+                    </span>
+                  }
+                />
+              ))}
+            </DataList>
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -450,7 +471,8 @@ export default async function ContributionsPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
     </div>

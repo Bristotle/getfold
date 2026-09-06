@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -206,7 +207,30 @@ export default async function RecordsPage({
             No records{validFilter ? " of this type" : ""} yet.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {records.map((r) => (
+                <DataRow
+                  key={r.id}
+                  title={labelFor(VITAL_RECORD_TYPES, r.type)}
+                  meta={metaLine(
+                    dateFmt.format(new Date(r.date)),
+                    one(r.members)?.full_name,
+                    r.note
+                  )}
+                  action={
+                    <form action={deleteVitalRecord}>
+                      <input type="hidden" name="id" value={r.id} />
+                      <SubmitButton variant="destructive" size="xs" pendingLabel="…">
+                        Delete
+                      </SubmitButton>
+                    </form>
+                  }
+                />
+              ))}
+            </DataList>
+
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -244,7 +268,8 @@ export default async function RecordsPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
     </div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -150,7 +151,31 @@ export default async function InsightsPage() {
                 is still turning up at their usual rate.
               </p>
             ) : (
-              <div className="overflow-x-auto">
+              <>
+            <DataList>
+              {rows.map((r) => (
+                <DataRow
+                  key={r.member_id}
+                  title={
+                    <Link
+                      href={`/members/${r.member_id}`}
+                      className="hover:text-primary hover:underline"
+                    >
+                      {r.full_name}
+                    </Link>
+                  }
+                  meta={metaLine(
+                    r.weeks_since_seen !== null
+                      ? `Last seen ${r.weeks_since_seen} weeks ago`
+                      : "Never seen",
+                    `${pct(r.baseline_rate)} to ${pct(r.recent_rate)}`,
+                    r.phone ?? undefined
+                  )}
+                  trailing={<RiskBadge risk={r.risk} />}
+                />
+              ))}
+            </DataList>
+            <TableWrap>
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                     <tr>
@@ -214,7 +239,8 @@ export default async function InsightsPage() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+                </TableWrap>
+          </>
             )}
             <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
               Compares the last 6 weeks against the 18 before them, as a share

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -144,7 +145,36 @@ export default async function VisitorsPage({
             No visitors recorded yet.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {visitors.map((v) => (
+                <DataRow
+                  key={v.id}
+                  title={v.full_name}
+                  meta={metaLine(
+                    dateFmt.format(new Date(v.date_of_visit)),
+                    v.phone,
+                    v.how_heard
+                  )}
+                  action={
+                    v.converted_member_id ? (
+                      <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success-text">
+                        Member
+                      </span>
+                    ) : (
+                      <form action={convertVisitor}>
+                        <input type="hidden" name="id" value={v.id} />
+                        <SubmitButton variant="quiet" size="xs" pendingLabel="…">
+                          Convert
+                        </SubmitButton>
+                      </form>
+                    )
+                  }
+                />
+              ))}
+            </DataList>
+
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -188,7 +218,8 @@ export default async function VisitorsPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
 

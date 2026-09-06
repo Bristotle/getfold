@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -172,7 +173,30 @@ export default async function MessagesPage({
             against one, and the text will appear here.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {rows.map((r) => (
+                <DataRow
+                  key={r.id}
+                  title={one(r.members)?.full_name ?? r.recipient}
+                  meta={metaLine(
+                    TYPE_LABELS[r.type] ?? r.type,
+                    dateFmt.format(new Date(r.created_at)),
+                    r.error ?? undefined
+                  )}
+                  trailing={
+                    <span
+                      className={`whitespace-nowrap rounded px-2 py-1 text-xs font-semibold ${
+                        STATUS_STYLES[r.status] ?? STATUS_STYLES.no_provider
+                      }`}
+                    >
+                      {STATUS_LABELS[r.status] ?? r.status}
+                    </span>
+                  }
+                />
+              ))}
+            </DataList>
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -219,7 +243,8 @@ export default async function MessagesPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
     </div>

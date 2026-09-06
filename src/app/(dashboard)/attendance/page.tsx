@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -158,7 +159,33 @@ export default async function AttendancePage({
             fills the weekly figure on your dashboard.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {rows.map((r) => (
+                <DataRow
+                  key={r.id}
+                  title={
+                    <Link
+                      href={`/attendance/${r.id}`}
+                      className="hover:text-primary hover:underline"
+                    >
+                      {labelFor(SERVICE_TYPES, r.service_type)}
+                    </Link>
+                  }
+                  meta={metaLine(
+                    dateFmt.format(new Date(r.date)),
+                    `${r.male_count} male`,
+                    `${r.female_count} female`
+                  )}
+                  trailing={
+                    <span className="font-numeric text-sm font-bold text-foreground">
+                      {r.male_count + r.female_count}
+                    </span>
+                  }
+                />
+              ))}
+            </DataList>
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -196,7 +223,8 @@ export default async function AttendancePage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
     </div>

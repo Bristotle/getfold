@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
+import { DataList, DataRow, TableWrap } from "@/components/ui/data-list";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -182,7 +183,35 @@ export default async function GroupDetailPage({
             No members in this group yet.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {memberRows.map((m) => (
+                <DataRow
+                  key={m.id}
+                  title={
+                    <>
+                      {m.full_name}
+                      {m.id === group.leader_id && (
+                        <span className="ml-2 rounded bg-primary/10 px-1.5 py-0.5 text-xs font-semibold text-primary">
+                          Leader
+                        </span>
+                      )}
+                    </>
+                  }
+                  meta={m.phone ?? undefined}
+                  action={
+                    <form action={unassignMember}>
+                      <input type="hidden" name="groupId" value={group.id} />
+                      <input type="hidden" name="memberId" value={m.id} />
+                      <SubmitButton variant="destructive" size="xs" pendingLabel="…">
+                        Remove
+                      </SubmitButton>
+                    </form>
+                  }
+                />
+              ))}
+            </DataList>
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -218,7 +247,8 @@ export default async function GroupDetailPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
 

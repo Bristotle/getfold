@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -176,7 +177,32 @@ export default async function TransfersPage({
             No transfers recorded yet.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <DataList>
+              {transfers.map((t) => (
+                <DataRow
+                  key={t.id}
+                  title={one(t.members)?.full_name ?? "Unknown member"}
+                  meta={metaLine(
+                    `Requested ${dateFmt.format(new Date(t.requested_at))}`,
+                    t.resolved_at
+                      ? `Resolved ${dateFmt.format(new Date(t.resolved_at))}`
+                      : null
+                  )}
+                  trailing={
+                    <span
+                      className={`rounded px-2 py-1 text-xs font-semibold ${
+                        STATUS_STYLES[t.status] ?? STATUS_STYLES.rejected
+                      }`}
+                    >
+                      {labelFor(TRANSFER_STATUSES, t.status)}
+                    </span>
+                  }
+                />
+              ))}
+            </DataList>
+
+            <TableWrap>
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -213,7 +239,8 @@ export default async function TransfersPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </TableWrap>
+          </>
         )}
       </Card>
     </div>

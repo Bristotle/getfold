@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
+import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
@@ -189,7 +190,45 @@ export default async function TeamPage({
             Members ({members.length})
           </h2>
         </div>
-        <div className="overflow-x-auto">
+        <>
+          <DataList>
+            {members.map((m) => {
+              const isSelf = m.profile_id === userId;
+              const isLastAdmin =
+                ["super_admin", "admin"].includes(m.role) && adminCount === 1;
+              return (
+                <DataRow
+                  key={m.id}
+                  title={
+                    <>
+                      {one(m.profiles)?.full_name ?? "Unnamed"}
+                      {isSelf && (
+                        <span className="ml-2 text-xs font-normal text-muted-foreground">
+                          (you)
+                        </span>
+                      )}
+                    </>
+                  }
+                  meta={metaLine(
+                    ROLE_LABELS[m.role] ?? m.role,
+                    `Joined ${dateFmt.format(new Date(m.created_at))}`,
+                    isLastAdmin ? "Last administrator" : undefined
+                  )}
+                  action={
+                    isLastAdmin ? null : (
+                      <form action={removeMember}>
+                        <input type="hidden" name="id" value={m.id} />
+                        <SubmitButton variant="destructive" size="xs" pendingLabel="…">
+                          Remove
+                        </SubmitButton>
+                      </form>
+                    )
+                  }
+                />
+              );
+            })}
+          </DataList>
+          <TableWrap>
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
@@ -262,7 +301,8 @@ export default async function TeamPage({
               })}
             </tbody>
           </table>
-        </div>
+          </TableWrap>
+        </>
         <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
           A church must always keep at least one administrator, the database
           refuses the change otherwise, so you cannot lock yourself out.
