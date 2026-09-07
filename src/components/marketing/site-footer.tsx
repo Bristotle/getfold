@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/marketing/logo";
 import { SupportWidgets } from "@/components/marketing/support-widgets";
+import { OPPORTUNITIES } from "@/lib/join";
 
 /**
  * The public footer.
@@ -8,27 +9,49 @@ import { SupportWidgets } from "@/components/marketing/support-widgets";
  * Carries the legal links a church will look for before trusting software
  * with its members' personal data, and the Manuel Technologies attribution.
  */
+/**
+ * Three columns.
+ *
+ * Product is what a church is buying. Quick links is everything else it
+ * might want to read, legal included. Join us is for a different reader
+ * entirely, somebody who wants to work with us rather than buy from us,
+ * and each entry is its own page so it can be found on its own terms.
+ *
+ * Join us is generated from OPPORTUNITIES rather than typed out here, so a
+ * new one appears in the footer, on /join and in the sitemap from a single
+ * edit.
+ */
 const COLUMNS = [
   {
     heading: "Product",
     links: [
       { label: "Features", href: "/features" },
       { label: "Compare", href: "/compare" },
-      { label: "About us", href: "/about" },
-      { label: "Getting started", href: "/getting-started" },
-      { label: "Blog", href: "/blog" },
-      { label: "Help centre", href: "/help" },
       { label: "Pricing", href: "/contact" },
-      { label: "Contact", href: "/contact" },
+      { label: "Getting started", href: "/getting-started" },
+      { label: "Help centre", href: "/help" },
       { label: "Log in", href: "/login" },
       { label: "Sign up", href: "/signup" },
     ],
   },
   {
-    heading: "Legal",
+    heading: "Quick links",
     links: [
+      { label: "About us", href: "/about" },
+      { label: "Blog", href: "/blog" },
+      { label: "Contact", href: "/contact" },
       { label: "Privacy policy", href: "/privacy" },
       { label: "Terms and conditions", href: "/terms" },
+    ],
+  },
+  {
+    heading: "Join us",
+    links: [
+      { label: "All opportunities", href: "/join" },
+      ...OPPORTUNITIES.map((o) => ({
+        label: o.title,
+        href: `/join/${o.slug}` as const,
+      })),
     ],
   },
 ] as const;
@@ -41,7 +64,7 @@ export function SiteFooter() {
       <SupportWidgets />
       <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <Logo showTagline />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">

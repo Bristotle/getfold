@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { POSTS } from "@/lib/posts";
 import { CATEGORIES, ALL_ARTICLES } from "@/lib/help";
+import { OPPORTUNITIES } from "@/lib/join";
 
 /**
  * The public pages only. Everything behind a login is deliberately absent,
@@ -62,6 +63,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    {
+      url: `${BASE}/join`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    ...OPPORTUNITIES.map((o) => ({
+      url: `${BASE}/join/${o.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
     {
       url: `${BASE}/help`,
       lastModified: now,
