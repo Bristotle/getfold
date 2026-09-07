@@ -53,30 +53,49 @@ const MODULES = [
   },
 ];
 
-const FAQS = [
+/**
+ * The FAQ.
+ *
+ * These are not questions we invented. Each one is a query people actually
+ * put into a search engine about church software in Ghana, taken from what
+ * ranks and from the "people also ask" boxes around those results:
+ * what church management software is, what it costs here, whether there is
+ * a free one, how a church takes MoMo, why foreign products fit badly, the
+ * Data Protection Act duty, and how to get off paper.
+ *
+ * Two rules for the answers. Each opens with the answer itself in the first
+ * sentence, because that is the part a search engine or an assistant lifts.
+ * And each is useful to a church that never becomes a customer, because an
+ * answer that only makes sense as a pitch does not get quoted anywhere.
+ */
+export const FAQS = [
   {
-    q: "Do our members need smartphones?",
-    a: "No. Nothing asks a member to install or sign in to anything. Your staff record what happens; members never have to do a thing.",
+    q: "What is church management software?",
+    a: "Church management software is one system holding the records a church currently keeps in several separate books: the membership register, attendance, giving, groups and classes, and the returns your denomination asks for. Instead of a register in the vestry, a cash book with the treasurer and a spreadsheet on somebody's laptop, each fact is recorded once and every total is worked out from it. In Fold nothing asks a member to install or sign in to anything, your staff record what happens.",
   },
   {
-    q: "Does it work if our giving is mostly cash?",
-    a: "Yes, and that is the assumption it is built on. Cash is the default on every giving form. Mobile money sits alongside it for members who prefer it, and you can ignore it entirely.",
+    q: "How much does church management software cost in Ghana?",
+    a: "Products marketed to Ghanaian churches range from free tiers for small congregations to around USD 35 a month for international ones, billed per church rather than per member. For many churches the real cost is not the headline figure but the payment method, since foreign products bill in dollars by card. Fold is free for 30 days with no card and no commitment, so a church can judge it on a full quarter of its own records.",
   },
   {
-    q: "What if the internet is slow?",
-    a: "Pages are light and the work is designed around few round trips. Marking a whole service's attendance is one save, not one per person.",
+    q: "Is there a free church management software?",
+    a: "Yes, several offer a free tier, almost always capped by membership at somewhere between 50 and 100 people. That suits a young congregation and stops suiting you the week you pass the cap, which is worth checking before you put your whole register into one. Fold takes the other approach, a complete 30 day trial with nothing withheld, so you evaluate the whole thing rather than a slice of it.",
   },
   {
-    q: "Can our circuit see our records?",
-    a: "Only if you give them access. Each church's data is separated at the database level, not merely hidden in the interface, so no other church can read yours.",
+    q: "How can a church in Ghana collect tithes and offerings by mobile money?",
+    a: "The simplest way is to display an official church MoMo number during the service, which many churches in Accra and Kumasi already do. The weakness is reconciliation, because money lands on a phone with no record of which member sent it or what it was for. A payment integration fixes that by prompting the member's own phone, recording the gift against their name and fund, and counting it as given only once they approve it. Whichever way you do it, register the number to the church and not to an individual.",
   },
   {
-    q: "Who can see what we give?",
-    a: "The pastor, an administrator and a finance officer. An elder or class leader cannot open the giving records at all, and that is enforced by the database rather than by the menu.",
+    q: "Why does church software built abroad not suit Ghanaian churches?",
+    a: "Three reasons come up again and again. It assumes card giving rather than cash and mobile money. It assumes a single independent congregation rather than circuits, societies, Bible classes and denominational returns. And it assumes a fast connection that is always there. A church here can use such a product, but usually ends up keeping a parallel paper system for everything the software cannot express, which is the situation the software was bought to end.",
   },
   {
-    q: "What happens to our data if we leave?",
-    a: "It stays yours. You can export your register at any time, and we delete everything within 30 days of an account closing.",
+    q: "Does a church in Ghana need to register under the Data Protection Act?",
+    a: "Yes. Under the Data Protection Act, 2012 (Act 843) a church is a data controller, because it holds personal data about living people for administration, welfare and communication, and data controllers must register with the Data Protection Commission and renew every two years. Religious belief is also special personal data under the Act, which raises the standard of care expected of you. Choosing software that separates your church's records from every other church's at the database level is part of meeting that duty rather than a substitute for registering.",
+  },
+  {
+    q: "How do we move our church register from a book to a computer?",
+    a: "Do not begin by typing the whole book. Import whatever is already typed, from Excel or Google Sheets, add the people who come every week, and let the rest of the book cross over as individuals come up for a wedding, a transfer or a funeral. Two things to watch in an export from Excel: format the phone column as text or the leading zero disappears, and write dates as 1990-04-03 so they cannot be read as March instead of April. Fold reads your own column headings rather than making you rename them.",
   },
 ];
 
@@ -188,6 +207,26 @@ export function Modules() {
 export function Faq() {
   return (
     <section className="border-t border-border">
+      {/*
+        FAQPage structured data. The same questions and answers the reader
+        sees, in the form a search engine and an assistant can quote, which
+        is what makes a page eligible to be cited rather than merely read.
+        Generated from FAQS so the two can never drift apart.
+      */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          }),
+        }}
+      />
       <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">

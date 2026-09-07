@@ -36,6 +36,26 @@ Other copy rules that matter here:
 - Ghanaian English, Ghanaian examples. `GHS 250.50`, `0244 000 000`,
   Methodist society and circuit, Akwaaba.
 
+## Public copy is written to be quoted
+
+Marketing pages exist to be found and cited, by a search engine, by an AI
+overview, and by an assistant answering a pastor's question. That changes
+how the copy is written:
+
+- **FAQ questions come from real searches, not from imagination.** Search
+  first, take the actual queries and the "people also ask" wording, and use
+  those as the questions. An invented question matches nothing.
+- **Answer in the first sentence.** The opening line is the part that gets
+  lifted. Context, caveats and detail come after it.
+- **Every answer has to be useful to a church that never becomes a
+  customer.** An answer that only makes sense as a pitch does not get
+  quoted anywhere, so it earns nothing.
+- **Ship the structured data.** `FAQPage` on any page with an FAQ,
+  `Article` on a post, generated from the same constant the page renders so
+  the two cannot drift apart.
+- New public routes go into `src/app/sitemap.ts`. Anything behind a login
+  goes into the disallow list in `src/app/robots.ts`.
+
 ## The security boundary
 
 Row-level security in Postgres is what stops one church seeing another's
