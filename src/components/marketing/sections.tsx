@@ -53,24 +53,6 @@ const MODULES = [
   },
 ];
 
-const STEPS = [
-  {
-    n: "1",
-    title: "Set up your church",
-    body: "Name, denomination, and you are in. Under a minute, and nothing else is compulsory.",
-  },
-  {
-    n: "2",
-    title: "Bring your register",
-    body: "Already in Excel or Google Sheets? Upload the file. We match your column names rather than making you rename them.",
-  },
-  {
-    n: "3",
-    title: "Use it on Sunday",
-    body: "Record the service, log the offering, and your dashboard and returns fill themselves in from there.",
-  },
-];
-
 const FAQS = [
   {
     q: "Do our members need smartphones?",
@@ -179,35 +161,6 @@ export function OnYourPhone() {
   );
 }
 
-export function HowItWorks() {
-  return (
-    <section className="border-y border-border bg-surface">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <Eyebrow>Getting started</Eyebrow>
-        <h2 className="mt-3 max-w-2xl text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Set up on a Thursday, using it by Sunday.
-        </h2>
-
-        <ol className="m-0 mt-10 grid list-none gap-8 p-0 sm:grid-cols-3">
-          {STEPS.map((s) => (
-            <li key={s.n} className="border-t-2 border-primary/30 pt-5">
-              <span className="font-numeric text-sm font-bold text-primary">
-                {s.n}
-              </span>
-              <h3 className="mt-2 text-base font-bold text-foreground">
-                {s.title}
-              </h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
-                {s.body}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
 export function Modules() {
   return (
     <section className="border-y border-border bg-surface">
@@ -235,39 +188,77 @@ export function Modules() {
 export function Faq() {
   return (
     <section className="border-t border-border">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <Eyebrow>Questions churches ask</Eyebrow>
-        <h2 className="mt-3 text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Before you commit a single record.
-        </h2>
+      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20">
+        <div className="text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+            FAQ
+          </p>
+          <h2 className="mt-3 text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Questions churches ask
+          </h2>
+          <p className="mt-4 text-[15px] text-muted-foreground">
+            Still not sure?{" "}
+            <a
+              href="#contact"
+              className="rounded font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              Send us a message
+            </a>{" "}
+            and a person will answer.
+          </p>
+        </div>
 
-        <div className="mt-8 flex flex-col">
+        <div className="mt-10 flex flex-col gap-3">
           {FAQS.map((f) => (
             /*
-              A real <details> rather than JavaScript state: it works before
+              A real <details> rather than JavaScript state: it opens before
               hydration, it is keyboard operable for free, and a screen
-              reader already knows what an expandable disclosure is.
+              reader already knows what a disclosure is. That is also why
+              this page stays fast.
             */
             <details
               key={f.q}
-              className="group border-b border-border py-4 first:border-t"
+              className="group rounded-xl border border-border bg-surface transition-colors open:border-primary/30 hover:border-border-strong"
             >
-              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded text-[15px] font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-xl px-5 py-4 text-left text-[15px] font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
                 {f.q}
                 <span
                   aria-hidden="true"
-                  className="shrink-0 text-muted-foreground transition-transform group-open:rotate-45"
+                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-soft text-muted-foreground transition-transform group-open:rotate-45 group-open:bg-primary/10 group-open:text-primary"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                  >
                     <path d="M12 5v14M5 12h14" />
                   </svg>
                 </span>
               </summary>
-              <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+              <p className="px-5 pb-5 text-[15px] leading-relaxed text-muted-foreground">
                 {f.a}
               </p>
             </details>
           ))}
+        </div>
+
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a
+            href="#contact"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Send us a message
+          </a>
+          <a
+            href="/login"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-surface px-6 text-sm font-semibold text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Start your free trial
+          </a>
         </div>
       </div>
     </section>

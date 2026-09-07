@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { Logo } from "@/components/marketing/logo";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { OnYourPhone, HowItWorks, Modules, Faq } from "@/components/marketing/sections";
+import { OnYourPhone, Modules, Faq } from "@/components/marketing/sections";
+import { GettingStarted } from "@/components/marketing/getting-started";
+import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
   title: "Fold, church management built for Ghanaian churches",
@@ -42,7 +44,13 @@ const RETURN_ROWS = [
   ["Total income", "GHS 61,240"],
 ];
 
-export default function LandingPage() {
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sent?: string; error?: string }>;
+}) {
+  const { sent, error } = await searchParams;
+
   return (
     <div className="min-h-screen">
       {/* ---------- header ---------- */}
@@ -140,7 +148,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <HowItWorks />
+      <GettingStarted />
 
       {/* ---------- the differentiator ---------- */}
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
@@ -197,6 +205,8 @@ export default function LandingPage() {
       <Modules />
 
       <Faq />
+
+      <Contact sent={sent === "1"} error={error} />
 
       {/* ---------- close ---------- */}
       <section className="border-t border-border bg-surface">

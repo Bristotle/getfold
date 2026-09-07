@@ -456,6 +456,30 @@ model Contribution {
 
 // ---------- Vital records ----------
 
+// An enquiry from the public site.
+//
+// Deliberately not tied to an organization: the person filling it in has no
+// account yet, which is the whole point. Nobody can read these through the
+// API at all, only the service role, because a table anyone may write to is
+// a table nobody should be able to enumerate.
+model ContactRequest {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  email     String
+  phone     String?
+  church    String?
+  message   String?
+  /**
+   * Which page or campaign it came from, for working out what actually converts.
+   */
+  source    String?
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("contact_requests")
+}
+
 enum NotificationType {
   welcome
   contribution_receipt
