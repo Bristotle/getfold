@@ -1,4 +1,10 @@
 import { type ReactNode } from "react";
+import {
+  Smartphone,
+  ClipboardCheck,
+  HandCoins,
+  TrendingDown,
+} from "lucide-react";
 
 /**
  * The homepage sections beyond the hero.
@@ -100,6 +106,79 @@ function Eyebrow({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * The phone section.
+ *
+ * Competitors lead with a member-facing app: devotionals, social feeds,
+ * members paying their own tithes. Fold has none of that, so it does not
+ * claim it. What is true here is quieter and more useful: the person doing
+ * the work is a church secretary holding a phone at the back of a service,
+ * and the whole product is built for that.
+ */
+const ON_PHONE = [
+  {
+    Icon: Smartphone,
+    title: "Install it like an app",
+    body: "Add Fold to your home screen from the browser. No app store, no download over a slow connection, no update to chase. It opens full screen like anything else on the phone.",
+  },
+  {
+    Icon: ClipboardCheck,
+    title: "Record the service from the back row",
+    body: "Search a name, tap who came, save once. Marking a whole congregation is a single save, not one round trip per person, so it works on a weak signal.",
+  },
+  {
+    Icon: HandCoins,
+    title: "Take mobile money on the spot",
+    body: "Send a prompt to a member's phone for MTN MoMo, Telecel Cash or AirtelTigo. Nothing counts as given until they approve it, so the books match the money.",
+  },
+  {
+    Icon: TrendingDown,
+    title: "See who has stopped coming",
+    body: "The members who used to be here every week and quietly are not, ranked and ready to call, in your hand before you leave the building.",
+  },
+];
+
+export function OnYourPhone() {
+  return (
+    <section className="border-y border-border bg-surface">
+      <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-6 sm:py-20">
+        <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Your church office, in your pocket.
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          The register does not live on a computer in the vestry any more. It
+          lives on the phone you already carry, and it works on the connection
+          you actually have.
+        </p>
+
+        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          {ON_PHONE.map(({ Icon, title, body }) => (
+            <div key={title} className="flex flex-col items-center text-center">
+              <span
+                aria-hidden="true"
+                className="grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"
+              >
+                <Icon size={30} strokeWidth={1.6} />
+              </span>
+              <h3 className="mt-5 text-balance text-base font-bold leading-snug text-foreground">
+                {title}
+              </h3>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+                {body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <p className="mx-auto mt-14 max-w-xl border-t border-border pt-6 text-sm text-muted-foreground">
+          Nothing asks a member to install or sign in to anything. Your staff
+          record what happens; the congregation never has to do a thing.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 export function HowItWorks() {
   return (
     <section className="border-y border-border bg-surface">
@@ -131,7 +210,8 @@ export function HowItWorks() {
 
 export function Modules() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+    <section className="border-y border-border bg-surface">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
       <Eyebrow>Everything in one place</Eyebrow>
       <h2 className="mt-3 max-w-2xl text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
         What your church stops keeping in separate books.
@@ -145,7 +225,8 @@ export function Modules() {
               {m.body}
             </p>
           </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -153,7 +234,7 @@ export function Modules() {
 
 export function Faq() {
   return (
-    <section className="border-t border-border bg-surface">
+    <section className="border-t border-border">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <Eyebrow>Questions churches ask</Eyebrow>
         <h2 className="mt-3 text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">

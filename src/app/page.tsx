@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { Logo } from "@/components/marketing/logo";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { HowItWorks, Modules, Faq } from "@/components/marketing/sections";
+import { OnYourPhone, HowItWorks, Modules, Faq } from "@/components/marketing/sections";
 
 export const metadata: Metadata = {
   title: "Fold, church management built for Ghanaian churches",
@@ -105,8 +105,12 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <OnYourPhone />
+
       {/* ---------- the argument ---------- */}
-      <section className="border-y border-border bg-surface">
+      {/* Sits on the page ground: the sections either side of it are on
+          surface, and three raised bands in a row read as one long block. */}
+      <section className="border-y border-border">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
