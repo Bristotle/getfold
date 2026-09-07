@@ -23,18 +23,18 @@ export default async function DashboardLayout({
     <div className="min-h-screen">
       <header className="border-b border-border bg-surface">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <div>
-            <p className="text-sm font-bold text-foreground">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-foreground">
               {organization.name}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="truncate text-xs text-muted-foreground">
               {ROLE_LABELS[role] ?? role}
               {organization.denomination
                 ? ` · ${organization.denomination}`
                 : ""}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-4">
             <span className="hidden text-xs text-muted-foreground sm:inline">
               {email}
             </span>

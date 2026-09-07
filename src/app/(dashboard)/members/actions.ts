@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { ownsOptionalRow } from "@/lib/owns";
+import { parseMembersCsv } from "@/lib/csv";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
 import { templates } from "@/lib/messaging";
@@ -175,4 +176,106 @@ export async function restoreMember(formData: FormData) {
   revalidatePath("/members");
   revalidatePath("/dashboard");
   redirect("/members?message=Member restored.");
+}
+
+/**
+ * Bulk import from a spreadsheet.
+ *
+ * Churches arrive with their register already in Excel or Google Sheets, and
+ * retyping 400 names is the reason software like this gets abandoned in week
+ * two. Column names are matched loosely, because no two churches label them
+ * the same way.
+ *
+ * Rows that cannot be imported are reported with their line number rather
+ * than silently dropped: a church needs to know which three of its 400
+ * members did not arrive.
+ */
+export async function importMembers(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  if (!can(membership.role, "people.write")) {
+    redirect(`/members?error=${encodeURIComponent("You do not have permission to add members.")}`);
+  }
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    redirect(`/members?error=${encodeURIComponent("Choose a CSV file to import.")}`);
+  }
+
+  // Guard against someone uploading a 200MB spreadsheet by accident.
+  if (file.size > 2 * 1024 * 1024) {
+    redirect(
+      `/members?error=${encodeURIComponent("That file is larger than 2MB. Split it, or export just the columns you need.")}`
+    );
+  }
+
+  const { rows, skipped, unmatchedHeaders } = parseMembersCsv(await file.text());
+
+  if (rows.length === 0) {
+    redirect(
+      `/members?error=${encodeURIComponent(
+        "No members found in that file. The first row should be column names, with one called Name or Full Name."
+      )}`
+    );
+  }
+
+  const supabase = await createClient();
+
+  // Groups named in the file are matched to existing ones. We do not create
+  // groups here: a typo would otherwise litter the church with near
+  // duplicates like "Wesley Class" and "wesley class".
+  const { data: groupRows } = await supabase
+    .from("member_groups")
+    .select("id, name");
+  const groupByName = new Map(
+    (groupRows ?? []).map((g) => [g.name.toLowerCase().trim(), g.id as string])
+  );
+
+  const payload = rows.map((r) => ({
+    organization_id: membership.organization.id,
+    full_name: r.full_name,
+    gender: r.gender,
+    date_of_birth: r.date_of_birth,
+    phone: r.phone,
+    email: r.email,
+    address: r.address,
+    member_type: r.member_type,
+    member_group_id: r.group
+      ? (groupByName.get(r.group.toLowerCase().trim()) ?? null)
+      : null,
+  }));
+
+  // Inserted in batches so one large file does not exceed the request limit,
+  // and so a failure halfway still leaves the earlier batches in place.
+  let inserted = 0;
+  for (let i = 0; i < payload.length; i += 200) {
+    const batch = payload.slice(i, i + 200);
+    const { error } = await supabase.from("members").insert(batch);
+    if (error) {
+      redirect(
+        `/members?error=${encodeURIComponent(
+          `${inserted} members imported, then row ${i + 2} failed: ${error.message}`
+        )}`
+      );
+    }
+    inserted += batch.length;
+  }
+
+  revalidatePath("/members");
+  revalidatePath("/dashboard");
+
+  const notes = [
+    `${inserted} member${inserted === 1 ? "" : "s"} imported.`,
+    skipped.length
+      ? `${skipped.length} row${skipped.length === 1 ? "" : "s"} skipped (line ${skipped
+          .slice(0, 3)
+          .map((s) => s.line)
+          .join(", ")}${skipped.length > 3 ? "…" : ""}): no name.`
+      : "",
+    unmatchedHeaders.length
+      ? `Ignored column${unmatchedHeaders.length === 1 ? "" : "s"}: ${unmatchedHeaders.join(", ")}.`
+      : "",
+  ].filter(Boolean);
+
+  redirect(`/members?message=${encodeURIComponent(notes.join(" "))}`);
 }

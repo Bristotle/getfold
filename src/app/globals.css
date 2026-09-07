@@ -41,7 +41,18 @@
   --color-danger-text: #b3241a;
 }
 
+html {
+  /*
+    A single element wider than the viewport used to scroll the entire page
+    sideways, which pushed headers and cards off screen and made every page
+    look broken on a phone. Wide content gets its own scroll container; the
+    document itself never scrolls horizontally.
+  */
+  overflow-x: hidden;
+}
+
 body {
+  overflow-x: hidden;
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);

@@ -112,7 +112,7 @@ export function Nav({ role }: { role: string }) {
         aria-label="Main"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] sm:hidden"
       >
-        <ul className="m-0 grid list-none grid-cols-5 p-0">
+        <ul className="m-0 grid list-none grid-cols-5 p-0 [&>li]:min-w-0">
           {primary.map(({ href, label, icon }) => (
             <li key={href}>
               <Link
@@ -120,12 +120,12 @@ export function Nav({ role }: { role: string }) {
                 onClick={() => setMoreOpen(false)}
                 aria-current={isActive(href) ? "page" : undefined}
                 className={cn(
-                  "flex min-h-14 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
+                  "flex min-h-14 w-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 py-2 text-[10px] font-medium leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
                   isActive(href) ? "text-primary" : "text-muted-foreground"
                 )}
               >
                 <Icon name={icon} />
-                <span className="truncate">{label}</span>
+                <span className="w-full truncate text-center">{label}</span>
               </Link>
             </li>
           ))}
@@ -136,7 +136,7 @@ export function Nav({ role }: { role: string }) {
               aria-expanded={moreOpen}
               aria-controls="more-nav"
               className={cn(
-                "flex min-h-14 w-full flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
+                "flex min-h-14 w-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 py-2 text-[10px] font-medium leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
                 moreOpen || secondary.some((l) => isActive(l.href))
                   ? "text-primary"
                   : "text-muted-foreground"

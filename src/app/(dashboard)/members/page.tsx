@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { createMember, archiveMember, restoreMember } from "./actions";
+import { createMember, archiveMember, restoreMember, importMembers } from "./actions";
 
 type MemberRow = {
   id: string;
@@ -85,6 +85,12 @@ export default async function MembersPage({
           >
             Archived
           </Link>
+          <a
+            href={`/members/export${showArchived ? "?show=archived" : ""}`}
+            className="inline-flex min-h-9 items-center rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-surface-soft hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Export CSV
+          </a>
         </div>
       </div>
 
@@ -174,6 +180,45 @@ export default async function MembersPage({
               </SubmitButton>
             </div>
           </form>
+        </Card>
+      )}
+
+      {canWrite && (
+        <Card>
+          <h2 className="text-sm font-bold text-foreground">
+            Import from a spreadsheet
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Already have your register in Excel or Google Sheets? Save it as
+            CSV and upload it here. The first row should be column names. We
+            look for Name, Gender, Date of Birth, Phone, Email, Address,
+            Member Type and Group, and we are not fussy about how they are
+            spelled.
+          </p>
+          <form
+            action={importMembers}
+            className="mt-4 flex flex-wrap items-end gap-3"
+          >
+            <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <span className="text-xs font-medium text-foreground">
+                CSV file
+              </span>
+              <input
+                type="file"
+                name="file"
+                accept=".csv,text/csv"
+                required
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground file:mr-3 file:rounded file:border-0 file:bg-surface-soft file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              />
+            </label>
+            <SubmitButton variant="secondary" pendingLabel="Importing…">
+              Import members
+            </SubmitButton>
+          </form>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Groups are matched to ones you have already created. Rows without a
+            name are skipped and reported, never guessed at.
+          </p>
         </Card>
       )}
 
