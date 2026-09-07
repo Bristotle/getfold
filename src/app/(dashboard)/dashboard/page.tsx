@@ -98,7 +98,7 @@ export default async function DashboardPage() {
               Record a service&rsquo;s attendance to start the weekly count.
             </li>
             <li>Log tithes and offerings against members and funds.</li>
-            <li>Invite your administrators, ministers and class leaders.</li>
+            <li>Invite your administrators, elders and class leaders.</li>
           </ol>
           <p className="mt-4 text-xs text-muted-foreground">
             Every figure above is scoped to {organization.name} by

@@ -96,9 +96,11 @@ model Profile {
 
 enum OrgRole {
   super_admin // Manuel Technologies / platform-level support access
-  admin // church-level administrator (e.g. "Society Admin")
-  minister
+  pastor // holds the church. Created it, and the only role that can appoint another pastor
+  admin // church-level administrator (e.g. "Society Admin"), delegated by the pastor
+  minister // legacy, treated as elder everywhere. No longer offered when assigning
   finance_officer
+  elder // pastoral work without money
   class_leader
   member // congregant with self-service portal access, if any
 }

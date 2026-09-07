@@ -4,20 +4,11 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
-import { can } from "@/lib/permissions";
+import { can, assignableRoles } from "@/lib/permissions";
 
-const ROLES = [
-  "super_admin",
-  "admin",
-  "minister",
-  "finance_officer",
-  "class_leader",
-  "member",
-];
-
-// super_admin is platform-level support access, not something a church
-// administrator should be able to hand out.
-const ASSIGNABLE = ROLES.filter((r) => r !== "super_admin");
+// Which roles this caller may hand out depends on their own. Only the
+// person who holds the church can appoint another pastor, so an
+// administrator cannot quietly promote themselves to owner.
 
 export async function inviteMember(formData: FormData) {
   const { userId, membership } = await getMembership();
@@ -36,8 +27,8 @@ export async function inviteMember(formData: FormData) {
   if (!email || !email.includes("@")) {
     redirect(`/team?error=${encodeURIComponent("Enter a valid email address.")}`);
   }
-  if (!ASSIGNABLE.includes(role)) {
-    redirect(`/team?error=${encodeURIComponent("Pick a role.")}`);
+  if (!(assignableRoles(membership.role) as string[]).includes(role)) {
+    redirect(`/team?error=${encodeURIComponent("You cannot assign that role.")}`);
   }
 
   const supabase = await createClient();
@@ -102,8 +93,8 @@ export async function changeRole(formData: FormData) {
   const role = String(formData.get("role") ?? "");
 
   if (!id) redirect(`/team?error=${encodeURIComponent("Missing member.")}`);
-  if (!ASSIGNABLE.includes(role)) {
-    redirect(`/team?error=${encodeURIComponent("Pick a valid role.")}`);
+  if (!(assignableRoles(membership.role) as string[]).includes(role)) {
+    redirect(`/team?error=${encodeURIComponent("You cannot assign that role.")}`);
   }
 
   const supabase = await createClient();

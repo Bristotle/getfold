@@ -5,7 +5,7 @@ import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-lis
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
-import { can, ROLE_LABELS } from "@/lib/permissions";
+import { can, ROLE_LABELS, ROLE_DESCRIPTIONS, assignableRoles } from "@/lib/permissions";
 import {
   inviteMember,
   revokeInvitation,
@@ -33,13 +33,7 @@ const inputClass =
   "h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40";
 
 // super_admin is platform support access, not a church role to hand out.
-const ASSIGNABLE_ROLES = [
-  "admin",
-  "minister",
-  "finance_officer",
-  "class_leader",
-  "member",
-];
+
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
@@ -62,6 +56,9 @@ export default async function TeamPage({
   // RLS returns nothing here to a non-admin; redirecting is clearer than an
   // empty page.
   if (!can(membership.role, "org.manage")) redirect("/dashboard");
+
+  // Only the pastor sees "Pastor" in the list.
+  const roleOptions = assignableRoles(membership.role);
 
   const supabase = await createClient();
 
@@ -133,8 +130,8 @@ export default async function TeamPage({
           </label>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-foreground">Role</span>
-            <select name="role" defaultValue="member" className={inputClass}>
-              {ASSIGNABLE_ROLES.map((r) => (
+            <select name="role" defaultValue="elder" className={inputClass}>
+              {roleOptions.map((r) => (
                 <option key={r} value={r}>
                   {ROLE_LABELS[r] ?? r}
                 </option>
@@ -147,6 +144,17 @@ export default async function TeamPage({
             </SubmitButton>
           </div>
         </form>
+
+        <dl className="mt-5 grid gap-x-6 gap-y-2 border-t border-border pt-4 text-xs sm:grid-cols-2">
+          {roleOptions.map((r) => (
+            <div key={r} className="flex flex-col">
+              <dt className="font-semibold text-foreground">
+                {ROLE_LABELS[r] ?? r}
+              </dt>
+              <dd className="text-muted-foreground">{ROLE_DESCRIPTIONS[r]}</dd>
+            </div>
+          ))}
+        </dl>
       </Card>
 
       {invites.length > 0 && (
@@ -266,7 +274,7 @@ export default async function TeamPage({
                           disabled={isLastAdmin}
                           className="h-8 rounded-lg border border-border bg-surface px-2 text-sm outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
                         >
-                          {ASSIGNABLE_ROLES.map((r) => (
+                          {roleOptions.map((r) => (
                             <option key={r} value={r}>
                               {ROLE_LABELS[r] ?? r}
                             </option>

@@ -60,8 +60,9 @@ export default async function OnboardingPage({
           Set up your church
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          This creates your organization and makes you its administrator. You
-          can change any of it later.
+          This creates your church and puts it in your hands. You can invite
+          administrators, elders and class leaders afterwards, and decide what
+          each of them can see.
         </p>
 
         {error && (
