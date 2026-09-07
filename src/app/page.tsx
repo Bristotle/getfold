@@ -8,6 +8,7 @@ import { OnYourPhone, Modules, Faq } from "@/components/marketing/sections";
 import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
 import { Proof } from "@/components/marketing/proof";
+import { CongregationBand } from "@/components/marketing/congregation-band";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 
@@ -156,6 +157,8 @@ export default async function LandingPage({
           </div>
         </div>
       </section>
+
+      <CongregationBand />
 
       <GettingStarted />
 
