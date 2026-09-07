@@ -3,6 +3,9 @@ import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
+import { getInsights, MONTH_NAMES } from "./insights-data";
+import { BarSeries, GroupedBars, SplitBar, SERIES } from "@/components/charts";
+import { Cake } from "lucide-react";
 
 type Stats = {
   member_count: number;
@@ -37,6 +40,7 @@ export default async function DashboardPage() {
   });
 
   const stats = (data?.[0] ?? null) as Stats | null;
+  const insights = await getInsights(organization.id);
 
   // amount is DECIMAL(12,2); PostgREST serialises it as a string to avoid
   // float rounding, so parse rather than assuming a number.
@@ -85,6 +89,152 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      {/* ---------- birthdays ---------- */}
+      {/*
+        Put high on the page on purpose. This is the one thing here that
+        changes what happens in the service itself: a name read out and a
+        blessing given. It uses the date of birth the register already
+        holds, and it never shows the year, because the year is the part
+        nobody wants announced.
+      */}
+      {insights.birthdays.length > 0 && (
+        <Card>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-warning/15 text-warning-text"
+              >
+                <Cake size={20} strokeWidth={1.8} />
+              </span>
+              <div>
+                <h2 className="text-sm font-bold text-foreground">
+                  Birthdays to announce
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  The next fortnight, so you can bless them on Sunday.
+                </p>
+              </div>
+            </div>
+            <span className="font-numeric text-xs text-muted-foreground">
+              {insights.birthdaysThisMonth} this month
+            </span>
+          </div>
+
+          <ul className="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+            {insights.birthdays.slice(0, 24).map((b) => (
+              <li
+                key={b.id}
+                className="flex items-baseline gap-2 rounded-full border border-border bg-surface-soft px-3 py-1.5"
+              >
+                <span className="text-sm font-medium text-foreground">
+                  {b.name}
+                </span>
+                <span className="font-numeric text-xs text-muted-foreground">
+                  {b.day} {MONTH_NAMES[b.month]}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {insights.birthdays.length > 24 && (
+            <p className="mt-3 font-numeric text-xs text-muted-foreground">
+              and {insights.birthdays.length - 24} more
+            </p>
+          )}
+        </Card>
+      )}
+
+      {/* ---------- charts ---------- */}
+      {!isEmpty && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {insights.attendance.length > 0 && (
+            <Card>
+              <CardLabel>Attendance, last services recorded</CardLabel>
+              <div className="mt-4">
+                <BarSeries
+                  label="Total attendance per service"
+                  data={insights.attendance}
+                  color={SERIES.attendance}
+                />
+              </div>
+            </Card>
+          )}
+
+          {insights.attendanceBySex.length > 0 && (
+            <Card>
+              <CardLabel>Attendance by sex</CardLabel>
+              <div className="mt-4">
+                <GroupedBars
+                  label="Attendance by sex per service"
+                  data={insights.attendanceBySex}
+                  keys={[
+                    { name: "Female", color: SERIES.female },
+                    { name: "Male", color: SERIES.male },
+                  ]}
+                />
+              </div>
+            </Card>
+          )}
+
+          {showFinance && (
+            <Card>
+              <CardLabel>Giving by month</CardLabel>
+              <div className="mt-4">
+                <GroupedBars
+                  label="Giving by month and type"
+                  data={insights.giving}
+                  format={(n) => cedis.format(n)}
+                  keys={[
+                    { name: "Tithe", color: SERIES.tithe },
+                    { name: "Offering", color: SERIES.offering },
+                    { name: "Other", color: SERIES.other },
+                  ]}
+                />
+              </div>
+            </Card>
+          )}
+
+          {insights.memberTypes.length > 0 && (
+            <Card>
+              <CardLabel>Membership by type</CardLabel>
+              <div className="mt-4">
+                <SplitBar label="Membership by type" parts={insights.memberTypes} />
+              </div>
+            </Card>
+          )}
+
+          {insights.sexSplit.female + insights.sexSplit.male > 0 && (
+            <Card>
+              <CardLabel>Membership by age</CardLabel>
+              <div className="mt-4">
+                <GroupedBars
+                  label="Membership by age band and sex"
+                  data={insights.ageBands}
+                  keys={[
+                    { name: "Female", color: SERIES.female },
+                    { name: "Male", color: SERIES.male },
+                  ]}
+                />
+              </div>
+            </Card>
+          )}
+
+          <Card>
+            <CardLabel>Members by sex</CardLabel>
+            <div className="mt-4">
+              <SplitBar
+                label="Members by sex"
+                parts={[
+                  { name: "Female", value: insights.sexSplit.female, color: SERIES.female },
+                  { name: "Male", value: insights.sexSplit.male, color: SERIES.male },
+                  { name: "Not recorded", value: insights.sexSplit.unknown, color: "#c9c3d4" },
+                ]}
+              />
+            </div>
+          </Card>
+        </div>
+      )}
+
       {isEmpty && (
         <Card>
           <h2 className="text-sm font-bold text-foreground">
@@ -99,6 +249,10 @@ export default async function DashboardPage() {
             </li>
             <li>Log tithes and offerings against members and funds.</li>
             <li>Invite your administrators, elders and class leaders.</li>
+            <li>
+              Record dates of birth as you go, and this page will tell you
+              who to bless each Sunday.
+            </li>
           </ol>
           <p className="mt-4 text-xs text-muted-foreground">
             Every figure above is scoped to {organization.name} by

@@ -7,14 +7,23 @@
  *
  * `showTagline` is off by default so the mark can sit in the app header
  * without repeating the pitch on every page.
+ *
+ * `variant="light"` is for a dark ground, such as the panel beside the
+ * sign in form, where the brand purple on deep purple would disappear.
  */
 export function Logo({
   showTagline = false,
   size = "md",
+  variant = "default",
 }: {
   showTagline?: boolean;
   size?: "sm" | "md" | "lg";
+  variant?: "default" | "light";
 }) {
+  const markClass = variant === "light" ? "text-white" : "text-primary";
+  const wordClass = variant === "light" ? "text-white" : "text-foreground";
+  const taglineClass =
+    variant === "light" ? "text-white/70" : "text-muted-foreground";
   const dims =
     size === "lg" ? 40 : size === "sm" ? 24 : 30;
   const wordmark =
@@ -37,7 +46,7 @@ export function Logo({
           strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-primary"
+          className={markClass}
         />
         {/* walls */}
         <path
@@ -46,7 +55,7 @@ export function Logo({
           strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-primary"
+          className={markClass}
         />
         {/* the door: an arch, the fold itself */}
         <path
@@ -55,18 +64,18 @@ export function Logo({
           strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-primary"
+          className={markClass}
         />
       </svg>
 
       <span className="flex flex-col leading-none">
         <span
-          className={`${wordmark} font-bold tracking-tight text-foreground`}
+          className={`${wordmark} font-bold tracking-tight ${wordClass}`}
         >
           Fold
         </span>
         {showTagline && (
-          <span className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          <span className={`mt-1 text-[11px] font-medium uppercase tracking-[0.16em] ${taglineClass}`}>
             Know your flock
           </span>
         )}

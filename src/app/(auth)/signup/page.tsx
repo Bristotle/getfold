@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input, StatusBanner } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Logo } from "@/components/marketing/logo";
+import { AuthPanel } from "@/components/marketing/auth-panel";
 import { signUp } from "../login/actions";
 
 export const metadata: Metadata = {
@@ -29,13 +30,14 @@ export default async function SignUpPage({
   const { error, message } = await searchParams;
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm">
+    <main className="grid min-h-screen lg:grid-cols-[1fr_1.05fr]">
+      <div className="flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-sm">
         <Link
           href="/"
           className="mx-auto mb-6 block w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         >
-          <Logo />
+          <Logo showTagline />
         </Link>
 
         <Card>
@@ -94,7 +96,10 @@ export default async function SignUpPage({
             Log in
           </Link>
         </p>
+        </div>
       </div>
+
+      <AuthPanel />
     </main>
   );
 }
