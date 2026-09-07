@@ -57,8 +57,13 @@ export default async function LandingPage({
       <SiteHeader />
 
       {/* ---------- hero ---------- */}
+      {/*
+        min-w-0 on both tracks. A grid item defaults to min-width:auto, so a
+        single wide descendant makes its track refuse to shrink and the
+        section overflows the viewport instead of wrapping.
+      */}
       <section className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
             Built for how Ghanaian churches actually operate
           </p>
@@ -80,7 +85,7 @@ export default async function LandingPage({
             </span>
           </div>
 
-          <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-6">
+          <dl className="mt-10 grid max-w-lg grid-cols-1 gap-x-6 gap-y-4 border-t border-border pt-6 sm:grid-cols-3">
             {[
               ["Cash first", "Mobile money optional"],
               ["Works on phones", "Not just office computers"],
@@ -96,7 +101,7 @@ export default async function LandingPage({
           </dl>
         </div>
 
-        <div className="lg:pl-4">
+        <div className="min-w-0 lg:pl-4">
           <DashboardPreview />
           <p className="mt-3 text-center text-xs text-muted-foreground">
             Example figures, shown to illustrate the dashboard.

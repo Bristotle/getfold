@@ -84,6 +84,14 @@ data. The interface is a mirror of those rules, never the enforcement.
   nothing arrives. Check with `GET /api/v2/sms/<id>` before debugging code.
 - Deleting an organization cascades to its memberships, so the last admin
   guard has to stand down for cascades or an org can never be deleted.
+- **`min-width: auto` is why the page renders wider than the phone.** Grid
+  and flex children refuse to shrink below their content by default, so one
+  `whitespace-nowrap` row deep inside a card sets a width floor that the
+  card, the grid track and the whole section inherit. This has broken the
+  homepage twice. Put `min-w-0` on grid and flex children that hold
+  anything wide, and fix it at the source rather than relying on the
+  `overflow-x: hidden` guard in `globals.css`, which hides the symptom and
+  silently clips real content.
 
 ## Testing
 
@@ -98,3 +106,21 @@ the live services and cleaning up afterwards. Two techniques worth reusing:
 
 Never sign up test users at a real mail domain with invented addresses. The
 bounces count against the project and Supabase will restrict sending.
+
+### Checking the public pages on a phone
+
+`scripts/audit-mobile.mjs` loads every public page at 320, 360, 390, 414
+and 768 pixels wide and fails if the document is wider than the viewport,
+naming the outermost element at fault. It turns off the `overflow-x:
+hidden` guard before measuring, because that guard is what made the last
+two overflow bugs invisible.
+
+```bash
+npm install --no-save playwright && npx playwright install chromium
+npm run build && npx next start -p 3100 &
+node scripts/audit-mobile.mjs              # local build
+BASE=https://www.getfold.org node scripts/audit-mobile.mjs   # live site
+```
+
+Playwright is deliberately not a dependency. It is installed for the run
+and thrown away, so it costs the deploy nothing.

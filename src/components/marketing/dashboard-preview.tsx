@@ -24,7 +24,7 @@ export function DashboardPreview() {
   return (
     <div
       aria-label="Example of the Fold dashboard"
-      className="overflow-hidden rounded-xl border border-border bg-surface shadow-[0_18px_50px_-24px_rgba(26,16,51,0.28)]"
+      className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface shadow-[0_18px_50px_-24px_rgba(26,16,51,0.28)]"
     >
       {/* window chrome */}
       <div className="flex items-center gap-2 border-b border-border bg-surface-soft px-4 py-2.5">
@@ -45,7 +45,13 @@ export function DashboardPreview() {
       </div>
 
       {/* nav */}
-      <div className="flex gap-1 overflow-hidden border-b border-border px-3">
+      {/*
+        min-w-0 matters more here than it looks. These six labels are
+        whitespace-nowrap flex items, so their combined width became the
+        min-content width of the card, then of the grid track holding it,
+        then of the hero, and the whole page rendered wider than a phone.
+      */}
+      <div className="flex min-w-0 gap-1 overflow-hidden border-b border-border px-3">
         {["Dashboard", "Members", "Groups", "Attendance", "Giving", "Reports"].map(
           (item, i) => (
             <span
