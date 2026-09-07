@@ -74,7 +74,10 @@ const GROUPS = [
     label: "Team",
     icon: "shield",
     cap: "org.manage",
-    items: [{ href: "/team", label: "Team" }],
+    items: [
+      { href: "/team", label: "People with access" },
+      { href: "/branches", label: "Branches" },
+    ],
   },
 ] as const satisfies ReadonlyArray<{
   label: string;
