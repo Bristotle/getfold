@@ -16,9 +16,10 @@ import { Button } from "@/components/ui/button";
  * a phone is rotated into a tablet width.
  */
 const LINKS = [
+  { href: "/features", label: "Features" },
+  { href: "/compare", label: "Compare" },
   { href: "/about", label: "About" },
   { href: "/getting-started", label: "Getting started" },
-  { href: "/blog", label: "Blog" },
   { href: "/help", label: "Help" },
   /*
     Pricing goes to Contact rather than to a page of figures. Every

@@ -30,6 +30,102 @@ export type Post = {
 
 export const POSTS: Post[] = [
   {
+    slug: "church-management-software-in-ghana",
+    title: "Church management software in Ghana: an honest comparison",
+    category: "Choosing software",
+    date: "September 2026",
+    published: "2026-09-07",
+    excerpt:
+      "Every guide to this is written by one of the vendors, including this one. So here is the version that names what each product is genuinely good at, including the ones that beat us.",
+    body: [
+      {
+        type: "p",
+        text: "Search for church management software in Ghana and you will find guides written by the companies selling it. This one is no different, we make Fold, and you should read it knowing that. What we can do is write the version that would survive you checking it, which means naming what our competitors are better at.",
+      },
+      { type: "h2", text: "What actually matters here" },
+      {
+        type: "p",
+        text: "Before the products, the criteria. Most lists judge on feature counts, which tells you very little. Four things decide whether church software survives its first year in Ghana:",
+      },
+      {
+        type: "list",
+        items: [
+          "Does it treat cash as normal? Most giving here is cash. Software that treats it as the awkward case was designed for somewhere else.",
+          "Does it fit how your church is organised? A society in a circuit is not the same shape as an independent assembly, and neither is a small group.",
+          "Does it work on a phone on a weak signal? The person recording a service is standing at the back of it holding a handset.",
+          "Can you pay for it, in cedis, without a card?",
+        ],
+      },
+      {
+        type: "p",
+        text: "A fifth one nobody lists: can you get your data out again. Software that makes leaving difficult is relying on something other than being good.",
+      },
+      { type: "h2", text: "Shepherd" },
+      {
+        type: "p",
+        text: "The strongest local product, and the one we watch most closely. WhatsApp check-in is genuinely clever, because WhatsApp is where Ghanaian churches already talk. They support mobile money, they price in cedis from GHS 99 with a free tier up to 50 members, and their youth tracking follows Ghana's education stages, which nobody else models.",
+      },
+      {
+        type: "p",
+        text: "Choose Shepherd if WhatsApp is how your church communicates, or if you want to see a price before you speak to anyone. What it does not do is denominational structure: no circuit, no society, no Bible class, no quarterly return.",
+      },
+      { type: "h2", text: "Asoriba" },
+      {
+        type: "p",
+        text: "The most established, running since 2016 with over a thousand churches and genuine international press. Branch management is a first class part of the product rather than a roadmap item, and members get a branded app.",
+      },
+      {
+        type: "p",
+        text: "Choose Asoriba if you want an app in your members' hands and you are running several branches today. Pricing is behind a page rather than on the homepage, so budget for a conversation.",
+      },
+      { type: "h2", text: "ChurchCast" },
+      {
+        type: "p",
+        text: "Ghanaian, built around custom branded apps with sermons, devotionals and a feed, plus multi campus support. They publish their giving fees plainly, mobile money at 1.7 per cent and cards at 2.15 per cent, which more vendors should do.",
+      },
+      {
+        type: "p",
+        text: "Choose ChurchCast if a branded app is the point of the exercise. Treat the engagement percentages on their homepage the way you would treat any unfalsifiable number.",
+      },
+      { type: "h2", text: "DaChurchMan and Msoft" },
+      {
+        type: "p",
+        text: "Both go wide: payroll, HR, asset registers, full accounting, church stores. DaChurchMan runs thirteen modules and Msoft seventeen, across Ghana, Nigeria and Kenya.",
+      },
+      {
+        type: "p",
+        text: "Choose either if you need the church office run as a business as well as a congregation. Neither publishes a price, so both mean a demo and a negotiation, which suits a large organisation and frustrates a small one.",
+      },
+      { type: "h2", text: "The international products" },
+      {
+        type: "p",
+        text: "Planning Center, Breeze, ChurchTrac and Tithe.ly are mature and well built, and it is worth being fair about them rather than using them as a strawman. ChurchTrac from USD 29 a month is genuinely cheap and puts every feature on every tier. Breeze is unusually easy to teach to volunteers.",
+      },
+      {
+        type: "p",
+        text: "The catch is real though. They assume card giving, they bill in dollars, they assume a connection that does not drop, and they model one independent congregation. A church here typically buys one, uses a tenth of it, and keeps the book anyway.",
+      },
+      { type: "h2", text: "Fold" },
+      {
+        type: "p",
+        text: "Ours. Built around denominational structure: societies, circuits, Bible classes, catechumens, class leaders, and the statistical return that assembles itself from what your team recorded through the quarter. Cash is the default and mobile money sits beside it. Thirty days free with no card, and the whole product rather than a limited tier.",
+      },
+      {
+        type: "p",
+        text: "What we do not have, plainly: no WhatsApp integration, no member facing app, no multi branch yet, and no payroll or accounting. If any of those is the reason you are looking, one of the products above is a better answer than ours, and we would rather tell you now than after you have moved four hundred members across.",
+      },
+      {
+        type: "quote",
+        text: "If your church files a return to a circuit, a presbytery, a diocese or a district, you are the church nobody else in this list is building for.",
+      },
+      { type: "h2", text: "How to actually decide" },
+      {
+        type: "p",
+        text: "Do not decide on a feature table, including ours. Take the thing that costs your church the most time this quarter, whether that is the return, the register, chasing giving, or knowing who has stopped coming, and ask each vendor to show you that one job end to end. Then ask how you would get your data out. The answers to those two questions will separate the field faster than any list.",
+      },
+    ],
+  },
+  {
     slug: "statistical-return-without-a-spreadsheet",
     title: "How to produce your statistical return without a spreadsheet",
     category: "Church admin",

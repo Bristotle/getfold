@@ -95,6 +95,10 @@ export const FAQS = [
     a: "Yes. Under the Data Protection Act, 2012 (Act 843) a church is a data controller, because it holds personal data about living people for administration, welfare and communication, and data controllers must register with the Data Protection Commission and renew every two years. Religious belief is also special personal data under the Act, which raises the standard of care expected of you. Choosing software that separates your church's records from every other church's at the database level is part of meeting that duty rather than a substitute for registering.",
   },
   {
+    q: "Does Fold work with WhatsApp?",
+    a: "Not yet, and we would rather say so than imply otherwise. Fold sends SMS, which reaches every member with a phone, including the older members who are often the most faithful and the least likely to be on WhatsApp. A WhatsApp integration reaches the members already reachable and misses the ones hardest to reach, so we built the channel that covers everybody first. If WhatsApp check-in is the reason you are choosing software, Shepherd does it well and we would point you there.",
+  },
+  {
     q: "How do we move our church register from a book to a computer?",
     a: "Do not begin by typing the whole book. Import whatever is already typed, from Excel or Google Sheets, add the people who come every week, and let the rest of the book cross over as individuals come up for a wedding, a transfer or a funeral. Two things to watch in an export from Excel: format the phone column as text or the leading zero disappears, and write dates as 1990-04-03 so they cannot be read as March instead of April. Fold reads your own column headings rather than making you rename them.",
   },

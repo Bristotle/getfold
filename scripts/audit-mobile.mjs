@@ -1,6 +1,7 @@
 import { chromium } from "playwright";
 
-const PAGES = ["/", "/about", "/getting-started", "/blog", "/contact",
+const PAGES = ["/", "/features", "/compare", "/about", "/getting-started",
+  "/blog", "/help", "/help/members/import-from-excel", "/contact",
   "/blog/what-mobile-money-costs-a-church"];
 const WIDTHS = [320, 360, 390, 414, 768];
 const BASE = process.env.BASE ?? "http://127.0.0.1:3100";
