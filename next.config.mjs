@@ -24,6 +24,30 @@ const csp = [
 
 const nextConfig = {
   typedRoutes: true,
+  /**
+   * One canonical host.
+   *
+   * Both getfold.org and www.getfold.org were serving the full site, so
+   * every page existed twice as far as a search engine was concerned, with
+   * no canonical tag to say which was real. That splits whatever authority
+   * the site earns across two copies and is the classic way to make a
+   * sitemap submission worthless.
+   *
+   * www wins because that is what the sitemap, robots.txt and every
+   * absolute URL already say. 308 rather than 302, so it is cached and
+   * passes the signal on permanently.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "getfold.org" }],
+        destination: "https://www.getfold.org/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
