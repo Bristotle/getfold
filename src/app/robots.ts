@@ -15,6 +15,9 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [
         "/api/",
+        // A redirect to a personal handset. Nothing to index, and no
+        // reason to invite a crawler to follow it.
+        "/whatsapp",
         "/dashboard",
         "/members",
         "/attendance",

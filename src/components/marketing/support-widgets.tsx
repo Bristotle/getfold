@@ -20,14 +20,12 @@ import { CATEGORIES } from "@/lib/help";
  * floating button would sit on top of it.
  */
 
-/** 0247902348 in the form wa.me expects: country code, no plus, no spaces. */
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? "233247902348";
-const WHATSAPP_DISPLAY =
-  process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? "024 790 2348";
-
-const GREETING = encodeURIComponent(
-  "Hello Fold, I have a question about using this for my church."
-);
+/*
+  The number is deliberately absent from this file. /whatsapp is a server
+  route that redirects, so the handset number never reaches the HTML where
+  a scraper could harvest it. While the support line is a personal phone
+  that is worth the extra hop.
+*/
 
 export function SupportWidgets() {
   return (
@@ -116,7 +114,7 @@ export function SupportWidgets() {
 
       {/* ---------------- whatsapp, bottom right ---------------- */}
       <a
-        href={`https://wa.me/${WHATSAPP}?text=${GREETING}`}
+        href="/whatsapp"
         target="_blank"
         rel="noopener noreferrer"
         className="group fixed bottom-4 right-4 z-40 flex h-12 items-center gap-2.5 rounded-full pl-3 pr-4 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_rgba(37,211,102,0.6)] transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:bottom-6 sm:right-6"
@@ -135,9 +133,7 @@ export function SupportWidgets() {
           <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15h-.01c-1.5 0-2.98-.4-4.27-1.17l-.31-.18-3.17.83.85-3.09-.2-.32a8.22 8.22 0 0 1-1.26-4.39c0-4.54 3.7-8.23 8.24-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.1 8.23z" />
         </svg>
         <span className="hidden sm:inline">WhatsApp us</span>
-        <span className="sr-only sm:hidden">
-          WhatsApp us on {WHATSAPP_DISPLAY}
-        </span>
+        <span className="sr-only sm:hidden">WhatsApp us</span>
       </a>
     </>
   );
