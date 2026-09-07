@@ -9,7 +9,7 @@ import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
 import { Proof } from "@/components/marketing/proof";
 import { CongregationBand } from "@/components/marketing/congregation-band";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, PhotoBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
@@ -54,6 +54,10 @@ export default async function LandingPage({
   searchParams: Promise<{ sent?: string; error?: string }>;
 }) {
   const { sent, error } = await searchParams;
+
+  // Whether an authorised photograph exists. Sections that can take one
+  // read this to flip their type colours; nothing else changes.
+  const hasPhoto = Boolean(process.env.NEXT_PUBLIC_CONGREGATION_IMAGE);
 
   return (
     <div className="min-h-screen">
@@ -224,13 +228,31 @@ export default async function LandingPage({
       <Contact sent={sent === "1"} error={error} />
 
       {/* ---------- close ---------- */}
-      <section className="relative isolate overflow-hidden border-t border-border bg-surface">
-        <SectionBg variant="orbs" />
+      {/*
+        The closing band takes a photograph when one is authorised, and
+        keeps its orbs until then. Everything inside it is written to read
+        on either ground, which is why the type colours flip with the
+        image rather than being hard coded.
+      */}
+      <section
+        className={`relative isolate overflow-hidden border-t border-border ${
+          hasPhoto ? "text-white" : "bg-surface"
+        }`}
+      >
+        <PhotoBg tone="dark" fallback="orbs" />
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16 lg:py-20">
-          <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h2
+            className={`text-balance text-2xl font-bold tracking-tight sm:text-3xl ${
+              hasPhoto ? "text-white" : "text-foreground"
+            }`}
+          >
             Set up your church tonight, use it on Sunday.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+          <p
+            className={`mx-auto mt-4 max-w-xl text-[15px] leading-relaxed ${
+              hasPhoto ? "text-white/85" : "text-muted-foreground"
+            }`}
+          >
             Start with your members. Add attendance and giving when you are
             ready. Nothing is compulsory, and nothing depends on mobile money or
             a fast connection.
@@ -239,7 +261,11 @@ export default async function LandingPage({
             <Link href="/signup">
               <Button size="lg">Start your 30 day free trial</Button>
             </Link>
-            <span className="text-sm text-muted-foreground">
+            <span
+              className={`text-sm ${
+                hasPhoto ? "text-white/75" : "text-muted-foreground"
+              }`}
+            >
               Free for 30 days. No credit card required, and no commitment.
             </span>
           </div>
