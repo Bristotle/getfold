@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { Logo } from "@/components/marketing/logo";
+import { SiteFooter } from "@/components/marketing/site-footer";
 
 export const metadata: Metadata = {
   title: "Fold, church management built for Ghanaian churches",
@@ -208,12 +209,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 sm:px-6 text-sm text-muted-foreground sm:flex-row">
-          <Logo size="sm" showTagline />
-          <span>Church management for Ghanaian churches.</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

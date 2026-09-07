@@ -58,3 +58,77 @@ export async function signOut() {
   revalidatePath("/", "layout");
   redirect("/login");
 }
+
+/**
+ * Sends a password reset link.
+ *
+ * Deliberately reports the same thing whether or not the address has an
+ * account. Saying "no account found" would let anyone check which of a
+ * congregation's emails are registered, and a church's member list is
+ * exactly the kind of thing worth not confirming.
+ */
+export async function requestPasswordReset(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  if (!email || !email.includes("@")) {
+    redirect(
+      `/forgot-password?error=${encodeURIComponent("Enter the email address you signed up with.")}`
+    );
+  }
+
+  const supabase = await createClient();
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
+
+  await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/reset-password`,
+  });
+
+  redirect(
+    `/forgot-password?message=${encodeURIComponent(
+      "If that address has an account, a reset link is on its way. Check your inbox, and your spam folder."
+    )}`
+  );
+}
+
+/**
+ * Sets a new password.
+ *
+ * Reached only from the link in the reset email, which signs the user in
+ * with a recovery session first. Without that session there is nobody to
+ * update, so the attempt is refused rather than failing obscurely.
+ */
+export async function updatePassword(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+
+  if (password.length < 6) {
+    redirect(
+      `/reset-password?error=${encodeURIComponent("Use at least 6 characters.")}`
+    );
+  }
+  if (password !== confirm) {
+    redirect(
+      `/reset-password?error=${encodeURIComponent("Those two passwords do not match.")}`
+    );
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(
+      `/login?error=${encodeURIComponent("That reset link has expired. Request a new one.")}`
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    redirect(`/reset-password?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
+}

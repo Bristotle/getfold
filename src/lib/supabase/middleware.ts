@@ -41,13 +41,20 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/onboarding");
   const isLoginRoute = request.nextUrl.pathname.startsWith("/login");
 
+  // A recovery session is a real session, so without this a user following
+  // a reset link would be bounced to the dashboard before they could set a
+  // new password.
+  const isPasswordReset =
+    request.nextUrl.pathname.startsWith("/reset-password") ||
+    request.nextUrl.pathname.startsWith("/forgot-password");
+
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && isLoginRoute) {
+  if (user && isLoginRoute && !isPasswordReset) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

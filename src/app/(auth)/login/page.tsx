@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Input, StatusBanner } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -40,6 +41,12 @@ export default async function LoginPage({
           <SubmitButton className="mt-1" pendingLabel="Signing in…">
             Sign in
           </SubmitButton>
+          <Link
+            href="/forgot-password"
+            className="self-start rounded text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Forgot your password?
+          </Link>
         </form>
 
         <details className="mt-8 text-sm text-muted-foreground">
