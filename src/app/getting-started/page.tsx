@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { GettingStarted } from "@/components/marketing/getting-started";
 import { Button } from "@/components/ui/button";
+import { SectionBg } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "Getting started, Fold",
@@ -81,7 +82,8 @@ export default function GettingStartedPage() {
 
       <main id="main">
         {/* ---------- hero ---------- */}
-        <section className="border-b border-border">
+        <section className="relative isolate overflow-hidden border-b border-border">
+          <SectionBg variant="aurora" />
           <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Getting started
@@ -110,7 +112,8 @@ export default function GettingStartedPage() {
         <GettingStarted />
 
         {/* ---------- what to have ready ---------- */}
-        <section>
+        <section className="relative isolate overflow-hidden">
+          <SectionBg variant="dots" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -156,7 +159,8 @@ export default function GettingStartedPage() {
         </section>
 
         {/* ---------- the first month ---------- */}
-        <section className="border-y border-border bg-surface">
+        <section className="relative isolate overflow-hidden border-y border-border bg-surface">
+          <SectionBg variant="grid" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               What to expect
@@ -196,7 +200,8 @@ export default function GettingStartedPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section>
+        <section className="relative isolate overflow-hidden">
+          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Set it up tonight

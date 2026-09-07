@@ -56,6 +56,24 @@ how the copy is written:
 - New public routes go into `src/app/sitemap.ts`. Anything behind a login
   goes into the disallow list in `src/app/robots.ts`.
 
+## Section backgrounds
+
+Marketing sections use `<SectionBg variant="..." />` from
+`src/components/marketing/section-bg.tsx`. Five variants: `aurora` for a
+page hero, `dots` and `grid` for texture, `orbs` for depth without a
+pattern, `mesh` for the purple bands where light has to come from white.
+
+Three rules keep them safe:
+
+- The parent section needs `relative isolate overflow-hidden`. The layer is
+  absolutely positioned and `-z-10`, so it contributes nothing to layout and
+  cannot widen the document.
+- Use them in a rhythm. Two neighbouring sections never share a variant, and
+  some sections stay plain so the eye has somewhere to rest.
+- Keep them faint. The strongest is 12% of the brand purple, because text
+  contrast is measured against the underlying token and a background that
+  moves it breaks WCAG AA. Pure CSS only, no images, no JavaScript.
+
 ## The security boundary
 
 Row-level security in Postgres is what stops one church seeing another's

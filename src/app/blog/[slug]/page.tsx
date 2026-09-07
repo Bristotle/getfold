@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
+import { SectionBg } from "@/components/marketing/section-bg";
 import { POSTS, getPost, sortedPosts } from "@/lib/posts";
 
 export function generateStaticParams() {
@@ -172,7 +173,8 @@ export default async function BlogPostPage({
 
         {/* ---------- read next ---------- */}
         {more.length > 0 && (
-          <section className="border-t border-border bg-surface">
+          <section className="relative isolate overflow-hidden border-t border-border bg-surface">
+            <SectionBg variant="dots" />
             <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
               <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 Read next

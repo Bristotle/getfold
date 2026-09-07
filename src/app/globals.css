@@ -71,3 +71,115 @@ body {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
+
+/*
+  Section backgrounds.
+
+  Five treatments, all pure CSS. No images and no JavaScript, because these
+  run on the marketing pages and those have to stay fast on Ghanaian mobile
+  data. Each one is painted on its own absolutely positioned layer inside a
+  section that clips, so a background can never widen the document the way
+  the dashboard mockup once did.
+
+  Colours are rgb() with a slash alpha rather than color-mix, which buys
+  support on older Android Chrome for nothing.
+
+  Everything here is deliberately faint. The job is to stop a long page
+  reading as a stack of flat rectangles, not to be noticed. Text contrast is
+  measured against the underlying token, so these must stay light enough
+  not to move it: the strongest is 12% of the brand purple.
+*/
+
+/* Fine dot lattice, fading out from the top. Quiet texture. */
+.bg-dots {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--color-border-strong) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+  opacity: 0.38;
+  -webkit-mask-image: radial-gradient(
+    ellipse 85% 65% at 50% 0%,
+    #000 35%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 85% 65% at 50% 0%,
+    #000 35%,
+    transparent 100%
+  );
+}
+
+/* Architect's grid. Larger cell than the dots so the two never read alike. */
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      var(--color-border) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.65;
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 70% at 50% 0%,
+    #000 25%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 70% 70% at 50% 0%,
+    #000 25%,
+    transparent 100%
+  );
+}
+
+/* Spotlight from above, with the dot lattice underneath it. Page openings. */
+.bg-aurora {
+  background-image: radial-gradient(
+      60% 45% at 50% 0%,
+      rgb(107 47 217 / 0.12) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      45% 35% at 88% 8%,
+      rgb(107 47 217 / 0.07) 0%,
+      transparent 70%
+    ),
+    radial-gradient(circle at 1px 1px, rgb(26 16 51 / 0.055) 1px, transparent 0);
+  background-size: auto, auto, 22px 22px;
+  /*
+    Fade the lattice out down the section. Without this the dots run
+    straight through the body copy, and at the size type is set here they
+    read as speckle on the paragraph rather than as texture behind it.
+  */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 92%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 92%);
+}
+
+/* Two soft orbs, one per side. For a band that needs depth but no pattern. */
+.bg-orbs {
+  background-image: radial-gradient(
+      38% 60% at 0% 30%,
+      rgb(107 47 217 / 0.08) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      38% 60% at 100% 70%,
+      rgb(107 47 217 / 0.06) 0%,
+      transparent 70%
+    );
+}
+
+/* For the purple bands, where the light has to come from white instead. */
+.bg-mesh {
+  background-image: radial-gradient(
+      55% 65% at 12% 0%,
+      rgb(255 255 255 / 0.16) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      50% 60% at 88% 100%,
+      rgb(255 255 255 / 0.11) 0%,
+      transparent 60%
+    );
+}

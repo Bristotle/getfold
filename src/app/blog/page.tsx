@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
+import { SectionBg } from "@/components/marketing/section-bg";
 import { sortedPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -19,7 +20,8 @@ export default function BlogPage() {
 
       <main id="main">
         {/* ---------- hero ---------- */}
-        <section className="border-b border-border">
+        <section className="relative isolate overflow-hidden border-b border-border">
+          <SectionBg variant="aurora" />
           <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Blog
@@ -36,7 +38,8 @@ export default function BlogPage() {
         </section>
 
         {/* ---------- posts ---------- */}
-        <section className="bg-surface">
+        <section className="relative isolate overflow-hidden bg-surface">
+          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <ul className="m-0 flex list-none flex-col gap-5 p-0">
               {sortedPosts.map((post) => (
@@ -81,7 +84,8 @@ export default function BlogPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section>
+        <section className="relative isolate overflow-hidden">
+          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Stop rebuilding the same return every quarter

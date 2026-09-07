@@ -8,6 +8,7 @@ import {
   Lock,
   BadgeCheck,
 } from "lucide-react";
+import { SectionBg } from "@/components/marketing/section-bg";
 
 /**
  * The trust section.
@@ -67,7 +68,8 @@ const REASONS = [
 
 export function WhyTrust() {
   return (
-    <section className="border-y border-border bg-surface">
+    <section className="relative isolate overflow-hidden border-y border-border bg-surface">
+      <SectionBg variant="grid" />
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
         {/* ---------- heading ---------- */}
         <div className="mx-auto max-w-2xl text-center">

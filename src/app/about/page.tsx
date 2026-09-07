@@ -13,6 +13,7 @@ import {
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
+import { SectionBg } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "About Fold, church software built in Ghana",
@@ -110,7 +111,8 @@ export default function AboutPage() {
 
       <main id="main">
         {/* ---------- hero ---------- */}
-        <section className="border-b border-border">
+        <section className="relative isolate overflow-hidden border-b border-border">
+          <SectionBg variant="aurora" />
           <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6 sm:py-20">
             <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               <span
@@ -133,7 +135,8 @@ export default function AboutPage() {
         </section>
 
         {/* ---------- our story ---------- */}
-        <section className="bg-surface">
+        <section className="relative isolate overflow-hidden bg-surface">
+          <SectionBg variant="dots" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16">
               <div>
@@ -188,7 +191,8 @@ export default function AboutPage() {
         </section>
 
         {/* ---------- values ---------- */}
-        <section className="border-y border-border">
+        <section className="relative isolate overflow-hidden border-y border-border">
+          <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-2xl text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -228,7 +232,8 @@ export default function AboutPage() {
         </section>
 
         {/* ---------- safeguards ---------- */}
-        <section className="bg-surface">
+        <section className="relative isolate overflow-hidden bg-surface">
+          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               How your records are protected
@@ -302,7 +307,8 @@ export default function AboutPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section className="border-t border-border bg-primary text-primary-foreground">
+        <section className="relative isolate overflow-hidden border-t border-border bg-primary text-primary-foreground">
+          <SectionBg variant="mesh" />
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               Ready to see your own church in it?

@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { submitEnquiry } from "@/app/contact-actions";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { SectionBg } from "@/components/marketing/section-bg";
 
 /**
  * The enquiry section.
@@ -35,8 +36,9 @@ export function Contact({
   return (
     <section
       id="contact"
-      className="scroll-mt-8 bg-primary text-primary-foreground"
+      className="relative isolate overflow-hidden scroll-mt-8 bg-primary text-primary-foreground"
     >
+      <SectionBg variant="mesh" />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
         {/* ---------- the case ---------- */}
         <div>

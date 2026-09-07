@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { submitEnquiry } from "@/app/contact-actions";
+import { SectionBg } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "Contact, Fold",
@@ -64,7 +65,8 @@ export default async function ContactPage({
 
       <main id="main">
         {/* ---------- hero ---------- */}
-        <section className="border-b border-border">
+        <section className="relative isolate overflow-hidden border-b border-border">
+          <SectionBg variant="aurora" />
           <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Contact
@@ -81,7 +83,8 @@ export default async function ContactPage({
         </section>
 
         {/* ---------- how to reach us ---------- */}
-        <section className="bg-surface">
+        <section className="relative isolate overflow-hidden bg-surface">
+          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
               <div>

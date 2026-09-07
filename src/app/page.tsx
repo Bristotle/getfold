@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { OnYourPhone, Modules, Faq } from "@/components/marketing/sections";
 import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
+import { SectionBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
@@ -62,7 +63,9 @@ export default async function LandingPage({
         single wide descendant makes its track refuse to shrink and the
         section overflows the viewport instead of wrapping.
       */}
-      <section className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
+      <section className="relative isolate overflow-hidden">
+        <SectionBg variant="aurora" />
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
             Built for how Ghanaian churches actually operate
@@ -101,11 +104,12 @@ export default async function LandingPage({
           </dl>
         </div>
 
-        <div className="min-w-0 lg:pl-4">
-          <DashboardPreview />
-          <p className="mt-3 text-center text-xs text-muted-foreground">
-            Example figures, shown to illustrate the dashboard.
-          </p>
+          <div className="min-w-0 lg:pl-4">
+            <DashboardPreview />
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              Example figures, shown to illustrate the dashboard.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -116,7 +120,8 @@ export default async function LandingPage({
       {/* ---------- the argument ---------- */}
       {/* Sits on the page ground: the sections either side of it are on
           surface, and three raised bands in a row read as one long block. */}
-      <section className="border-y border-border">
+      <section className="relative isolate overflow-hidden border-y border-border">
+        <SectionBg variant="dots" />
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -149,7 +154,9 @@ export default async function LandingPage({
       <GettingStarted />
 
       {/* ---------- the differentiator ---------- */}
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+      <section className="relative isolate overflow-hidden">
+        <SectionBg variant="orbs" />
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
@@ -198,6 +205,7 @@ export default async function LandingPage({
             </p>
           </div>
         </div>
+        </div>
       </section>
 
       <Modules />
@@ -207,7 +215,8 @@ export default async function LandingPage({
       <Contact sent={sent === "1"} error={error} />
 
       {/* ---------- close ---------- */}
-      <section className="border-t border-border bg-surface">
+      <section className="relative isolate overflow-hidden border-t border-border bg-surface">
+        <SectionBg variant="orbs" />
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16 lg:py-20">
           <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Set up your church tonight, use it on Sunday.

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SectionBg } from "@/components/marketing/section-bg";
 
 /**
  * Getting started, as three steps.
@@ -61,7 +62,8 @@ function Arrow() {
 
 export function GettingStarted() {
   return (
-    <section className="border-y border-border bg-surface">
+    <section className="relative isolate overflow-hidden border-y border-border bg-surface">
+      <SectionBg variant="orbs" />
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">

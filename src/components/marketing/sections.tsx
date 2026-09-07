@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { SectionBg } from "@/components/marketing/section-bg";
 import {
   Smartphone,
   ClipboardCheck,
@@ -182,7 +183,8 @@ export function OnYourPhone() {
 
 export function Modules() {
   return (
-    <section className="border-y border-border bg-surface">
+    <section className="relative isolate overflow-hidden border-y border-border bg-surface">
+      <SectionBg variant="grid" />
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
       <Eyebrow>Everything in one place</Eyebrow>
       <h2 className="mt-3 max-w-2xl text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
