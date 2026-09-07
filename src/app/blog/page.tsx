@@ -95,7 +95,7 @@ export default function BlogPage() {
               your pocket. Thirty days free, no card, no commitment.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/login">
+              <Link href="/signup">
                 <Button size="lg">Start your free trial</Button>
               </Link>
               <Link href="/contact">

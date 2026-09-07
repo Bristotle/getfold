@@ -55,6 +55,12 @@ how the copy is written:
   the two cannot drift apart.
 - New public routes go into `src/app/sitemap.ts`. Anything behind a login
   goes into the disallow list in `src/app/robots.ts`.
+- The blog and the help centre are typed data (`src/lib/posts.ts`,
+  `src/lib/help.ts`) rather than MDX or a hosted help desk, so they render
+  as static HTML and work on a weak connection. Help search is a plain GET
+  form filtered on the server, so it needs no JavaScript. A help article
+  must describe what the product actually does; where something is not
+  built, say so rather than describing a screen that does not exist.
 
 ## Section backgrounds
 

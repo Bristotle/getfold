@@ -26,7 +26,7 @@ export function LegalLayout({
             <Logo />
           </Link>
           <Link
-            href="/login"
+            href="/signup"
             className="rounded text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
             Sign in

@@ -114,7 +114,7 @@ export function GettingStarted() {
         </ol>
 
         <div className="mt-14 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/login">
+          <Link href="/signup">
             <Button size="lg">Start your 30 day free trial</Button>
           </Link>
           <Link href="#contact">

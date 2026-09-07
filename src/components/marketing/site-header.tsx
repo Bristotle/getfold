@@ -19,6 +19,7 @@ const LINKS = [
   { href: "/about", label: "About" },
   { href: "/getting-started", label: "Getting started" },
   { href: "/blog", label: "Blog" },
+  { href: "/help", label: "Help" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
@@ -57,10 +58,10 @@ export function SiteHeader() {
               href="/login"
               className="whitespace-nowrap rounded text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
-              Sign in
+              Log in
             </Link>
-            <Link href="/login">
-              <Button size="sm">Start free trial</Button>
+            <Link href="/signup">
+              <Button size="sm">Sign up</Button>
             </Link>
           </div>
 
@@ -103,13 +104,13 @@ export function SiteHeader() {
                   href="/login"
                   className="flex min-h-11 items-center rounded-lg px-3 text-[15px] font-medium text-muted-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
-                  Sign in
+                  Log in
                 </Link>
                 <Link
-                  href="/login"
+                  href="/signup"
                   className="flex min-h-11 items-center justify-center rounded-lg bg-primary px-3 text-[15px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
-                  Start free trial
+                  Sign up
                 </Link>
               </div>
             </nav>

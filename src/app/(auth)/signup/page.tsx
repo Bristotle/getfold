@@ -4,21 +4,24 @@ import { Card } from "@/components/ui/card";
 import { Input, StatusBanner } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Logo } from "@/components/marketing/logo";
-import { signIn } from "./actions";
+import { signUp } from "../login/actions";
 
 export const metadata: Metadata = {
-  title: "Log in, Fold",
-  description: "Log in to your church's Fold account.",
+  title: "Create your church account, Fold",
+  description:
+    "Start your 30 day free trial of Fold. No credit card, no commitment, and nothing to cancel.",
 };
 
 /**
- * Log in. Signing in only.
+ * Sign up.
  *
- * Creating an account lives at /signup now. A page that tried to do both
- * had to bury one of them, and the one it buried was the one every button
- * on the marketing site was pointing at.
+ * This used to live inside a collapsed <details> at the bottom of the sign
+ * in page, which meant every "Start free trial" button on the site landed a
+ * new church on a form asking for a password it had never set. Signing in
+ * and signing up are different jobs for different people and now have
+ * different pages.
  */
-export default async function LoginPage({
+export default async function SignUpPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string; message?: string }>;
@@ -36,16 +39,25 @@ export default async function LoginPage({
         </Link>
 
         <Card>
-          <h1 className="text-xl font-bold text-foreground">Log in to Fold</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            Create your church account
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Welcome back. Enter the details you signed up with.
+            Free for 30 days. No credit card, and nothing to cancel.
           </p>
 
           <div className="mt-4 flex flex-col gap-2 empty:mt-0">
             <StatusBanner error={error} message={message} />
           </div>
 
-          <form action={signIn} className="mt-6 flex flex-col gap-4">
+          <form action={signUp} className="mt-6 flex flex-col gap-4">
+            <Input
+              label="Your full name"
+              name="fullName"
+              type="text"
+              autoComplete="name"
+              required
+            />
             <Input
               label="Email"
               name="email"
@@ -57,30 +69,30 @@ export default async function LoginPage({
               label="Password"
               name="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
+              minLength={6}
               required
+              hint="At least 6 characters."
             />
-            <SubmitButton className="mt-1" pendingLabel="Logging in…">
-              Log in
+            <SubmitButton className="mt-1" pendingLabel="Creating your account…">
+              Create account
             </SubmitButton>
-            <Link
-              href="/forgot-password"
-              className="self-start rounded text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            >
-              Forgot your password?
-            </Link>
           </form>
+
+          <p className="mt-6 border-t border-border pt-5 text-sm text-muted-foreground">
+            You name your church on the next step, so there is nothing else to
+            prepare.
+          </p>
         </Card>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          New church?{" "}
+          Already have an account?{" "}
           <Link
-            href="/signup"
+            href="/login"
             className="rounded font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
-            Create an account
-          </Link>{" "}
-          and start your 30 day free trial.
+            Log in
+          </Link>
         </p>
       </div>
     </main>

@@ -14,9 +14,10 @@ const COLUMNS = [
       { label: "About us", href: "/about" },
       { label: "Getting started", href: "/getting-started" },
       { label: "Blog", href: "/blog" },
+      { label: "Help centre", href: "/help" },
       { label: "Contact", href: "/contact" },
-      { label: "Sign in", href: "/login" },
-      { label: "Start free trial", href: "/login" },
+      { label: "Log in", href: "/login" },
+      { label: "Sign up", href: "/signup" },
     ],
   },
   {

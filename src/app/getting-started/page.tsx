@@ -96,7 +96,7 @@ export default function GettingStartedPage() {
               what setting up involves, and what it will ask of you.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/login">
+              <Link href="/signup">
                 <Button size="lg">Start your 30 day free trial</Button>
               </Link>
               <Link href="/contact">
@@ -212,7 +212,7 @@ export default function GettingStartedPage() {
               through it, say so and we will.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/login">
+              <Link href="/signup">
                 <Button size="lg">Create your church</Button>
               </Link>
               <Link href="/contact">

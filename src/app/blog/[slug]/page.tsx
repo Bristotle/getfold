@@ -159,7 +159,7 @@ export default async function BlogPostPage({
               free, no card, no commitment.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link href="/login">
+              <Link href="/signup">
                 <Button size="lg">Start your free trial</Button>
               </Link>
               <Link href="/contact">

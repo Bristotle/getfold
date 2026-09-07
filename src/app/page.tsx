@@ -80,7 +80,7 @@ export default async function LandingPage({
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link href="/login">
+            <Link href="/signup">
               <Button size="lg">Start your 30 day free trial</Button>
             </Link>
             <span className="text-sm text-muted-foreground">
@@ -227,7 +227,7 @@ export default async function LandingPage({
             a fast connection.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3">
-            <Link href="/login">
+            <Link href="/signup">
               <Button size="lg">Start your 30 day free trial</Button>
             </Link>
             <span className="text-sm text-muted-foreground">

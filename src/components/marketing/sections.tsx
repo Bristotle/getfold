@@ -295,7 +295,7 @@ export function Faq() {
             Send us a message
           </a>
           <a
-            href="/login"
+            href="/signup"
             className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-surface px-6 text-sm font-semibold text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
             Start your free trial

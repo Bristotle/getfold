@@ -34,7 +34,7 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
+    redirect(`/signup?error=${encodeURIComponent(error.message)}`);
   }
 
   // Whether a session exists here depends on a project setting: with
@@ -47,7 +47,7 @@ export async function signUp(formData: FormData) {
   }
 
   redirect(
-    "/login?message=Check your email to confirm your account, then sign in."
+    "/login?message=Check your email to confirm your account, then log in."
   );
 }
 
