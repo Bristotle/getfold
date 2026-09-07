@@ -86,9 +86,9 @@ export function WhyTrust() {
             Always.
           </h2>
           <p className="mt-5 text-[17px] leading-relaxed text-muted-foreground">
-            Fold is built in Ghana for churches in Ghana, and it shows in the
-            small decisions: cash before card, phones before office computers,
-            your words before ours.
+            Fold is built in Ghana around how a denomination actually works,
+            and it shows in the small decisions: your words before ours, cash
+            before card, phones before office computers.
           </p>
         </div>
 

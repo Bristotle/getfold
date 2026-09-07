@@ -7,13 +7,14 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { OnYourPhone, Modules, Faq } from "@/components/marketing/sections";
 import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
+import { Proof } from "@/components/marketing/proof";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
-  title: "Fold, church management built for Ghanaian churches",
+  title: "Fold, church software that speaks your denomination's language",
   description:
-    "Members, attendance, tithes and statistical returns, configurable to your denomination's structure. Cash first, with mobile money and SMS as options. 30 day free trial.",
+    "Members, Bible classes, attendance and giving in your own words, and the statistical return your circuit asks for already filled in. Built in Ghana, cash first. 30 day free trial, no card.",
 };
 
 const FEATURES = [
@@ -68,15 +69,15 @@ export default async function LandingPage({
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
-            Built for how Ghanaian churches actually operate
+            For societies, circuits and congregations across Ghana
           </p>
           <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-            Church management that fits your church, not a template.
+            Church software that speaks your denomination&apos;s language.
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Keep your membership register, attendance, tithes and vital records
-            in one place, and produce the return your circuit asks for without
-            rebuilding it in a spreadsheet every quarter.
+            Members, Bible classes, attendance and giving recorded in your own
+            words, and the statistical return your circuit asks for already
+            filled in. No spreadsheet, and no rebuilding it every quarter.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -90,9 +91,9 @@ export default async function LandingPage({
 
           <dl className="mt-10 grid max-w-lg grid-cols-1 gap-x-6 gap-y-4 border-t border-border pt-6 sm:grid-cols-3">
             {[
-              ["Cash first", "Mobile money optional"],
-              ["Works on phones", "Not just office computers"],
               ["Your structure", "Society, circuit or diocese"],
+              ["Your return", "Already filled in"],
+              ["Cash first", "Mobile money optional"],
             ].map(([term, desc]) => (
               <div key={term}>
                 <dt className="text-sm font-semibold text-foreground">{term}</dt>
@@ -113,6 +114,8 @@ export default async function LandingPage({
         </div>
       </section>
 
+      <Proof />
+
       <WhyTrust />
 
       <OnYourPhone />
@@ -125,14 +128,17 @@ export default async function LandingPage({
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Most church software is built for somewhere else, then translated.
+              Every other church system is built for one independent
+              congregation.
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              It assumes card payments, weekly small groups and a membership
-              model that does not match a Methodist society, a Presbyterian
-              congregation or an independent assembly. Fold starts from how your
-              church is actually organised, and stays out of the way of the
-              parts that already work.
+              None of them knows what a circuit is, or a society, or a Bible
+              class, or a catechumen, or a quarterly return to a
+              superintendent. They offer you a fixed list of member types
+              somebody else wrote and a small group model borrowed from
+              somewhere else. Fold starts from how your denomination is
+              actually organised, and stays out of the way of the parts that
+              already work.
             </p>
           </div>
 

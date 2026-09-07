@@ -16,9 +16,9 @@ import { Button } from "@/components/ui/button";
 import { SectionBg } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
-  title: "About Fold, church software built in Ghana",
+  title: "About Fold, built around your denomination",
   description:
-    "Fold is church management software built in Ghana for Ghanaian churches. Cash before card, phones before office computers, and your denomination's structure rather than a template.",
+    "Fold is church software built in Ghana around how a denomination actually works: societies, circuits, Bible classes and the quarterly return. Cash before card, phones before office computers.",
 };
 
 /**
@@ -122,14 +122,14 @@ export default function AboutPage() {
               About Fold
             </p>
             <h1 className="mt-4 text-balance font-serif text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-              Church software built in Ghana,{" "}
-              <span className="italic text-primary">for Ghana</span>.
+              Built in Ghana, around{" "}
+              <span className="italic text-primary">your denomination</span>.
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
               Real churches. Real records. Real Sundays. Fold keeps the
               register, the attendance, the giving and the return your circuit
-              asks for in one place, and it is designed around how a Ghanaian
-              church actually runs rather than translated from somewhere else.
+              asks for in one place, in the words your denomination actually
+              uses rather than a fixed list translated from somewhere else.
             </p>
           </div>
         </section>

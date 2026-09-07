@@ -15,6 +15,7 @@ const COLUMNS = [
       { label: "Getting started", href: "/getting-started" },
       { label: "Blog", href: "/blog" },
       { label: "Help centre", href: "/help" },
+      { label: "Pricing", href: "/contact" },
       { label: "Contact", href: "/contact" },
       { label: "Log in", href: "/login" },
       { label: "Sign up", href: "/signup" },

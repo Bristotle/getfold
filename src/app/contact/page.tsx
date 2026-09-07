@@ -147,7 +147,29 @@ export default async function ContactPage({
                   </div>
                 )}
 
-                <div className="mt-6 rounded-xl border border-primary/25 bg-primary-soft p-5">
+                {/*
+                  The Pricing item in the nav lands here, so this has to
+                  answer the pricing question honestly rather than leave
+                  somebody hunting. What it must never do is imply a figure
+                  we have not settled.
+                */}
+                <div
+                  id="pricing"
+                  className="mt-6 scroll-mt-24 rounded-xl border border-border bg-background p-5"
+                >
+                  <h3 className="text-sm font-bold text-foreground">
+                    What does Fold cost?
+                  </h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    Every church starts with 30 days free, with no card and
+                    nothing to cancel. After that we quote per church, in
+                    cedis, based on your membership. Tell us roughly how many
+                    members you have and we will send you a figure the same
+                    day.
+                  </p>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-primary/25 bg-primary-soft p-5">
                   <h3 className="text-sm font-bold text-foreground">
                     Moving from a book or a spreadsheet?
                   </h3>
