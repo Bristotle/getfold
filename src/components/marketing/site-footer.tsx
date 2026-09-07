@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/marketing/logo";
+import { SupportWidgets } from "@/components/marketing/support-widgets";
 
 /**
  * The public footer.
@@ -15,7 +16,6 @@ const COLUMNS = [
       { label: "Compare", href: "/compare" },
       { label: "About us", href: "/about" },
       { label: "Getting started", href: "/getting-started" },
-      { label: "Blog", href: "/blog" },
       { label: "Blog", href: "/blog" },
       { label: "Help centre", href: "/help" },
       { label: "Pricing", href: "/contact" },
@@ -37,7 +37,9 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface">
+    <>
+      <SupportWidgets />
+      <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
           <div>
@@ -84,6 +86,7 @@ export function SiteFooter() {
           </p>
         </div>
       </div>
-    </footer>
+      </footer>
+    </>
   );
 }
