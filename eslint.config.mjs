@@ -11,6 +11,9 @@ const config = [
       'out/**',
       'build/**',
       'next-env.d.ts',
+      // Throwaway harnesses, not app code: the mobile overflow audit and
+      // the demo readiness smoke test.
+      'scripts/**',
     ],
   },
   ...next,
