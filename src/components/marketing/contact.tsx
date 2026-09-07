@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { submitEnquiry } from "@/app/contact-actions";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { PhotoBg } from "@/components/marketing/section-bg";
 
 /**
  * The enquiry section.
@@ -38,7 +38,14 @@ export function Contact({
       id="contact"
       className="relative isolate overflow-hidden scroll-mt-8 bg-primary text-primary-foreground"
     >
-      <SectionBg variant="mesh" />
+      {/*
+        A photograph of a real congregation behind the enquiry, falling
+        back to the mesh until one is authorised. This band was already
+        white type on the brand purple, so a photograph needs no colour
+        changes: the scrim ends in purple, which keeps it on brand, and the
+        form stays on a white card where a form belongs.
+      */}
+      <PhotoBg tone="dark" fallback="mesh" />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
         {/* ---------- the case ---------- */}
         <div>

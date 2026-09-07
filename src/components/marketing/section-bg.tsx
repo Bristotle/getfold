@@ -51,6 +51,14 @@ export function SectionBg({ variant }: { variant: keyof typeof VARIANTS }) {
  * The dark scrim is heavy on purpose: a congregation photograph is busy
  * edge to edge, and type over a thin wash of it is unreadable, which is
  * the mistake most sites make with an image hero.
+ *
+ * The three stops are not guesses. Each was composited over pure white,
+ * the worst case for a photograph sitting under white type, and measured:
+ * 12.06:1, 7.27:1 and 5.13:1 against white. The bottom stop was 0.78 and
+ * measured 4.42:1, which fails WCAG AA for normal text, so it went to
+ * 0.85. Anyone changing these numbers should measure again rather than
+ * eyeball it, because a scrim that looks fine over a dark photograph
+ * fails over a bright one.
  */
 export function PhotoBg({
   tone = "dark",
@@ -67,7 +75,7 @@ export function PhotoBg({
 
   const scrim =
     tone === "dark"
-      ? "linear-gradient(180deg, rgb(26 16 51 / 0.86) 0%, rgb(26 16 51 / 0.72) 45%, rgb(107 47 217 / 0.78) 100%)"
+      ? "linear-gradient(180deg, rgb(26 16 51 / 0.86) 0%, rgb(26 16 51 / 0.72) 45%, rgb(107 47 217 / 0.85) 100%)"
       : "linear-gradient(180deg, rgb(250 249 246 / 0.94) 0%, rgb(250 249 246 / 0.88) 100%)";
 
   return (
