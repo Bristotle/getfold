@@ -4,14 +4,18 @@ out
 build
 .DS_Store
 
-# Local env — never commit real credentials. .env.example is the template.
-# The wildcards matter: a stray .env.backup or .env.old holds live keys
-# just as surely as .env does.
-.env
-.env.*
-!.env.example
-
 .vercel
 next-env.d.ts
 *.tsbuildinfo
-.env*
+
+# Local env, never commit real credentials. .env.example is the template.
+# The wildcards matter: a stray .env.backup or .env.old holds live keys
+# just as surely as .env does.
+#
+# ORDER MATTERS HERE. A later .env* pattern used to sit at the bottom of
+# this file and quietly re-ignored the template, so .env.example was never
+# committed and nobody could see which variables a deployment needs. The
+# negation has to come last.
+.env
+.env.*
+!.env.example
