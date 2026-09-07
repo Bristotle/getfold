@@ -3,6 +3,8 @@ import { getMembership } from "@/lib/org";
 import { signOut } from "@/app/(auth)/login/actions";
 import { Nav } from "@/components/nav";
 import { ROLE_LABELS } from "@/lib/permissions";
+import { TrialBanner } from "@/components/trial-banner";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
   children,
@@ -19,8 +21,19 @@ export default async function DashboardLayout({
 
   const { organization, role } = membership;
 
+  // trial_status is SECURITY INVOKER, so RLS scopes it to this church.
+  const supabase = await createClient();
+  const { data: trial } = await supabase.rpc("trial_status", {
+    org_id: organization.id,
+  });
+  const t = (trial?.[0] ?? null) as
+    | { status: string; days_left: number }
+    | null;
+
   return (
     <div className="min-h-screen">
+      {t && <TrialBanner status={t.status} daysLeft={t.days_left} />}
+
       <header className="border-b border-border bg-surface">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <div className="min-w-0">

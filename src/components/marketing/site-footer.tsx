@@ -62,53 +62,103 @@ export function SiteFooter() {
   return (
     <>
       <SupportWidgets />
-      <footer className="border-t border-border bg-surface">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
-          <div>
-            <Logo showTagline />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Church management built for how Ghanaian churches actually
-              operate. Cash first, configurable to your denomination.
-            </p>
+
+      {/*
+        A deep purple ground rather than the brand purple. The measurement
+        decided it: white at 70% opacity on #6b2fd9 comes out at 4.17:1 and
+        fails WCAG AA for normal text, while the deeper gradient below
+        measures 8.68:1 at the same opacity. A footer is mostly small
+        secondary type, so it needs the headroom.
+      */}
+      <footer
+        className="relative isolate overflow-hidden text-white"
+        style={{
+          background:
+            "linear-gradient(160deg, #241442 0%, #33196b 45%, #4a1fa0 100%)",
+        }}
+      >
+        {/* the same lattice the marketing sections use, in white */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.16]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+            maskImage:
+              "radial-gradient(ellipse 90% 80% at 50% 0%, #000 15%, transparent 100%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 90% 80% at 50% 0%, #000 15%, transparent 100%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(55% 70% at 12% 0%, rgb(255 255 255 / 0.10) 0%, transparent 60%), radial-gradient(45% 60% at 90% 100%, rgb(255 255 255 / 0.07) 0%, transparent 60%)",
+          }}
+        />
+
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+            <div>
+              <Logo showTagline variant="light" />
+              <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
+                Church software built in Ghana around how a denomination
+                actually works. Societies, circuits, Bible classes, and the
+                return your circuit asks for.
+              </p>
+
+              <a
+                href="https://wa.me/233247902348"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex min-h-11 items-center gap-2.5 rounded-lg border border-white/25 px-4 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15h-.01c-1.5 0-2.98-.4-4.27-1.17l-.31-.18-3.17.83.85-3.09-.2-.32a8.22 8.22 0 0 1-1.26-4.39c0-4.54 3.7-8.23 8.24-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.1 8.23z" />
+                </svg>
+                <span className="font-numeric">024 790 2348</span>
+              </a>
+            </div>
+
+            {COLUMNS.map((col) => (
+              <div key={col.heading}>
+                <h2 className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#c9b3ff]">
+                  {col.heading}
+                </h2>
+                <ul className="m-0 mt-4 flex list-none flex-col gap-2.5 p-0">
+                  {col.links.map((l) => (
+                    <li key={l.label}>
+                      <Link
+                        href={l.href}
+                        className="rounded text-sm font-medium text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          {COLUMNS.map((col) => (
-            <div key={col.heading}>
-              <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                {col.heading}
-              </h2>
-              <ul className="m-0 mt-3 flex list-none flex-col gap-2 p-0">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      className="rounded text-sm text-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="mt-12 flex flex-col gap-2 border-t border-white/20 pt-6 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
+            <p>&copy; {year} Fold. All rights reserved.</p>
+            <p>
+              Built by{" "}
+              <a
+                href="https://manueltechnologies.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded font-semibold text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              >
+                Manuel Technologies
+              </a>
+            </p>
+          </div>
         </div>
-
-        <div className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {year} Fold. All rights reserved.</p>
-          <p>
-            Built by{" "}
-            <a
-              href="https://manueltechnologies.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded font-medium text-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            >
-              Manuel Technologies
-            </a>
-          </p>
-        </div>
-      </div>
       </footer>
     </>
   );
