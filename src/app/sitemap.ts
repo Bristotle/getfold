@@ -14,6 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1 },
     {
+      url: `${BASE}/about`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: `${BASE}/getting-started`,
       lastModified: now,
       changeFrequency: "monthly",

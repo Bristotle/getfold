@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
  * hamburger would cost a tap and save nothing.
  */
 const LINKS = [
+  { href: "/about", label: "About" },
   { href: "/getting-started", label: "Getting started" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },

@@ -2,10 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
-import { Logo } from "@/components/marketing/logo";
+import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { OnYourPhone, Modules, Faq } from "@/components/marketing/sections";
 import { GettingStarted } from "@/components/marketing/getting-started";
+import { WhyTrust } from "@/components/marketing/why-trust";
 import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
@@ -53,17 +54,7 @@ export default async function LandingPage({
 
   return (
     <div className="min-h-screen">
-      {/* ---------- header ---------- */}
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
-          <Logo />
-          <Link href="/login">
-            <Button size="sm" variant="secondary">
-              Sign in
-            </Button>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* ---------- hero ---------- */}
       <section className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
@@ -112,6 +103,8 @@ export default async function LandingPage({
           </p>
         </div>
       </section>
+
+      <WhyTrust />
 
       <OnYourPhone />
 
