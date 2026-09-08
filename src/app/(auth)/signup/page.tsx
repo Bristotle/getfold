@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Card } from "@/components/ui/card";
 import { Input, StatusBanner } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Logo } from "@/components/marketing/logo";
 import { AuthPanel } from "@/components/marketing/auth-panel";
@@ -67,10 +68,9 @@ export default async function SignUpPage({
               autoComplete="email"
               required
             />
-            <Input
+            <PasswordInput
               label="Password"
               name="password"
-              type="password"
               autoComplete="new-password"
               minLength={6}
               required

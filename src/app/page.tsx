@@ -9,7 +9,7 @@ import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
 import { Proof } from "@/components/marketing/proof";
 import { CongregationBand } from "@/components/marketing/congregation-band";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, HeroWash } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
@@ -75,6 +75,7 @@ export default async function LandingPage({
         section overflows the viewport instead of wrapping.
       */}
       <section className="relative isolate overflow-hidden">
+        <HeroWash />
         <SectionBg variant="aurora" />
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
         <div className="min-w-0">

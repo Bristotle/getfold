@@ -92,3 +92,56 @@ export function PhotoBg({
     </div>
   );
 }
+
+/**
+ * A blurred photograph behind a light section, as a wash of colour rather
+ * than a picture.
+ *
+ * Two things make this cheap enough to justify.
+ *
+ * The source is a 64 pixel wide file of about 1 KB, not the 170 KB one.
+ * Blurring destroys detail, so scaling a tiny image up and blurring it in
+ * CSS is visually identical to blurring a large one and costs a
+ * hundred-and-fiftieth as much. On Ghanaian mobile data that is the whole
+ * argument.
+ *
+ * And the paper wash on top is heavy, starting at 94 percent. The hero is
+ * dark type on a light ground, so the photograph has to sit behind a wash
+ * that keeps it legible even where the picture is black.
+ *
+ * 88 percent was the first attempt and it failed. Headings were fine at
+ * 12.41:1, but the muted body copy came out at 3.89:1 over the dark parts
+ * of the photograph, below the 4.5:1 AA needs. The threshold measured at
+ * 93 percent, so this uses 94 with the wash deepening down the section.
+ * Anyone lightening these numbers to see more of the picture should
+ * measure again, because the headline will look fine long after the body
+ * copy has stopped being readable.
+ *
+ * Renders nothing without an image, so the hero keeps its aurora.
+ */
+export function HeroWash() {
+  const src = process.env.NEXT_PUBLIC_CONGREGATION_BLUR;
+  if (!src) return null;
+
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
+      <div
+        className="absolute -inset-8"
+        style={{
+          backgroundImage: `url(${src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "blur(48px) saturate(1.15)",
+          transform: "scale(1.1)",
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgb(250 249 246 / 0.94) 0%, rgb(250 249 246 / 0.95) 55%, rgb(250 249 246 / 0.98) 100%)",
+        }}
+      />
+    </div>
+  );
+}

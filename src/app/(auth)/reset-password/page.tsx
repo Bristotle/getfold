@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { Input, StatusBanner } from "@/components/ui/field";
+import { StatusBanner } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { updatePassword } from "../login/actions";
 
@@ -36,19 +37,17 @@ export default async function ResetPasswordPage({
         </div>
 
         <form action={updatePassword} className="mt-6 flex flex-col gap-4">
-          <Input
+          <PasswordInput
             label="New password"
             name="password"
-            type="password"
             autoComplete="new-password"
             minLength={6}
             required
             hint="At least 6 characters."
           />
-          <Input
+          <PasswordInput
             label="Confirm new password"
             name="confirmPassword"
-            type="password"
             autoComplete="new-password"
             minLength={6}
             required
