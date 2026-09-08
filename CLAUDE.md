@@ -94,6 +94,28 @@ data. The interface is a mirror of those rules, never the enforcement.
   policy. Adding one without the other promises a restriction the database
   will ignore.
 
+### Every table needs RLS, including ones we did not create
+
+Supabase's default privileges grant `anon` and `authenticated` full DML on
+every new table in `public`. That is deliberate: RLS, not grants, is the
+boundary. The consequence is that **a table created without RLS is born
+world writable**.
+
+That is exactly how `_prisma_migrations` ended up readable and deletable by
+anyone holding the public anon key. Prisma created it outside our
+migrations, so it never got the `enable row level security` we run on
+everything else.
+
+After any migration, and after anything that creates a table:
+
+```bash
+node scripts/rls-guard.mjs
+```
+
+It fails if any table in `public` is granted to `anon` or `authenticated`
+with RLS off. Migration 0019 also revokes the default privileges for those
+two roles, so a future Prisma-created table does not inherit them.
+
 ## Things that have already bitten us
 
 - `id` and `updated_at` need database defaults. Prisma generates those
