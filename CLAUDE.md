@@ -116,6 +116,22 @@ It fails if any table in `public` is granted to `anon` or `authenticated`
 with RLS off. Migration 0019 also revokes the default privileges for those
 two roles, so a future Prisma-created table does not inherit them.
 
+### Email confirmation is an authorisation control here, not a nicety
+
+`accept_pending_invitations()` grants membership by matching the caller's
+**verified** address against a pending invitation. Migration 0012 added
+that guard precisely so nobody could register `pastor@somechurch.org`
+without controlling the mailbox and inherit an administrator invitation.
+
+**With `mailer_autoconfirm` on, Supabase sets `email_confirmed_at`
+immediately and the guard is neutralised.** Verified against the live
+project: a public signup, nothing clicked, came back confirmed.
+
+So "Confirm email" in Authentication settings is not a preference. Turning
+it off makes the invitation flow exploitable. If it must be off for
+testing, use `auth.admin.createUser({ email_confirm: true })` instead, and
+turn it back on.
+
 ## Things that have already bitten us
 
 - `id` and `updated_at` need database defaults. Prisma generates those

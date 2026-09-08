@@ -2,17 +2,38 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import {
+  isRateLimited,
+  logAuthEvent,
+  RATE_LIMIT_MESSAGE,
+} from "@/lib/auth-guard";
 
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
 
+  if (await isRateLimited(email)) {
+    await logAuthEvent(email, "rate_limited", "signIn");
+    redirect(`/login?error=${encodeURIComponent(RATE_LIMIT_MESSAGE)}`);
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
+    await logAuthEvent(email, "login_failed", error.message);
+    // Deliberately generic. Supabase already answers "Invalid login
+    // credentials" for both a wrong password and an address with no
+    // account, and passing its message straight through would risk
+    // leaking a more specific one in future.
+    redirect(
+      `/login?error=${encodeURIComponent(
+        "That email and password do not match an account."
+      )}`
+    );
   }
+
+  await logAuthEvent(email, "login_ok");
 
   // Land on /dashboard; its layout sends the user to /onboarding if they
   // don't belong to a church yet.
@@ -29,6 +50,11 @@ export async function signUp(formData: FormData) {
   const password = String(formData.get("password"));
   const fullName = String(formData.get("fullName"));
 
+  if (await isRateLimited(email)) {
+    await logAuthEvent(email, "rate_limited", "signUp");
+    redirect(`/signup?error=${encodeURIComponent(RATE_LIMIT_MESSAGE)}`);
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -37,8 +63,23 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) {
+    await logAuthEvent(email, "signup_failed", error.message);
+
+    // "User already registered" tells an attacker which of a
+    // congregation's addresses have accounts. Answer as though the signup
+    // worked and send them to log in, which is also what a real person in
+    // that position needs to do.
+    if (/already registered|already exists/i.test(error.message)) {
+      redirect(
+        `/login?message=${encodeURIComponent(
+          "If that address does not already have an account, check your email to confirm it. Otherwise log in below."
+        )}`
+      );
+    }
     redirect(`/signup?error=${encodeURIComponent(error.message)}`);
   }
+
+  await logAuthEvent(email, "signup_ok");
 
   // Whether a session exists here depends on a project setting: with
   // "Confirm email" ON (the Supabase default) signUp returns no session
@@ -55,7 +96,10 @@ export async function signUp(formData: FormData) {
 
 export async function signOut() {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  // "global" revokes every refresh token for this user, so signing out on
+  // the church laptop also ends the session on the phone that was left in
+  // the vestry. The default only ends the session doing the asking.
+  await supabase.auth.signOut({ scope: "global" });
 
   redirect("/login");
 }
@@ -84,6 +128,8 @@ export async function requestPasswordReset(formData: FormData) {
   await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/reset-password`,
   });
+
+  await logAuthEvent(email, "reset_requested");
 
   redirect(
     `/forgot-password?message=${encodeURIComponent(
@@ -129,6 +175,13 @@ export async function updatePassword(formData: FormData) {
   if (error) {
     redirect(`/reset-password?error=${encodeURIComponent(error.message)}`);
   }
+
+  // Changing a password is what somebody does after suspecting their
+  // account is compromised, so end every OTHER session and keep this one.
+  // Without this the attacker's session survives the password change,
+  // which makes the reset close to useless.
+  await supabase.auth.signOut({ scope: "others" });
+  await logAuthEvent(user.email ?? null, "password_changed");
 
   redirect("/dashboard");
 }
