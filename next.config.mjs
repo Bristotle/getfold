@@ -51,6 +51,24 @@ const nextConfig = {
   async headers() {
     return [
       {
+        /*
+          Images in /public were served with max-age=0, must-revalidate, so
+          every visitor re-checked the congregation photograph on every
+          page load. A day of caching with a week of stale-while-revalidate
+          keeps it out of the request path without making it impossible to
+          replace: swap the file and the longest anyone sees the old one is
+          a day. Not "immutable", because that would need the filename
+          versioned and it is referenced from an environment variable.
+        */
+        source: "/:file(.*\\.(?:jpg|jpeg|png|webp|avif|gif|svg))",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+      {
         source: "/manifest.json",
         headers: [
           { key: "Content-Type", value: "application/manifest+json" },
