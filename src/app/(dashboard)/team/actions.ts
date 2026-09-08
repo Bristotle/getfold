@@ -111,7 +111,11 @@ export async function changeRole(formData: FormData) {
   }
 
   revalidatePath("/team");
-  revalidatePath("/", "layout");
+  // Deliberately NOT revalidatePath("/", "layout"). Every authenticated
+  // page is already rendered per request, so revalidating them changes
+  // nothing, while "/" with "layout" invalidated all ~50 static marketing
+  // and help pages on every single sign in. That was the largest source of
+  // ISR writes on the project and none of it was needed.
   redirect(`/team?message=${encodeURIComponent("Role updated.")}`);
 }
 
@@ -160,6 +164,5 @@ export async function acceptInvitations() {
     );
   }
 
-  revalidatePath("/", "layout");
   redirect("/dashboard");
 }

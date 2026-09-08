@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 const ORG_TYPES = ["local_church", "circuit", "diocese", "denomination_hq"];
@@ -43,6 +42,10 @@ export async function createOrganization(formData: FormData) {
     redirect("/onboarding?error=Could not create the church. Please try again.");
   }
 
-  revalidatePath("/", "layout");
+  // Deliberately NOT revalidatePath("/", "layout"). Every authenticated
+  // page is already rendered per request, so revalidating them changes
+  // nothing, while "/" with "layout" invalidated all ~50 static marketing
+  // and help pages on every single sign in. That was the largest source of
+  // ISR writes on the project and none of it was needed.
   redirect("/dashboard");
 }

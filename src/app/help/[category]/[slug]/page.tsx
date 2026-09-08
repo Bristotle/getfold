@@ -7,6 +7,15 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { CATEGORIES, getCategory, getArticle } from "@/lib/help";
 
+/*
+  Only the slugs in generateStaticParams exist. Without this, dynamicParams
+  defaults to true and ANY url matching this pattern is rendered on demand
+  and written to the ISR cache, so a scanner probing random paths runs up
+  unbounded ISR writes for pages that only ever 404. With it, an unknown
+  slug is refused from the static shell: no render, no cache write.
+*/
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return CATEGORIES.flatMap((c) =>
     c.articles.map((a) => ({ category: c.slug, slug: a.slug }))

@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/button";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { POSTS, getPost, sortedPosts } from "@/lib/posts";
 
+/*
+  Only the slugs in generateStaticParams exist. Without this, dynamicParams
+  defaults to true and ANY url matching this pattern is rendered on demand
+  and written to the ISR cache, so a scanner probing random paths runs up
+  unbounded ISR writes for pages that only ever 404. With it, an unknown
+  slug is refused from the static shell: no render, no cache write.
+*/
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return POSTS.map((p) => ({ slug: p.slug }));
 }

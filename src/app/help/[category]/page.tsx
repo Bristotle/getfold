@@ -9,6 +9,15 @@ import { HelpIcon } from "@/components/marketing/help-icon";
 import { HelpSearch } from "@/components/marketing/help-search";
 import { CATEGORIES, getCategory } from "@/lib/help";
 
+/*
+  Only the slugs in generateStaticParams exist. Without this, dynamicParams
+  defaults to true and ANY url matching this pattern is rendered on demand
+  and written to the ISR cache, so a scanner probing random paths runs up
+  unbounded ISR writes for pages that only ever 404. With it, an unknown
+  slug is refused from the static shell: no render, no cache write.
+*/
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ category: c.slug }));
 }

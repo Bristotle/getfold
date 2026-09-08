@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 export async function signIn(formData: FormData) {
@@ -17,7 +16,11 @@ export async function signIn(formData: FormData) {
 
   // Land on /dashboard; its layout sends the user to /onboarding if they
   // don't belong to a church yet.
-  revalidatePath("/", "layout");
+  // Deliberately NOT revalidatePath("/", "layout"). Every authenticated
+  // page is already rendered per request, so revalidating them changes
+  // nothing, while "/" with "layout" invalidated all ~50 static marketing
+  // and help pages on every single sign in. That was the largest source of
+  // ISR writes on the project and none of it was needed.
   redirect("/dashboard");
 }
 
@@ -42,8 +45,7 @@ export async function signUp(formData: FormData) {
   // and the user must click a link first. With it OFF they are signed in
   // immediately. Branch on the actual result rather than assuming either.
   if (data.session) {
-    revalidatePath("/", "layout");
-    redirect("/onboarding");
+      redirect("/onboarding");
   }
 
   redirect(
@@ -55,7 +57,6 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
 
-  revalidatePath("/", "layout");
   redirect("/login");
 }
 
@@ -129,6 +130,5 @@ export async function updatePassword(formData: FormData) {
     redirect(`/reset-password?error=${encodeURIComponent(error.message)}`);
   }
 
-  revalidatePath("/", "layout");
   redirect("/dashboard");
 }

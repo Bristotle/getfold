@@ -60,6 +60,14 @@ export default async function LandingPage({
     <div className="min-h-screen">
       <SiteHeader />
 
+      {/*
+        The homepage was the only page on the site with no <main>, while
+        still rendering the skip link pointing at #main. Anyone on a
+        keyboard or a screen reader who chose "skip to content" on our most
+        visited page went nowhere. WCAG 2.4.1.
+      */}
+      <main id="main">
+
       {/* ---------- hero ---------- */}
       {/*
         min-w-0 on both tracks. A grid item defaults to min-width:auto, so a
@@ -246,6 +254,8 @@ export default async function LandingPage({
           </div>
         </div>
       </section>
+
+      </main>
 
       <SiteFooter />
     </div>
