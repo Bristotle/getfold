@@ -3,7 +3,7 @@ import { LegalLayout, Section } from "@/components/marketing/legal-layout";
 
 export const metadata: Metadata = {
   title: "Terms and conditions, Fold",
-  description: "The terms on which churches use Fold.",
+  description: "The terms your church agrees to when using Fold: the 30 day free trial, who owns your records, how to export them, and what happens to your data if you leave.",
 };
 
 /**

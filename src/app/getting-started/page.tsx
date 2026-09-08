@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SectionBg } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
-  title: "Getting started, Fold",
+  title: "Getting started with Fold, set up in an evening",
   description:
     "What setting up Fold actually involves: under a minute to create your church, upload the register you already keep, and record your first service this Sunday.",
 };

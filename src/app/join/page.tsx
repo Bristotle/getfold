@@ -7,7 +7,7 @@ import { SectionBg } from "@/components/marketing/section-bg";
 import { OPPORTUNITIES } from "@/lib/join";
 
 export const metadata: Metadata = {
-  title: "Join us, Fold",
+  title: "Join us, partnerships and roles across Ghana",
   description:
     "Partner with Fold or work with us. Business, sales and brand partnerships, consulting, internships and engineering roles, open to anyone in Ghana.",
 };

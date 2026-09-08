@@ -7,7 +7,7 @@ import { submitEnquiry } from "@/app/contact-actions";
 import { SectionBg } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
-  title: "Contact, Fold",
+  title: "Contact Fold, church software support in Ghana",
   description:
     "Talk to a person about bringing your church register, attendance and giving into one place. We reply within a day.",
 };

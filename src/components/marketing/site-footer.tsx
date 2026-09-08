@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/marketing/logo";
 import { SupportWidgets } from "@/components/marketing/support-widgets";
 import { OPPORTUNITIES } from "@/lib/join";
+import { DENOMINATIONS } from "@/lib/denominations";
 
 /**
  * The public footer.
@@ -33,6 +34,13 @@ const COLUMNS = [
       { label: "Log in", href: "/login" },
       { label: "Sign up", href: "/signup" },
     ],
+  },
+  {
+    heading: "Your church",
+    links: DENOMINATIONS.map((d) => ({
+      label: d.short,
+      href: `/for/${d.slug}` as const,
+    })),
   },
   {
     heading: "Quick links",
@@ -101,7 +109,7 @@ export function SiteFooter() {
         />
 
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1fr]">
             <div>
               <Logo showTagline variant="light" />
               <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { POSTS } from "@/lib/posts";
 import { CATEGORIES, ALL_ARTICLES } from "@/lib/help";
 import { OPPORTUNITIES } from "@/lib/join";
+import { DENOMINATIONS } from "@/lib/denominations";
 
 /**
  * The public pages only. Everything behind a login is deliberately absent,
@@ -15,6 +16,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    // Denomination pages rank above the generic ones, because a church
+    // searching for its own denomination is far closer to buying.
+    ...DENOMINATIONS.map((d) => ({
+      url: `${BASE}/for/${d.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
     {
       url: `${BASE}/features`,
       lastModified: now,

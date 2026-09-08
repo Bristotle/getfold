@@ -8,7 +8,7 @@ import { SectionBg } from "@/components/marketing/section-bg";
 import { sortedPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
-  title: "Blog, Fold",
+  title: "Church admin, giving and attendance, the Fold blog",
   description:
     "Practical writing for Ghanaian churches on registers, attendance, giving and the quarterly return. No jargon, no sales pitch.",
 };

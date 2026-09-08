@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { CATEGORIES, ALL_ARTICLES, searchArticles } from "@/lib/help";
 
 export const metadata: Metadata = {
-  title: "Help centre, Fold",
+  title: "Help centre, answers for churches using Fold",
   description:
     "Answers on importing your register, recording attendance and giving, producing your statistical return, and managing who on your team can see what.",
 };
