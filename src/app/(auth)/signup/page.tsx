@@ -72,9 +72,9 @@ export default async function SignUpPage({
               label="Password"
               name="password"
               autoComplete="new-password"
-              minLength={6}
+              minLength={8}
               required
-              hint="At least 6 characters."
+              hint="At least 8 characters. A short phrase you will remember beats a short word you will not."
             />
             <SubmitButton className="mt-1" pendingLabel="Creating your account…">
               Create account

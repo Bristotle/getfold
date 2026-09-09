@@ -41,7 +41,7 @@ export default async function ResetPasswordPage({
             label="New password"
             name="password"
             autoComplete="new-password"
-            minLength={6}
+            minLength={8}
             required
             hint="At least 6 characters."
           />
@@ -49,7 +49,7 @@ export default async function ResetPasswordPage({
             label="Confirm new password"
             name="confirmPassword"
             autoComplete="new-password"
-            minLength={6}
+            minLength={8}
             required
           />
           <SubmitButton pendingLabel="Saving…">Save new password</SubmitButton>
