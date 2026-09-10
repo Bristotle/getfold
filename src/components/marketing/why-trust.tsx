@@ -1,7 +1,7 @@
 import {
   CalendarClock,
-  MessageSquare,
   Banknote,
+  Wallet,
   Landmark,
   Smartphone,
   ShieldCheck,
@@ -30,11 +30,6 @@ const REASONS = [
     body: "Create your church, bring in the register you already keep, and record Sunday's service. No installation, no training day, no consultant.",
   },
   {
-    Icon: MessageSquare,
-    title: "A person reads every message",
-    body: "Support is a human being who understands how a church runs, not a bot and not a ticket number.",
-  },
-  {
     Icon: Banknote,
     title: "Cash first, always",
     body: "Cash is the default on every giving form. Mobile money sits beside it for members ready for it, and stays out of the way when you are not.",
@@ -53,6 +48,11 @@ const REASONS = [
     Icon: ShieldCheck,
     title: "No other church can read yours",
     body: "Each church's records are separated at the database level by Postgres itself, rather than merely hidden behind a menu.",
+  },
+  {
+    Icon: Wallet,
+    title: "Your money goes straight to you",
+    body: "Mobile money giving is paid directly into your church's own account. It never passes through Fold, and we take nothing from what your members give.",
   },
   {
     Icon: Lock,

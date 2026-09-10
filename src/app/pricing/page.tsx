@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, Info } from "lucide-react";
+import { Check, Info, Banknote, Cake, HandHeart, MessageCircleHeart } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg } from "@/components/marketing/section-bg";
@@ -24,6 +24,38 @@ export const metadata: Metadata = {
  * engine and by an assistant. Pricing questions are among the highest
  * intent searches there are.
  */
+/**
+ * The four a pastor repeats to another pastor.
+ *
+ * Each is describable in one true sentence, which is the test. The
+ * settlement one is the strongest because no competitor audited makes any
+ * claim about where a member's giving actually lands, and the three texts
+ * are the strongest because they are work a church currently does by
+ * memory or not at all.
+ */
+const HIGHLIGHTS = [
+  {
+    Icon: Banknote,
+    title: "Your money goes straight to your church",
+    body: "When a member gives by mobile money it is paid directly into your church's own account, MoMo or bank. It does not pass through Fold at any point and we take nothing from it.",
+  },
+  {
+    Icon: Cake,
+    title: "Birthday greetings, sent on the morning",
+    body: "From the dates of birth already on your register, in your church's name, once a year and never twice. Nobody has to remember, and the dashboard tells you who to bless on Sunday.",
+  },
+  {
+    Icon: MessageCircleHeart,
+    title: "A welcome for every new member",
+    body: "Added to the register on Sunday, welcomed by name the same day, from your church rather than from a number they do not recognise.",
+  },
+  {
+    Icon: HandHeart,
+    title: "A thank you for every tithe and offering",
+    body: "Recorded and acknowledged, so a member who gave by mobile money on Tuesday knows it arrived without having to ask the treasurer on Sunday.",
+  },
+];
+
 const FAQS = [
   {
     q: "Is this per member or per church?",
@@ -44,6 +76,14 @@ const FAQS = [
   {
     q: "What happens at the end of the 30 day trial?",
     a: "We tell you it is ending, at seven days, three days, one day and on the day. If you decide not to continue, nothing is deleted and nothing is locked. Your register stays yours, you can export the whole thing whenever you like, and we delete everything within 30 days of an account closing.",
+  },
+  {
+    q: "Whose name do the texts come from?",
+    a: "Yours. You choose a short name, up to 11 characters, and that is what your members see instead of a phone number: SHEKINAH, or ICGC, or whatever your church is known by. One thing to know: the first message from a new name is held while the mobile networks approve it, which takes a little while, so send one to your own phone before you rely on it for a whole congregation. Every message after that arrives normally.",
+  },
+  {
+    q: "Do the automatic messages send whether we want them or not?",
+    a: "No. All three are switched off until you turn them on, one by one, and you can turn any of them off again at any time. Texting your congregation is your relationship with them to manage, not ours.",
   },
   {
     q: "Is there a setup fee, or a contract?",
@@ -240,6 +280,43 @@ export default function PricingPage() {
                   <span className="text-[15px] leading-relaxed text-foreground/85">
                     {f}
                   </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* ---------- the four that sell it ---------- */}
+        <section className="relative isolate overflow-hidden border-b border-border bg-surface">
+          <SectionBg variant="orbs" />
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                On every band
+              </p>
+              <h2 className="mt-3 text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+                The things churches tell other churches about
+              </h2>
+            </div>
+
+            <ul className="m-0 mt-12 grid list-none gap-5 p-0 sm:grid-cols-2">
+              {HIGHLIGHTS.map(({ Icon, title, body }) => (
+                <li
+                  key={title}
+                  className="rounded-2xl border border-border bg-background p-6"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary"
+                  >
+                    <Icon size={22} strokeWidth={1.7} />
+                  </span>
+                  <h3 className="mt-5 text-balance text-base font-bold text-foreground">
+                    {title}
+                  </h3>
+                  <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
+                    {body}
+                  </p>
                 </li>
               ))}
             </ul>
