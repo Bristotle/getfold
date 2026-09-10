@@ -6,6 +6,8 @@ import { can } from "@/lib/permissions";
 import { getInsights, MONTH_NAMES } from "./insights-data";
 import { BarSeries, GroupedBars, SplitBar, SERIES } from "@/components/charts";
 import { Cake } from "lucide-react";
+import { getSetupProgress } from "./setup-progress";
+import { SetupChecklist } from "@/components/setup-checklist";
 
 type Stats = {
   member_count: number;
@@ -41,6 +43,7 @@ export default async function DashboardPage() {
 
   const stats = (data?.[0] ?? null) as Stats | null;
   const insights = await getInsights(organization.id);
+  const setup = await getSetupProgress(organization.id);
 
   // amount is DECIMAL(12,2); PostgREST serialises it as a string to avoid
   // float rounding, so parse rather than assuming a number.
@@ -66,6 +69,21 @@ export default async function DashboardPage() {
         <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">
           Could not load statistics: {error.message}
         </p>
+      )}
+
+
+      {/*
+        First on the page while it exists, and gone the moment all five are
+        done. A church that has not finished setting up needs the next step
+        more than it needs four tiles reading zero.
+      */}
+      {!setup.complete && (
+        <SetupChecklist
+          steps={setup.steps}
+          done={setup.done}
+          total={setup.total}
+          churchName={organization.name}
+        />
       )}
 
       <div className={`grid grid-cols-2 gap-4 ${showFinance ? "sm:grid-cols-4" : "sm:grid-cols-3"}`}>
@@ -235,32 +253,6 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {isEmpty && (
-        <Card>
-          <h2 className="text-sm font-bold text-foreground">
-            Your church is set up. Here&rsquo;s what comes next.
-          </h2>
-          <ol className="mt-3 flex list-decimal flex-col gap-2 pl-5 text-sm text-muted-foreground">
-            <li>
-              Add your members, the register everything else is built on.
-            </li>
-            <li>
-              Record a service&rsquo;s attendance to start the weekly count.
-            </li>
-            <li>Log tithes and offerings against members and funds.</li>
-            <li>Invite your administrators, elders and class leaders.</li>
-            <li>
-              Record dates of birth as you go, and this page will tell you
-              who to bless each Sunday.
-            </li>
-          </ol>
-          <p className="mt-4 text-xs text-muted-foreground">
-            Every figure above is scoped to {organization.name} by
-            row-level security, no other church can see your data, and you
-            cannot see theirs.
-          </p>
-        </Card>
-      )}
     </div>
   );
 }
