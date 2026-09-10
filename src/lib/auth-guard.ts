@@ -18,7 +18,22 @@ import { createClient } from "@/lib/supabase/server";
  * she gives up and uses the reset link.
  */
 const MAX_PER_EMAIL = 5;
-const MAX_PER_IP = 20;
+/*
+  Deliberately loose, and much looser than it first was.
+
+  Ghanaian mobile carriers NAT aggressively, so a large number of unrelated
+  MTN or Telecel subscribers can share one public address. A tight per-IP
+  threshold would therefore lock out a church because strangers on the same
+  carrier fumbled their passwords, and a church locked out of its own
+  register on a Sunday morning is a worse outcome than the attack this
+  guards against.
+
+  The per-email limit is what actually stops a targeted attack on one
+  pastor's account. This one is only a blunt volumetric backstop, so it is
+  set where it catches a single machine hammering us without catching a
+  carrier.
+*/
+const MAX_PER_IP = 50;
 const WINDOW_MINUTES = 15;
 
 export type AuthEvent =
