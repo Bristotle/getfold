@@ -335,3 +335,73 @@ export function settlementLabel(optionName: string, accountNumber: string) {
   const tail = accountNumber.replace(/\s/g, "").slice(-4);
   return `${optionName} ending ${tail}`;
 }
+
+// ---------------------------------------------------------------------------
+// Billing: a church paying Fold
+//
+// The opposite direction from everything above. Member giving settles to the
+// CHURCH's subaccount; a subscription settles to ours, which is why nothing
+// here passes a subaccount.
+// ---------------------------------------------------------------------------
+
+/**
+ * Creates a hosted payment page for an invoice.
+ *
+ * A link rather than a silent recurring charge, deliberately. Mobile money
+ * mandates in Ghana are unreliable enough that auto-charging would fail
+ * quietly and often, and a treasurer would rather authorise each payment
+ * anyway. The link accepts MoMo and card without us choosing for them.
+ */
+export async function createInvoicePaymentLink(params: {
+  email: string;
+  amountPesewas: number;
+  reference: string;
+  churchName: string;
+  periodLabel: string;
+}): Promise<
+  { ok: true; url: string } | { ok: false; error: string }
+> {
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  if (!secret) return { ok: false, error: "Payments are not configured yet." };
+
+  try {
+    const res = await fetch("https://api.paystack.co/transaction/initialize", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${secret}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: params.email,
+        amount: params.amountPesewas,
+        currency: "GHS",
+        reference: params.reference,
+        // Both, so a church that has one and not the other is never stuck.
+        channels: ["mobile_money", "card"],
+        metadata: {
+          church: params.churchName,
+          period: params.periodLabel,
+          purpose: "fold_subscription",
+        },
+      }),
+    });
+
+    const json = (await res.json()) as {
+      status?: boolean;
+      message?: string;
+      data?: { authorization_url?: string };
+    };
+
+    if (!res.ok || !json.status || !json.data?.authorization_url) {
+      return { ok: false, error: json.message ?? "Could not create a payment link." };
+    }
+    return { ok: true, url: json.data.authorization_url };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
+
+/** Invoice references are distinguishable from giving references on sight. */
+export function invoiceReference(orgSlug: string, periodStart: string) {
+  return `sub_${orgSlug}_${periodStart.replace(/-/g, "")}_${Date.now().toString(36)}`;
+}

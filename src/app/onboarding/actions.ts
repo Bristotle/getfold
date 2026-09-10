@@ -11,6 +11,8 @@ export async function createOrganization(formData: FormData) {
   const denomination = String(formData.get("denomination") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
   const address = String(formData.get("address") ?? "").trim();
+  const heardChannel = String(formData.get("heardAbout") ?? "").trim();
+  const heardDetail = String(formData.get("heardDetail") ?? "").trim();
 
   if (!name) {
     redirect("/onboarding?error=Please enter your church name.");
@@ -27,6 +29,8 @@ export async function createOrganization(formData: FormData) {
   // plain .insert() here would always be refused, see
   // supabase/migrations/0003_onboarding.sql for why.
   const { data, error } = await supabase.rpc("create_organization", {
+    heard_channel: heardChannel || null,
+    heard_detail: heardDetail || null,
     org_name: name,
     org_type: orgType,
     org_denomination: denomination || null,

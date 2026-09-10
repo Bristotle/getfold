@@ -63,6 +63,54 @@ export async function POST(request: Request) {
     auth: { persistSession: false },
   });
 
+  /*
+    Two completely different kinds of money arrive on this one webhook.
+
+    A member's tithe settles into the CHURCH's subaccount and becomes a
+    contribution. A church's subscription settles into OURS and marks an
+    invoice paid. Confusing the two would either credit a church with money
+    it never received, or record our own revenue as somebody's tithe.
+
+    Subscription references are prefixed sub_ at the point they are created,
+    which is what makes them distinguishable here without a lookup.
+  */
+  if (reference.startsWith("sub_")) {
+    const paid =
+      event.event === "charge.success" || event.data?.status === "success";
+
+    if (paid) {
+      const { data: invoice } = await supabase
+        .from("invoices")
+        .select("id, organization_id, period_end, status")
+        .eq("paystack_reference", reference)
+        .maybeSingle();
+
+      // Already paid: acknowledge and stop. Paystack retries, and marking
+      // it twice would move the subscription end date twice.
+      if (invoice && invoice.status !== "paid") {
+        await supabase
+          .from("invoices")
+          .update({
+            status: "paid",
+            paid_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", invoice.id);
+
+        await supabase
+          .from("organizations")
+          .update({
+            subscription_status: "active",
+            // Paid up to the end of the period this invoice covered.
+            trial_ends_at: invoice.period_end,
+          })
+          .eq("id", invoice.organization_id);
+      }
+    }
+
+    return new Response("OK", { status: 200 });
+  }
+
   const { data: payment } = await supabase
     .from("payments")
     .select("id, organization_id, member_id, amount, type, status, contribution_id, phone")

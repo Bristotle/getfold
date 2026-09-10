@@ -132,6 +132,31 @@ it off makes the invitation flow exploitable. If it must be off for
 testing, use `auth.admin.createUser({ email_confirm: true })` instead, and
 turn it back on.
 
+### New tables get no grants, and new function arguments make a second function
+
+Two consequences of things we did on purpose, both of which have already
+caused a bug.
+
+**Migration 0019 revoked the default privileges** that used to hand `anon`
+and `authenticated` full DML on every new table in `public`. That is
+correct, and it means a new table now needs an explicit
+`grant select on public.<table> to authenticated;` or RLS has nothing to
+filter and the page shows nothing to anybody.
+
+**`create or replace function` with a different argument list creates a
+SECOND function.** Adding two parameters to `create_organization` left two
+overloads, and any call that did not name every argument became ambiguous:
+`function public.create_organization(unknown) is not unique`. Every path
+that creates a church would have failed. Drop the old signature explicitly.
+
+Both were caught by the rolled back transaction tests rather than by a
+church on a Sunday, which is the argument for writing them.
+
+**And an RLS policy cannot be tested from the owner connection.** `postgres`
+bypasses RLS, so a test that queries as the owner proves nothing. Use
+`set local role authenticated;` inside the transaction and `reset role;`
+afterwards.
+
 ## Things that have already bitten us
 
 - `id` and `updated_at` need database defaults. Prisma generates those

@@ -64,6 +64,7 @@ const GROUPS = [
       { href: "/contributions", label: "Contributions" },
       { href: "/funds", label: "Funds" },
       { href: "/payouts", label: "Where giving is paid" },
+      { href: "/billing", label: "Billing" },
     ],
   },
   {

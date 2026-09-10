@@ -166,6 +166,48 @@ export default async function OnboardingPage({
                 className={inputClass}
               />
             </label>
+
+            {/*
+              Last, and optional. Churches tell churches, and knowing which
+              one is the difference between guessing whether the marketing
+              works and knowing. Nothing here blocks finishing: a church
+              that would rather not say still gets set up.
+            */}
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-foreground">
+                How did you hear about Fold?{" "}
+                <span className="font-normal text-muted-foreground">
+                  (optional)
+                </span>
+              </span>
+              <select name="heardAbout" defaultValue="" className={inputClass}>
+                <option value="">Rather not say</option>
+                <option value="another_church">Another church told us</option>
+                <option value="denomination">Our circuit, diocese or denomination</option>
+                <option value="search">We searched for it online</option>
+                <option value="social">Facebook, WhatsApp or LinkedIn</option>
+                <option value="event">A meeting, conference or convention</option>
+                <option value="other">Somewhere else</option>
+              </select>
+            </label>
+
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-foreground">
+                Which church or person?{" "}
+                <span className="font-normal text-muted-foreground">
+                  (optional)
+                </span>
+              </span>
+              <input
+                name="heardDetail"
+                type="text"
+                placeholder="Ebenezer Methodist Society, or Rev Mensah"
+                className={inputClass}
+              />
+              <span className="text-xs text-muted-foreground">
+                So we can thank them properly.
+              </span>
+            </label>
           </div>
 
           <SubmitButton size="lg" className="mt-2">
