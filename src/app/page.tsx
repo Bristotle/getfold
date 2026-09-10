@@ -9,7 +9,7 @@ import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
 import { Proof } from "@/components/marketing/proof";
 import { CongregationBand } from "@/components/marketing/congregation-band";
-import { SectionBg, HeroWash } from "@/components/marketing/section-bg";
+import { SectionBg, HeroWash, CtaBand } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 
 export const metadata: Metadata = {
@@ -234,27 +234,29 @@ export default async function LandingPage({
       <Contact sent={sent === "1"} error={error} />
 
       {/* ---------- close ---------- */}
-      <section className="relative isolate overflow-hidden border-t border-border bg-surface">
-        <SectionBg variant="orbs" />
+      <CtaBand>
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16 lg:py-20">
-          <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             Set up your church tonight, use it on Sunday.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-xl text-[16px] leading-relaxed text-primary-foreground/85">
             Start with your members. Add attendance and giving when you are
             ready. Nothing is compulsory, and nothing depends on mobile money or
             a fast connection.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3">
-            <Link href="/signup">
-              <Button size="lg">Start your 30 day free trial</Button>
+            <Link
+              href="/signup"
+              className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary-foreground px-6 text-base font-semibold text-primary transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
+            >
+              Start your 30 day free trial
             </Link>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-primary-foreground/75">
               Free for 30 days. No credit card required, and no commitment.
             </span>
           </div>
         </div>
-      </section>
+      </CtaBand>
 
       </main>
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Check, Info, Banknote, Cake, HandHeart, MessageCircleHeart } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { TIERS, cedis, quarterly, annual, ANNUAL_MONTHS_CHARGED } from "@/lib/pricing";
 
 export const metadata: Metadata = {
@@ -358,8 +358,7 @@ export default function PricingPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section className="relative isolate overflow-hidden border-t border-border bg-primary text-primary-foreground">
-          <SectionBg variant="mesh" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               Find out on your own records first
@@ -384,7 +383,7 @@ export default function PricingPage() {
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { HelpIcon } from "@/components/marketing/help-icon";
 import { HelpSearch } from "@/components/marketing/help-search";
 import { Button } from "@/components/ui/button";
@@ -203,8 +203,7 @@ export default async function HelpPage({
         )}
 
         {/* ---------- still stuck ---------- */}
-        <section className="relative isolate overflow-hidden bg-primary text-primary-foreground">
-          <SectionBg variant="mesh" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <span
               aria-hidden="true"
@@ -228,7 +227,7 @@ export default async function HelpPage({
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />

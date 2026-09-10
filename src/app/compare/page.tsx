@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Check, Minus, X } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "Fold compared with Asoriba, Shepherd and the rest",
@@ -285,13 +285,12 @@ export default function ComparePage() {
         </section>
 
         {/* ---------- where we win ---------- */}
-        <section className="relative isolate overflow-hidden">
-          <SectionBg variant="grid" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               And when Fold is the right answer
             </h2>
-            <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-[16px] leading-relaxed text-primary-foreground/85">
               If your church files a return to a circuit, a presbytery, a
               diocese or a district, you are the church nobody else in this
               table is building for. Every product above, local and
@@ -299,7 +298,7 @@ export default function ComparePage() {
               knows what a class leader is, or a catechumen, or a society, or
               why the quarterly return costs somebody an entire evening.
             </p>
-            <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-[16px] leading-relaxed text-primary-foreground/85">
               We also tell you what enforces the separation between your
               records and another church&apos;s, which no other product on this
               page attempts, and we say plainly which parts of Fold need a few
@@ -309,19 +308,19 @@ export default function ComparePage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/signup"
-                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary-foreground px-6 text-base font-semibold text-primary transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
               >
                 Start your 30 day free trial
               </Link>
               <Link
                 href="/features"
-                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-border bg-surface px-6 text-base font-semibold text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-primary-foreground/40 px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
               >
                 See every feature
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />

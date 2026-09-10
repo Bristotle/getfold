@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { GettingStarted } from "@/components/marketing/getting-started";
 import { Button } from "@/components/ui/button";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "Getting started with Fold, set up in an evening",
@@ -200,29 +200,32 @@ export default function GettingStartedPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
-            <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               Set it up tonight
             </h2>
-            <p className="mx-auto mt-4 max-w-lg text-[15px] leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-lg text-[16px] leading-relaxed text-primary-foreground/85">
               Thirty days free, no card, and nothing to cancel if it turns out
               not to suit your church. If you would rather we walked you
               through it, say so and we will.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/signup">
-                <Button size="lg">Create your church</Button>
+              <Link
+                href="/signup"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary-foreground px-6 text-base font-semibold text-primary transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
+              >
+                Create your church
               </Link>
-              <Link href="/contact">
-                <Button size="lg" variant="secondary">
-                  Talk to a person
-                </Button>
+              <Link
+                href="/contact"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-primary-foreground/40 px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
+              >
+                Talk to a person
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />

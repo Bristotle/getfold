@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "Features, everything Fold does for your church",
@@ -218,8 +218,7 @@ export default function FeaturesPage() {
           </div>
         </section>
 
-        <section className="relative isolate overflow-hidden border-t border-border bg-primary text-primary-foreground">
-          <SectionBg variant="mesh" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               See it with your own register in it
@@ -243,7 +242,7 @@ export default function FeaturesPage() {
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />

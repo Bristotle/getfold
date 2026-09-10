@@ -69,6 +69,12 @@ Marketing sections use `<SectionBg variant="..." />` from
 page hero, `dots` and `grid` for texture, `orbs` for depth without a
 pattern, `mesh` for the purple bands where light has to come from white.
 
+Every call to action band uses `<CtaBand>` from the same file rather than
+composing a section by hand. It is the homepage's "Bring your church into
+one place" treatment, purple with white type and the congregation
+photograph behind a measured scrim, applied to all nine bands so the site
+reads as one site. Do not build a tenth by hand.
+
 Three rules keep them safe:
 
 - The parent section needs `relative isolate overflow-hidden`. The layer is

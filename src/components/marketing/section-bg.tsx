@@ -145,3 +145,35 @@ export function HeroWash() {
     </div>
   );
 }
+
+/**
+ * Every call to action band on the site, from one place.
+ *
+ * The homepage's "Bring your church into one place" section set the
+ * treatment: brand purple, white type, the congregation photograph behind
+ * a scrim measured to keep the type readable, and the mesh until a
+ * photograph is authorised. Nine bands across the site now use this rather
+ * than four of them being purple and four being pale, which read as four
+ * different sites rather than one.
+ *
+ * The scrim is not adjustable here on purpose. It was measured at
+ * 12.06:1, 7.27:1 and 5.13:1 against white type over pure white, and a
+ * band that loosened it "to see more of the picture" would fail AA on the
+ * body copy long before anyone noticed by eye.
+ */
+export function CtaBand({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`relative isolate overflow-hidden border-t border-border bg-primary text-primary-foreground ${className}`}
+    >
+      <PhotoBg tone="dark" fallback="mesh" />
+      {children}
+    </section>
+  );
+}

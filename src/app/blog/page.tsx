@@ -3,8 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { Button } from "@/components/ui/button";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { sortedPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -84,28 +83,31 @@ export default function BlogPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
-            <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               Stop rebuilding the same return every quarter
             </h2>
-            <p className="mx-auto mt-4 max-w-lg text-[15px] leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-lg text-[16px] leading-relaxed text-primary-foreground/85">
               Register, attendance and giving in one place, on the phone in
               your pocket. Thirty days free, no card, no commitment.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/signup">
-                <Button size="lg">Start your free trial</Button>
+              <Link
+                href="/signup"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary-foreground px-6 text-base font-semibold text-primary transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
+              >
+                Start your free trial
               </Link>
-              <Link href="/contact">
-                <Button size="lg" variant="secondary">
-                  Talk to a person
-                </Button>
+              <Link
+                href="/contact"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-primary-foreground/40 px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
+              >
+                Talk to a person
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />

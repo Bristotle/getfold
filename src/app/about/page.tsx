@@ -13,7 +13,7 @@ import {
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
-import { SectionBg } from "@/components/marketing/section-bg";
+import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 
 export const metadata: Metadata = {
   title: "About Fold, built around your denomination",
@@ -307,8 +307,7 @@ export default function AboutPage() {
         </section>
 
         {/* ---------- close ---------- */}
-        <section className="relative isolate overflow-hidden border-t border-border bg-primary text-primary-foreground">
-          <SectionBg variant="mesh" />
+        <CtaBand>
           <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               Ready to see your own church in it?
@@ -333,7 +332,7 @@ export default function AboutPage() {
               </Link>
             </div>
           </div>
-        </section>
+        </CtaBand>
       </main>
 
       <SiteFooter />
