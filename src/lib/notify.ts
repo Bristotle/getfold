@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import { toE164, providerStatus } from "@/lib/messaging";
+import { toE164, providerStatus, deliver } from "@/lib/messaging";
 
 type Queue = {
   organizationId: string;
@@ -14,6 +14,11 @@ type Queue = {
    * something the church switched on. Manual sends skip the check.
    */
   automatic?: boolean;
+  /**
+   * Deliver immediately rather than leaving it for the daily job. For
+   * anything whose value depends on arriving promptly.
+   */
+  sendNow?: boolean;
 };
 
 /**
@@ -45,9 +50,12 @@ export async function queueMessage({
   phone,
   body,
   automatic,
+  sendNow,
 }: Queue): Promise<string | null> {
   const to = toE164(phone);
   if (!to) return null;
+
+  let senderId: string | null = null;
 
   try {
     const supabase = await createClient();
@@ -66,10 +74,13 @@ export async function queueMessage({
       if (column) {
         const { data: org } = await supabase
           .from("organizations")
-          .select(column)
+          .select(`${column}, sms_sender_id`)
           .eq("id", organizationId)
           .maybeSingle();
-        if (!(org as Record<string, boolean> | null)?.[column]) return null;
+        if (!(org as Record<string, unknown> | null)?.[column]) return null;
+        senderId =
+          ((org as { sms_sender_id?: string | null } | null)?.sms_sender_id) ??
+          null;
       }
     }
     const { data, error } = await supabase
@@ -89,7 +100,34 @@ export async function queueMessage({
       .single();
 
     if (error) return null;
-    return data?.id ?? null;
+    const id = data?.id ?? null;
+
+    /*
+      Send it now, not tomorrow morning.
+
+      A welcome and a thank you are single messages triggered by something a
+      person just did, and their whole value is promptness. A member who
+      gave by mobile money and hears nothing for a day rings the treasurer,
+      which is the phone call this feature exists to prevent.
+
+      Birthdays are different and stay on the daily job: they are a batch,
+      and the time of day is the point.
+
+      A failure here is not a failure overall. The row stays queued and the
+      daily job retries it, so the worst case is the behaviour we had
+      before rather than a lost message.
+    */
+    if (id && sendNow) {
+      const result = await deliver(to, body, senderId);
+      if (result.ok) {
+        await supabase
+          .from("notifications")
+          .update({ status: "sent", sent_at: new Date().toISOString(), error: null })
+          .eq("id", id);
+      }
+    }
+
+    return id;
   } catch {
     return null;
   }

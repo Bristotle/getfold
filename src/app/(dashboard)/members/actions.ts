@@ -61,6 +61,7 @@ export async function createMember(formData: FormData) {
     organizationId: membership.organization.id,
     type: "welcome",
     automatic: true,
+    sendNow: true,
     phone: clean(formData, "phone"),
     body: templates.welcome(membership.organization.name, fullName),
   });
