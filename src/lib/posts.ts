@@ -112,7 +112,7 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "What we do not have, plainly: no WhatsApp integration, no member facing app, no multi branch yet, and no payroll or accounting. If any of those is the reason you are looking, one of the products above is a better answer than ours, and we would rather tell you now than after you have moved four hundred members across.",
+        text: "What we do not have, plainly: no WhatsApp integration, no member facing app, and no payroll or accounting. Branches exist, a circuit can oversee its societies and each keeps its own register, but figures do not yet roll up into one view and the tree is one level deep, so a national headquarters with regions above districts above assemblies is not served yet. If any of those is the reason you are looking, one of the products above is a better answer than ours, and we would rather tell you now than after you have moved four hundred members across.",
       },
       {
         type: "quote",

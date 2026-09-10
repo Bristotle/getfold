@@ -62,7 +62,8 @@ const ROWS: { feature: string; note?: string; cells: Cell[] }[] = [
   },
   {
     feature: "Multi branch or multi campus",
-    cells: ["no", "no", "yes", "yes", "no"],
+    note: "Fold: one level, a circuit over its societies, no roll-up yet",
+    cells: ["partial", "no", "yes", "yes", "no"],
   },
   {
     feature: "Payroll, HR and assets",
