@@ -68,6 +68,17 @@ export async function initiateMomoCharge(params: {
   phone: string;
   provider: MomoProvider;
   reference: string;
+  /**
+   * The church's Paystack subaccount. When present, settlement goes
+   * directly to the church and never enters our balance.
+   *
+   * REQUIRED IN PRACTICE. A charge without it settles to Fold, which means
+   * holding a church's tithes, and that is both a trust problem and Bank of
+   * Ghana territory. The caller refuses to charge without one; this
+   * parameter is optional only so the type does not pretend a charge can be
+   * built without deciding.
+   */
+  subaccount?: string | null;
 }): Promise<ChargeResult> {
   const status = paystackStatus();
   if (!status.configured) {
@@ -93,6 +104,16 @@ export async function initiateMomoCharge(params: {
           phone: params.phone,
           provider: params.provider,
         },
+        ...(params.subaccount
+          ? {
+              subaccount: params.subaccount,
+              // "subaccount" bears Paystack's fee, so the church pays the
+              // processing cost out of the gift rather than Fold paying it
+              // on their behalf and reconciling it later. It also means we
+              // are demonstrably not skimming: our share is nil.
+              bearer: "subaccount",
+            }
+          : {}),
       }),
     });
 
@@ -185,4 +206,132 @@ export async function verifyTransaction(reference: string): Promise<
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Settlement destinations and subaccounts
+//
+// A member's tithe must settle into the CHURCH's account, not ours. Paystack
+// subaccounts do that: settlement goes directly to the church's destination
+// and never enters our balance, which is the line between being software and
+// being an unlicensed money handler.
+// ---------------------------------------------------------------------------
+
+export type SettlementOption = {
+  /** Paystack's code for the bank or network, e.g. "MTN" or "030100". */
+  code: string;
+  name: string;
+  type: "momo" | "bank";
+};
+
+/**
+ * The destinations a Ghanaian church can be paid into.
+ *
+ * Mobile money first, deliberately. Plenty of churches have a MoMo number
+ * and no bank account, and Paystack Ghana treats the three networks as
+ * settlement destinations in their own right.
+ *
+ * Paystack returns duplicate rows for several banks sharing one GHIPSS
+ * code, so this de-duplicates on the code and keeps the shortest name,
+ * which is reliably the cleanest of the duplicates.
+ */
+export async function listSettlementOptions(): Promise<SettlementOption[]> {
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  if (!secret) return [];
+
+  try {
+    const res = await fetch("https://api.paystack.co/bank?country=ghana", {
+      headers: { Authorization: `Bearer ${secret}` },
+      // Bank lists change rarely. A day of caching keeps this off the
+      // critical path of a page a church loads while setting up.
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as {
+      data?: { code: string; name: string; type: string }[];
+    };
+
+    const byCode = new Map<string, SettlementOption>();
+    for (const b of json.data ?? []) {
+      const type = b.type === "mobile_money" ? "momo" : "bank";
+      const existing = byCode.get(b.code);
+      if (!existing || b.name.length < existing.name.length) {
+        byCode.set(b.code, { code: b.code, name: b.name, type });
+      }
+    }
+
+    return [...byCode.values()].sort((a, b) => {
+      if (a.type !== b.type) return a.type === "momo" ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Creates the church's subaccount.
+ *
+ * percentageCharge is what Fold keeps of each gift. Zero means the church
+ * receives the whole amount less Paystack's own fee, which is the honest
+ * default until a share of giving is a decision somebody has actually
+ * made.
+ */
+export async function createSubaccount(params: {
+  businessName: string;
+  bankCode: string;
+  accountNumber: string;
+  percentageCharge?: number;
+}): Promise<
+  | { ok: true; code: string; accountName: string | null }
+  | { ok: false; error: string }
+> {
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  if (!secret) return { ok: false, error: "Payments are not configured yet." };
+
+  try {
+    const res = await fetch("https://api.paystack.co/subaccount", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${secret}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        business_name: params.businessName,
+        settlement_bank: params.bankCode,
+        account_number: params.accountNumber,
+        percentage_charge: params.percentageCharge ?? 0,
+      }),
+    });
+
+    const json = (await res.json()) as {
+      status?: boolean;
+      message?: string;
+      data?: { subaccount_code?: string; account_name?: string | null };
+    };
+
+    if (!res.ok || !json.status || !json.data?.subaccount_code) {
+      // Paystack's messages here are unusually good, "Account number is
+      // invalid" and the like, so they are worth showing to the church
+      // rather than replacing with something vaguer.
+      return {
+        ok: false,
+        error: json.message ?? "Paystack could not verify that account.",
+      };
+    }
+
+    return {
+      ok: true,
+      code: json.data.subaccount_code,
+      accountName: json.data.account_name ?? null,
+    };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
+
+/** "MTN ending 2348". Never the whole number. */
+export function settlementLabel(optionName: string, accountNumber: string) {
+  const tail = accountNumber.replace(/\s/g, "").slice(-4);
+  return `${optionName} ending ${tail}`;
 }
