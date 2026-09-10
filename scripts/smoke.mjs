@@ -104,15 +104,27 @@ try {
     ok("statistical return", `members=${row?.members_total} attendance avg=${row?.attendance_average} income=${row?.income_total}`);
   }
 
-  // ---------- 10. branches ----------
+  // ---------- 10. branches, at depth, with roll up ----------
   const { data: branch, error: bErr } = await as.rpc("create_branch", {
     parent_id: orgId, branch_name: `Smoke Branch ${stamp}`,
   });
   bErr ? bad("create a branch", bErr.message) : ok("create a branch");
 
+  const { data: grandchild, error: gcErr } = await as.rpc("create_branch", {
+    parent_id: branch, branch_name: `Smoke Grandchild ${stamp}`,
+  });
+  gcErr ? bad("create a branch under a branch", gcErr.message) : ok("create a branch under a branch (any depth)");
+
+  const { data: roll, error: ruErr } = await as.rpc("rollup_stats", { root: orgId });
+  if (ruErr) bad("roll up", ruErr.message);
+  else {
+    const c = Number(roll?.[0]?.churches);
+    c === 3 ? ok("roll up counts the whole tree", `${c} churches`) : bad("roll up", `counted ${c}, expected 3`);
+  }
+
   // ---------- 11. tenant isolation ----------
   const { data: others } = await as.from("organizations").select("id");
-  const onlyMine = (others ?? []).every(o => o.id === orgId || o.id === branch);
+  const onlyMine = (others ?? []).every(o => o.id === orgId || o.id === branch || o.id === grandchild);
   onlyMine ? ok("tenant isolation", `sees ${others?.length} of its own churches only`)
            : bad("tenant isolation", `saw ${others?.length} organizations`);
 
@@ -132,6 +144,7 @@ try {
 } finally {
   // ---------- clean up ----------
   if (orgId) await admin.from("organizations").delete().eq("id", orgId);
+  await admin.from("organizations").delete().like("name", `Smoke Grandchild ${stamp}%`);
   await admin.from("organizations").delete().like("name", `Smoke Branch ${stamp}%`);
   await admin.from("contact_requests").delete().eq("source", "smoke");
   if (userId) await admin.auth.admin.deleteUser(userId);

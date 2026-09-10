@@ -45,6 +45,22 @@ export default async function DashboardPage() {
   const insights = await getInsights(organization.id);
   const setup = await getSetupProgress(organization.id);
 
+  // Everything beneath this church, summed. rollup_stats is SECURITY
+  // INVOKER, so RLS decides what may be counted: only churches the caller
+  // belongs to or oversees contribute. A church with nothing beneath it
+  // gets churches = 1, and the card stays hidden.
+  const { data: rollupRows } = await supabase.rpc("rollup_stats", {
+    root: organization.id,
+  });
+  const rollup = (rollupRows?.[0] ?? null) as {
+    churches: number;
+    member_count: number;
+    week_attendance: number;
+    month_tithe: string | number;
+    pending_transfers: number;
+  } | null;
+  const overseesOthers = Boolean(rollup && Number(rollup.churches) > 1);
+
   // amount is DECIMAL(12,2); PostgREST serialises it as a string to avoid
   // float rounding, so parse rather than assuming a number.
   const tithe = stats ? Number(stats.month_tithe) : 0;
@@ -106,6 +122,44 @@ export default async function DashboardPage() {
           <CardStat>{stats?.pending_transfers ?? 0}</CardStat>
         </Card>
       </div>
+
+      {/* ---------- roll up across every church beneath this one ---------- */}
+      {overseesOthers && rollup && (
+        <Card>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 className="text-sm font-bold text-foreground">
+              Across everything under {organization.name}
+            </h2>
+            <span className="font-numeric text-xs text-muted-foreground">
+              {Number(rollup.churches)} churches including this one
+            </span>
+          </div>
+          <div className={`mt-4 grid grid-cols-2 gap-4 ${showFinance ? "sm:grid-cols-4" : "sm:grid-cols-3"}`}>
+            <div>
+              <CardLabel>Active members</CardLabel>
+              <CardStat>{Number(rollup.member_count)}</CardStat>
+            </div>
+            <div>
+              <CardLabel>This week&rsquo;s attendance</CardLabel>
+              <CardStat>{Number(rollup.week_attendance)}</CardStat>
+            </div>
+            {showFinance && (
+              <div>
+                <CardLabel>This month&rsquo;s tithe</CardLabel>
+                <CardStat>{cedis.format(Number(rollup.month_tithe))}</CardStat>
+              </div>
+            )}
+            <div>
+              <CardLabel>Pending transfers</CardLabel>
+              <CardStat>{Number(rollup.pending_transfers)}</CardStat>
+            </div>
+          </div>
+          <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">
+            Summed across every church you lead or oversee beneath this one.
+            Each church&rsquo;s own figures stay on its own dashboard.
+          </p>
+        </Card>
+      )}
 
       {/* ---------- birthdays ---------- */}
       {/*

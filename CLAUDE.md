@@ -122,6 +122,21 @@ It fails if any table in `public` is granted to `anon` or `authenticated`
 with RLS off. Migration 0019 also revokes the default privileges for those
 two roles, so a future Prisma-created table does not inherit them.
 
+### Oversight is read only, and that is what keeps it small
+
+Branches go to any depth: headquarters over regions over districts over
+assemblies. Access from above is a second kind of access alongside
+membership, called oversight, and it is deliberately **read only**.
+`public.oversees(org_id)` is true when the caller holds a leadership role
+in any ancestor. It appears in SELECT policies only; every INSERT, UPDATE
+and DELETE policy is untouched, so a regional overseer sees every assembly
+beneath them and cannot write into one. A class leader at headquarters
+oversees nothing, because oversight requires leadership above.
+
+`rollup_stats(root)` is SECURITY INVOKER, so RLS decides what may be
+summed. Do not turn it into SECURITY DEFINER to "make the numbers work";
+if a roll up is short, somebody lacks oversight, and that is the answer.
+
 ### Email confirmation is an authorisation control here, not a nicety
 
 `accept_pending_invitations()` grants membership by matching the caller's
