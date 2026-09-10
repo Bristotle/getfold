@@ -104,6 +104,16 @@ export async function sendQueued() {
   }
 
   const supabase = await createClient();
+
+  // Read the sender here rather than adding it to ActiveOrg, which is
+  // passed through most of the app and should stay small.
+  const { data: org } = await supabase
+    .from("organizations")
+    .select("sms_sender_id")
+    .eq("id", membership.organization.id)
+    .maybeSingle();
+  const senderId = (org as { sms_sender_id: string | null } | null)?.sms_sender_id ?? null;
+
   const { data: pending } = await supabase
     .from("notifications")
     .select("id, recipient, body")
@@ -118,7 +128,11 @@ export async function sendQueued() {
     recipient: string;
     body: string;
   }[]) {
-    const result = await deliver(n.recipient, n.body);
+    const result = await deliver(
+      n.recipient,
+      n.body,
+      senderId
+    );
     await supabase
       .from("notifications")
       .update(
@@ -135,6 +149,71 @@ export async function sendQueued() {
   redirect(
     `/messages?message=${encodeURIComponent(
       `${sent} sent${failed ? `, ${failed} failed` : ""}.`
+    )}`
+  );
+}
+
+/**
+ * Turns an automatic message on or off, and sets the name it is sent under.
+ *
+ * Both live behind org.manage rather than people.write. Deciding that a
+ * congregation will start receiving texts, and under what name, is a
+ * leadership decision rather than a clerical one.
+ */
+export async function updateMessageSettings(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  if (!can(membership.role, "org.manage")) {
+    redirect(
+      `/messages?error=${encodeURIComponent(
+        "Only the pastor or an administrator can change these."
+      )}`
+    );
+  }
+
+  const supabase = await createClient();
+
+  const sender = String(formData.get("senderId") ?? "").trim();
+  if (sender.length > 0 && sender.length < 3) {
+    redirect(
+      `/messages?error=${encodeURIComponent("A sender name needs at least 3 characters.")}`
+    );
+  }
+  if (sender.length > 11) {
+    redirect(
+      `/messages?error=${encodeURIComponent(
+        "A sender name can be at most 11 characters. Networks will not carry a longer one."
+      )}`
+    );
+  }
+
+  const { error: senderError } = await supabase.rpc("set_sms_sender_id", {
+    org_id: membership.organization.id,
+    sender: sender || null,
+  });
+  if (senderError) {
+    redirect(`/messages?error=${encodeURIComponent(senderError.message)}`);
+  }
+
+  const { error } = await supabase
+    .from("organizations")
+    .update({
+      sms_welcome_enabled: formData.get("welcome") === "on",
+      sms_thanks_enabled: formData.get("thanks") === "on",
+      sms_birthday_enabled: formData.get("birthday") === "on",
+    })
+    .eq("id", membership.organization.id);
+
+  if (error) {
+    redirect(`/messages?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/messages");
+  redirect(
+    `/messages?message=${encodeURIComponent(
+      sender
+        ? `Saved. Messages will be sent as "${sender}". The very first one may be held while your provider approves the name, so send a test to your own phone before relying on it.`
+        : "Saved."
     )}`
   );
 }

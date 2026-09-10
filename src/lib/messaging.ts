@@ -88,6 +88,9 @@ export const templates = {
   ) =>
     `${churchName}: received your ${kind} of ${cedis(amount)}. Thank you, ${memberName}. God bless you.`,
 
+  birthday: (churchName: string, memberName: string) =>
+    `Happy birthday ${memberName}! Everyone at ${churchName} is thanking God for your life today. May this year bring you joy and good health.`,
+
   absenceFollowUp: (churchName: string, memberName: string) =>
     `Hello ${memberName}, we have missed you at ${churchName} recently and wanted to check that all is well. You are welcome any time.`,
 };
@@ -100,7 +103,17 @@ export const templates = {
  */
 export async function deliver(
   to: string,
-  body: string
+  body: string,
+  /**
+   * The church's own sender name, so a member sees "SHEKINAH" rather than
+   * the platform's. Falls back to SMS_SENDER_ID when a church has not set
+   * one.
+   *
+   * Eleven characters maximum, by the GSM standard rather than by anyone's
+   * choice, and it has to be approved by the provider before anything
+   * actually arrives.
+   */
+  senderId?: string | null
 ): Promise<{ ok: boolean; error?: string }> {
   const status = providerStatus();
   if (!status.configured || !status.provider) {
@@ -109,6 +122,8 @@ export async function deliver(
       error: `No SMS provider configured (missing ${status.missing.join(", ")})`,
     };
   }
+
+  const sender = (senderId?.trim() || process.env.SMS_SENDER_ID) ?? undefined;
 
   try {
     switch (status.provider) {
@@ -120,7 +135,7 @@ export async function deliver(
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            sender: process.env.SMS_SENDER_ID,
+            sender,
             message: body,
             // Sent in full E.164 form, plus included, matching Arkesel's
             // documented example. Their v1 URL API took a bare number, which
@@ -137,7 +152,7 @@ export async function deliver(
           `${process.env.HUBTEL_CLIENT_ID}:${process.env.HUBTEL_CLIENT_SECRET}`
         ).toString("base64");
         const url = new URL("https://smsc.hubtel.com/v1/messages/send");
-        url.searchParams.set("from", process.env.SMS_SENDER_ID!);
+        url.searchParams.set("from", sender!);
         url.searchParams.set("to", to);
         url.searchParams.set("content", body);
         const res = await fetch(url, {

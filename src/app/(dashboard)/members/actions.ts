@@ -60,6 +60,7 @@ export async function createMember(formData: FormData) {
   await queueMessage({
     organizationId: membership.organization.id,
     type: "welcome",
+    automatic: true,
     phone: clean(formData, "phone"),
     body: templates.welcome(membership.organization.name, fullName),
   });

@@ -3,6 +3,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
+import { MessageSettings } from "@/components/message-settings";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
 import { providerStatus } from "@/lib/messaging";
@@ -71,6 +72,21 @@ export default async function MessagesPage({
     .order("created_at", { ascending: false })
     .limit(100);
 
+  const { data: org } = await supabase
+    .from("organizations")
+    .select(
+      "sms_sender_id, sms_welcome_enabled, sms_thanks_enabled, sms_birthday_enabled"
+    )
+    .eq("id", membership.organization.id)
+    .maybeSingle();
+
+  const settings = (org ?? {}) as {
+    sms_sender_id?: string | null;
+    sms_welcome_enabled?: boolean;
+    sms_thanks_enabled?: boolean;
+    sms_birthday_enabled?: boolean;
+  };
+
   const rows = (data ?? []) as Row[];
   const unsent = rows.filter((r) => r.status !== "sent").length;
 
@@ -80,9 +96,18 @@ export default async function MessagesPage({
         <h1 className="text-2xl font-bold text-foreground">Messages</h1>
         <p className="text-sm text-muted-foreground">
           Texts sent to members, a welcome when they join, a receipt when they
-          give, and a gentle check-in when they haven&rsquo;t been seen.
+          give, a birthday greeting on the day, and a gentle check-in when
+          they haven&rsquo;t been seen.
         </p>
       </div>
+
+      <MessageSettings
+        senderId={settings.sms_sender_id ?? null}
+        welcome={Boolean(settings.sms_welcome_enabled)}
+        thanks={Boolean(settings.sms_thanks_enabled)}
+        birthday={Boolean(settings.sms_birthday_enabled)}
+        canManage={can(membership.role, "org.manage")}
+      />
 
       {error && (
         <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">

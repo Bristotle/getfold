@@ -81,6 +81,7 @@ export async function recordContribution(formData: FormData) {
         organizationId: membership.organization.id,
         memberId,
         type: "contribution_receipt",
+        automatic: true,
         phone: m.phone,
         body: templates.contributionReceipt(
           membership.organization.name,
