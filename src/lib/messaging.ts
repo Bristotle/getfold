@@ -61,7 +61,7 @@ export function toE164(raw: string | null | undefined): string | null {
   return null;
 }
 
-const cedis = (n: number) =>
+export const cedis = (n: number) =>
   new Intl.NumberFormat("en-GH", {
     style: "currency",
     currency: "GHS",
@@ -189,4 +189,65 @@ export async function deliver(
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Church written messages
+// ---------------------------------------------------------------------------
+
+/**
+ * The placeholders a church can use, and what each one becomes.
+ *
+ * Deliberately few and obvious. Somebody writing a birthday greeting on a
+ * phone should not have to learn a syntax, and every extra placeholder is
+ * another way for a message to go out reading "Hello {nmae}".
+ */
+export const PLACEHOLDERS = {
+  name: "the member's name",
+  church: "your church's name",
+  amount: "the amount given, in cedis, for the thank you only",
+  type: "tithe, offering or pledge, for the thank you only",
+} as const;
+
+/** The wording used until a church writes its own. */
+export const DEFAULT_TEMPLATES = {
+  welcome:
+    "Akwaaba {name}! You have been added to the register at {church}. We are glad to have you with us.",
+  birthday:
+    "Happy birthday {name}! Everyone at {church} is thanking God for your life today. May this year bring you joy and good health.",
+  thanks:
+    "{church}: received your {type} of {amount}. Thank you, {name}. God bless you.",
+} as const;
+
+/**
+ * Fills a template in.
+ *
+ * Any placeholder we do not have a value for is removed rather than left
+ * on the page, because "{amount}" arriving on a member's phone is worse
+ * than a slightly clipped sentence. Double spaces left behind by that are
+ * tidied for the same reason.
+ */
+export function renderTemplate(
+  template: string,
+  values: { name?: string; church?: string; amount?: string; type?: string }
+): string {
+  return template
+    .replace(/\{name\}/g, values.name ?? "")
+    .replace(/\{church\}/g, values.church ?? "")
+    .replace(/\{amount\}/g, values.amount ?? "")
+    .replace(/\{type\}/g, values.type ?? "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/**
+ * How many 160 character messages this will actually cost to send.
+ *
+ * Worth showing a church while they type. A sentence that feels short can
+ * tip into a second segment and quietly double the bill for every message
+ * they ever send.
+ */
+export function smsSegments(text: string): number {
+  if (text.length === 0) return 0;
+  return Math.ceil(text.length / 160);
 }

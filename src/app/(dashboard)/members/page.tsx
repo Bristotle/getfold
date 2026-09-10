@@ -45,6 +45,15 @@ export default async function MembersPage({
   const showArchived = show === "archived";
 
   const supabase = await createClient();
+
+  // Only offer the welcome tick when the church has switched welcomes on.
+  // A checkbox for something that cannot happen is just confusing.
+  const { data: msgOrg } = await supabase
+    .from("organizations")
+    .select("sms_welcome_enabled")
+    .eq("id", membership.organization.id)
+    .maybeSingle<{ sms_welcome_enabled: boolean }>();
+  const welcomeOn = Boolean(msgOrg?.sms_welcome_enabled);
   const { data, error: loadError } = await supabase
     .from("members")
     .select(
@@ -175,6 +184,23 @@ export default async function MembersPage({
               <input name="address" className={inputClass} />
             </label>
             <div className="flex items-end">
+              {welcomeOn && (
+                <label className="mb-3 flex cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-surface-soft p-3">
+                  <input
+                    type="checkbox"
+                    name="sendWelcome"
+                    defaultChecked
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+                  />
+                  <span className="text-xs leading-relaxed text-foreground/85">
+                    <span className="font-semibold">Send them the welcome text</span>
+                    <span className="mt-0.5 block text-muted-foreground">
+                      Untick for somebody who has been a member for years and
+                      is only now being recorded.
+                    </span>
+                  </span>
+                </label>
+              )}
               <SubmitButton className="w-full">
                 Add member
               </SubmitButton>

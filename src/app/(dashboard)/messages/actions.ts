@@ -195,6 +195,19 @@ export async function updateMessageSettings(formData: FormData) {
     redirect(`/messages?error=${encodeURIComponent(senderError.message)}`);
   }
 
+  // The church's own wording. Blank means "use ours", which is why these
+  // are cleared to null rather than stored empty: improving the defaults
+  // later should still reach every church that never wrote their own.
+  const { error: tplError } = await supabase.rpc("set_message_templates", {
+    org_id: membership.organization.id,
+    t_welcome: String(formData.get("tplWelcome") ?? "").trim() || null,
+    t_birthday: String(formData.get("tplBirthday") ?? "").trim() || null,
+    t_thanks: String(formData.get("tplThanks") ?? "").trim() || null,
+  });
+  if (tplError) {
+    redirect(`/messages?error=${encodeURIComponent(tplError.message)}`);
+  }
+
   const { error } = await supabase
     .from("organizations")
     .update({

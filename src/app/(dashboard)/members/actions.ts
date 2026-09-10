@@ -8,7 +8,7 @@ import { ownsOptionalRow } from "@/lib/owns";
 import { parseMembersCsv } from "@/lib/csv";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
-import { templates } from "@/lib/messaging";
+import { renderTemplate, DEFAULT_TEMPLATES } from "@/lib/messaging";
 
 const GENDERS = ["male", "female"];
 
@@ -55,15 +55,37 @@ export async function createMember(formData: FormData) {
     redirect(`/members?error=${encodeURIComponent(error.message)}`);
   }
 
+  /*
+    Only when the person adding them says so.
+
+    A church adds members for all sorts of reasons: a new convert on
+    Sunday, but also a thirty year member somebody finally got round to
+    recording, or a correction after a bad import. Welcoming the second two
+    to a church they have belonged to for decades is embarrassing, so the
+    form asks rather than assuming.
+  */
+  const sendWelcome = formData.get("sendWelcome") === "on";
+
+  const { data: orgTemplates } = sendWelcome
+    ? await supabase
+        .from("organizations")
+        .select("sms_template_welcome")
+        .eq("id", membership.organization.id)
+        .maybeSingle<{ sms_template_welcome: string | null }>()
+    : { data: null };
+
   // Best-effort: a failure to queue the welcome must not undo adding the
   // member, so queueMessage swallows its own errors.
-  await queueMessage({
+  if (sendWelcome) await queueMessage({
     organizationId: membership.organization.id,
     type: "welcome",
     automatic: true,
     sendNow: true,
     phone: clean(formData, "phone"),
-    body: templates.welcome(membership.organization.name, fullName),
+    body: renderTemplate(
+      orgTemplates?.sms_template_welcome ?? DEFAULT_TEMPLATES.welcome,
+      { name: fullName, church: membership.organization.name }
+    ),
   });
 
   revalidatePath("/members");

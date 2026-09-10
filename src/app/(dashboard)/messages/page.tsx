@@ -75,7 +75,7 @@ export default async function MessagesPage({
   const { data: org } = await supabase
     .from("organizations")
     .select(
-      "sms_sender_id, sms_welcome_enabled, sms_thanks_enabled, sms_birthday_enabled"
+      "sms_sender_id, sms_welcome_enabled, sms_thanks_enabled, sms_birthday_enabled, sms_template_welcome, sms_template_thanks, sms_template_birthday"
     )
     .eq("id", membership.organization.id)
     .maybeSingle();
@@ -85,6 +85,9 @@ export default async function MessagesPage({
     sms_welcome_enabled?: boolean;
     sms_thanks_enabled?: boolean;
     sms_birthday_enabled?: boolean;
+    sms_template_welcome?: string | null;
+    sms_template_thanks?: string | null;
+    sms_template_birthday?: string | null;
   };
 
   const rows = (data ?? []) as Row[];
@@ -106,6 +109,11 @@ export default async function MessagesPage({
         welcome={Boolean(settings.sms_welcome_enabled)}
         thanks={Boolean(settings.sms_thanks_enabled)}
         birthday={Boolean(settings.sms_birthday_enabled)}
+        templates={{
+          welcome: settings.sms_template_welcome ?? null,
+          thanks: settings.sms_template_thanks ?? null,
+          birthday: settings.sms_template_birthday ?? null,
+        }}
         canManage={can(membership.role, "org.manage")}
       />
 

@@ -1,6 +1,7 @@
 import { Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/field";
+import { DEFAULT_TEMPLATES } from "@/lib/messaging";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { updateMessageSettings } from "@/app/(dashboard)/messages/actions";
 
@@ -15,18 +16,27 @@ import { updateMessageSettings } from "@/app/(dashboard)/messages/actions";
 const AUTOMATIONS = [
   {
     name: "welcome" as const,
+    field: "tplWelcome",
     title: "Welcome a new member",
-    when: "Sent when somebody is added to the register, if they have a phone number.",
+    when: "Sent the moment somebody is added to the register, if they have a phone number and you tick the box on the form.",
+    placeholders: "{name} {church}",
+    fallback: DEFAULT_TEMPLATES.welcome,
   },
   {
     name: "thanks" as const,
+    field: "tplThanks",
     title: "Thank someone for a tithe or offering",
-    when: "Sent when a gift is recorded against a member who has a phone number.",
+    when: "Sent the moment a gift is recorded against a member who has a phone number.",
+    placeholders: "{name} {church} {amount} {type}",
+    fallback: DEFAULT_TEMPLATES.thanks,
   },
   {
     name: "birthday" as const,
+    field: "tplBirthday",
     title: "Wish a member happy birthday",
-    when: "Sent on the morning of their birthday, from the date of birth on the register. Once a year, never twice.",
+    when: "Sent at seven in the morning on their birthday, from the date of birth on the register. Once a year, never twice.",
+    placeholders: "{name} {church}",
+    fallback: DEFAULT_TEMPLATES.birthday,
   },
 ];
 
@@ -35,12 +45,14 @@ export function MessageSettings({
   welcome,
   thanks,
   birthday,
+  templates,
   canManage,
 }: {
   senderId: string | null;
   welcome: boolean;
   thanks: boolean;
   birthday: boolean;
+  templates: { welcome: string | null; thanks: string | null; birthday: string | null };
   canManage: boolean;
 }) {
   const current = { welcome, thanks, birthday };
@@ -95,8 +107,11 @@ export function MessageSettings({
 
         <ul className="m-0 flex list-none flex-col gap-3 border-t border-border p-0 pt-5">
           {AUTOMATIONS.map((a) => (
-            <li key={a.name}>
-              <label className="flex cursor-pointer gap-3 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-primary/30">
+            <li
+              key={a.name}
+              className="rounded-lg border border-border bg-surface p-4"
+            >
+              <label className="flex cursor-pointer gap-3">
                 <input
                   type="checkbox"
                   name={a.name}
@@ -112,6 +127,32 @@ export function MessageSettings({
                   </span>
                 </span>
               </label>
+
+              <div className="mt-3.5 border-t border-border pt-3.5">
+                <label
+                  htmlFor={a.field}
+                  className="text-xs font-medium text-foreground"
+                >
+                  What it says
+                </label>
+                <textarea
+                  id={a.field}
+                  name={a.field}
+                  rows={3}
+                  maxLength={320}
+                  defaultValue={templates[a.name] ?? ""}
+                  placeholder={a.fallback}
+                  className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
+                />
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  Leave it empty to use the wording shown. Use{" "}
+                  <code className="rounded bg-surface-soft px-1 font-numeric">
+                    {a.placeholders}
+                  </code>{" "}
+                  and we fill them in. Keep it under 160 characters or it
+                  counts as two messages.
+                </p>
+              </div>
             </li>
           ))}
         </ul>

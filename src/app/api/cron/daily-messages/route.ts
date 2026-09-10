@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { deliver, toE164, templates } from "@/lib/messaging";
+import { deliver, toE164, renderTemplate, DEFAULT_TEMPLATES } from "@/lib/messaging";
 
 /**
  * The daily message run.
@@ -28,6 +28,7 @@ type Birthday = {
   member_name: string;
   phone: string;
   sender_id: string | null;
+  template: string | null;
 };
 
 export async function GET(request: Request) {
@@ -59,7 +60,11 @@ export async function GET(request: Request) {
       type: "birthday",
       channel: "sms",
       recipient: to,
-      body: templates.birthday(b.organization_name, b.member_name),
+      // The church's own wording where it has written one.
+      body: renderTemplate(b.template ?? DEFAULT_TEMPLATES.birthday, {
+        name: b.member_name,
+        church: b.organization_name,
+      }),
       status: "queued",
     });
     if (!error) queued++;

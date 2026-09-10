@@ -7,7 +7,7 @@ import { getMembership } from "@/lib/org";
 import { ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
-import { templates, toE164 } from "@/lib/messaging";
+import { renderTemplate, DEFAULT_TEMPLATES, cedis, toE164 } from "@/lib/messaging";
 import { CONTRIBUTION_TYPES, PAYMENT_METHODS, values } from "@/lib/constants";
 
 export async function recordContribution(formData: FormData) {
@@ -77,6 +77,13 @@ export async function recordContribution(formData: FormData) {
       .maybeSingle();
 
     if (m && toE164(m.phone)) {
+      const { data: tpl } = await supabase
+        .from("organizations")
+        .select("sms_template_thanks")
+        .eq("id", membership.organization.id)
+        .maybeSingle<{ sms_template_thanks: string | null }>();
+      const orgTemplate = tpl?.sms_template_thanks ?? null;
+
       await queueMessage({
         organizationId: membership.organization.id,
         memberId,
@@ -84,11 +91,14 @@ export async function recordContribution(formData: FormData) {
         automatic: true,
         sendNow: true,
         phone: m.phone,
-        body: templates.contributionReceipt(
-          membership.organization.name,
-          m.full_name,
-          amount,
-          type
+        body: renderTemplate(
+          orgTemplate ?? DEFAULT_TEMPLATES.thanks,
+          {
+            name: m.full_name,
+            church: membership.organization.name,
+            amount: cedis(amount),
+            type,
+          }
         ),
       });
     }
