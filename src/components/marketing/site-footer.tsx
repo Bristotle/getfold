@@ -119,18 +119,11 @@ export function SiteFooter() {
               </p>
 
               {/*
-                No number on the face of it. /whatsapp redirects on the
-                server, so the handset never appears in the HTML.
+                No WhatsApp button here. The floating one sits in the
+                bottom right of every page, so a second one in the footer
+                was the same offer twice, and two ways to do one thing is
+                how a page starts feeling cluttered.
               */}
-              <a
-                href="/whatsapp"
-                className="mt-6 inline-flex min-h-11 items-center gap-2.5 rounded-lg border border-white/25 px-4 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-              >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15h-.01c-1.5 0-2.98-.4-4.27-1.17l-.31-.18-3.17.83.85-3.09-.2-.32a8.22 8.22 0 0 1-1.26-4.39c0-4.54 3.7-8.23 8.24-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.1 8.23z" />
-                </svg>
-                <span>Message us on WhatsApp</span>
-              </a>
             </div>
 
             {COLUMNS.map((col) => (
