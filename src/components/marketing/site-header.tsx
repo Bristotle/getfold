@@ -25,8 +25,34 @@ const LINKS = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
+/**
+ * The verse the product is named after, as a thin bar above the header.
+ *
+ * Kept to one line and quiet on purpose. It is there to say what Fold is
+ * for before anything else is read, not to compete with the hero. On a
+ * phone the reference sits under the verse rather than beside it, so the
+ * line never wraps mid-sentence.
+ */
+function VerseBar() {
+  return (
+    <div className="bg-primary text-primary-foreground">
+      <p className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-x-3 gap-y-0.5 px-4 py-2 text-center sm:flex-row sm:px-6">
+        <span className="font-serif text-[13px] italic leading-snug text-primary-foreground/95 sm:text-sm">
+          &ldquo;Know well the condition of your flocks, and give attention to
+          your herds.&rdquo;
+        </span>
+        <span className="font-numeric text-[10px] font-semibold uppercase tracking-[0.16em] text-primary-foreground/70 sm:text-[11px]">
+          Proverbs 27:23
+        </span>
+      </p>
+    </div>
+  );
+}
+
 export function SiteHeader() {
   return (
+    <>
+    <VerseBar />
     <header className="border-b border-border bg-surface">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* ---------- the bar ---------- */}
@@ -120,5 +146,6 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+    </>
   );
 }
