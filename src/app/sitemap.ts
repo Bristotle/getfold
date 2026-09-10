@@ -25,6 +25,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     })),
     {
+      // A price is among the highest intent searches there is.
+      url: `${BASE}/pricing`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    },
+    {
       url: `${BASE}/features`,
       lastModified: now,
       changeFrequency: "monthly",

@@ -21,14 +21,7 @@ const LINKS = [
   { href: "/about", label: "About" },
   { href: "/getting-started", label: "Getting started" },
   { href: "/help", label: "Help" },
-  /*
-    Pricing goes to Contact rather than to a page of figures. Every
-    competitor that sells self serve publishes a price, and a nav with no
-    Pricing item at all reads as "too expensive to say". This keeps the
-    signpost while the numbers are still being settled, which is what
-    Asoriba does. Point it at a real pricing page the moment there is one.
-  */
-  { href: "/contact", label: "Pricing" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
 ] as const;
 

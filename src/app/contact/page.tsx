@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Mail, Phone, Clock, MessageSquare } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -162,10 +163,16 @@ export default async function ContactPage({
                   </h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                     Every church starts with 30 days free, with no card and
-                    nothing to cancel. After that we quote per church, in
-                    cedis, based on your membership. Tell us roughly how many
-                    members you have and we will send you a figure the same
-                    day.
+                    nothing to cancel. After that it is from GHS 149 a month
+                    for the whole church, billed quarterly.
+                  </p>
+                  <p className="mt-3">
+                    <Link
+                      href="/pricing"
+                      className="rounded text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    >
+                      See the bands
+                    </Link>
                   </p>
                 </div>
 

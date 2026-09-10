@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 
-const PAGES = ["/", "/features", "/compare", "/about", "/getting-started",
+const PAGES = ["/", "/pricing", "/features", "/compare", "/about", "/getting-started",
   "/blog", "/help", "/help/members/import-from-excel", "/contact", "/join", "/join/sales-partner",
   "/blog/what-mobile-money-costs-a-church"];
 const WIDTHS = [320, 360, 390, 414, 768];

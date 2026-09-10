@@ -28,7 +28,7 @@ const COLUMNS = [
     links: [
       { label: "Features", href: "/features" },
       { label: "Compare", href: "/compare" },
-      { label: "Pricing", href: "/contact" },
+      { label: "Pricing", href: "/pricing" },
       { label: "Getting started", href: "/getting-started" },
       { label: "Help centre", href: "/help" },
       { label: "Log in", href: "/login" },
