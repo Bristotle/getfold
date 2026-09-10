@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { alertNewEnquiry } from "@/lib/alert";
 
 /**
  * An enquiry from the public site.
@@ -50,6 +51,20 @@ export async function submitEnquiry(formData: FormData) {
       )}#contact`
     );
   }
+
+  /*
+    Tell somebody. The row is already saved, so this is best effort: an
+    alert that fails must not turn into an enquiry that fails, which would
+    lose the very thing we are trying not to miss.
+  */
+  await alertNewEnquiry({
+    name,
+    email,
+    phone: phone || null,
+    church: church || null,
+    message: message || null,
+    source: String(formData.get("source") ?? "homepage"),
+  });
 
   redirect(`/?sent=1#contact`);
 }
