@@ -13,9 +13,14 @@ import { SectionBg, HeroWash, CtaBand, PhotoBg } from "@/components/marketing/se
 import { Contact } from "@/components/marketing/contact";
 
 /*
-  A TEST. The congregation photograph as the hero background, full rather
-  than the blurred wash, with the hero flipped to white type on the same
-  measured scrim the CTA bands use.
+  The congregation photograph as the hero background, full rather than the
+  blurred wash, with the hero flipped to white type on the same measured
+  scrim the CTA bands use. Kept after a look at it live; the photograph
+  itself may be swapped for a better one later, and that needs no change
+  here.
+
+  The page uses the photograph twice, here and on the closing band, as
+  bookends. The enquiry band between them is plain purple on purpose.
 
   Flip this to false to go back to the wash and the aurora. Nothing else
   needs to change; every colour below branches on it.
