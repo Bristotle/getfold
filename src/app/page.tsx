@@ -9,8 +9,18 @@ import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
 import { Proof } from "@/components/marketing/proof";
 import { CongregationBand } from "@/components/marketing/congregation-band";
-import { SectionBg, HeroWash, CtaBand } from "@/components/marketing/section-bg";
+import { SectionBg, HeroWash, CtaBand, PhotoBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
+
+/*
+  A TEST. The congregation photograph as the hero background, full rather
+  than the blurred wash, with the hero flipped to white type on the same
+  measured scrim the CTA bands use.
+
+  Flip this to false to go back to the wash and the aurora. Nothing else
+  needs to change; every colour below branches on it.
+*/
+const HERO_PHOTO = true;
 
 export const metadata: Metadata = {
   title: "Fold, church software that speaks your denomination's language",
@@ -74,41 +84,90 @@ export default async function LandingPage({
         single wide descendant makes its track refuse to shrink and the
         section overflows the viewport instead of wrapping.
       */}
-      <section className="relative isolate overflow-hidden">
-        <HeroWash />
-        <SectionBg variant="aurora" />
+      <section
+        className={`relative isolate overflow-hidden ${
+          HERO_PHOTO ? "bg-primary text-primary-foreground" : ""
+        }`}
+      >
+        {HERO_PHOTO ? (
+          <PhotoBg tone="dark" fallback="mesh" />
+        ) : (
+          <>
+            <HeroWash />
+            <SectionBg variant="aurora" />
+          </>
+        )}
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-24">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          <p
+            className={`text-xs font-semibold uppercase tracking-[0.14em] ${
+              HERO_PHOTO ? "text-primary-foreground/80" : "text-primary"
+            }`}
+          >
             For societies, circuits and congregations across Ghana
           </p>
-          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
+          <h1
+            className={`mt-4 text-balance text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl ${
+              HERO_PHOTO ? "text-primary-foreground" : "text-foreground"
+            }`}
+          >
             Church software that speaks your denomination&apos;s language.
           </h1>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
+          <p
+            className={`mt-5 max-w-xl text-lg leading-relaxed ${
+              HERO_PHOTO ? "text-primary-foreground/85" : "text-muted-foreground"
+            }`}
+          >
             Members, Bible classes, attendance and giving recorded in your own
             words, and the statistical return your circuit asks for already
             filled in. No spreadsheet, and no rebuilding it every quarter.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link href="/signup">
-              <Button size="lg">Start your 30 day free trial</Button>
-            </Link>
-            <span className="text-sm text-muted-foreground">
+            {HERO_PHOTO ? (
+              <Link
+                href="/signup"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary-foreground px-6 text-base font-semibold text-primary transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
+              >
+                Start your 30 day free trial
+              </Link>
+            ) : (
+              <Link href="/signup">
+                <Button size="lg">Start your 30 day free trial</Button>
+              </Link>
+            )}
+            <span
+              className={`text-sm ${
+                HERO_PHOTO ? "text-primary-foreground/75" : "text-muted-foreground"
+              }`}
+            >
               No credit card. No commitment.
             </span>
           </div>
 
-          <dl className="mt-10 grid max-w-lg grid-cols-1 gap-x-6 gap-y-4 border-t border-border pt-6 sm:grid-cols-3">
+          <dl
+            className={`mt-10 grid max-w-lg grid-cols-1 gap-x-6 gap-y-4 border-t pt-6 sm:grid-cols-3 ${
+              HERO_PHOTO ? "border-primary-foreground/20" : "border-border"
+            }`}
+          >
             {[
               ["Your structure", "Society, circuit or diocese"],
               ["Your return", "Already filled in"],
               ["Cash first", "Mobile money optional"],
             ].map(([term, desc]) => (
               <div key={term}>
-                <dt className="text-sm font-semibold text-foreground">{term}</dt>
-                <dd className="mt-0.5 text-xs leading-snug text-muted-foreground">
+                <dt
+                  className={`text-sm font-semibold ${
+                    HERO_PHOTO ? "text-primary-foreground" : "text-foreground"
+                  }`}
+                >
+                  {term}
+                </dt>
+                <dd
+                  className={`mt-0.5 text-xs leading-snug ${
+                    HERO_PHOTO ? "text-primary-foreground/70" : "text-muted-foreground"
+                  }`}
+                >
                   {desc}
                 </dd>
               </div>
@@ -118,7 +177,11 @@ export default async function LandingPage({
 
           <div className="min-w-0 lg:pl-4">
             <DashboardPreview />
-            <p className="mt-3 text-center text-xs text-muted-foreground">
+            <p
+              className={`mt-3 text-center text-xs ${
+                HERO_PHOTO ? "text-primary-foreground/70" : "text-muted-foreground"
+              }`}
+            >
               Example figures, shown to illustrate the dashboard.
             </p>
           </div>
