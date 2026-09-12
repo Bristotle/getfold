@@ -48,8 +48,19 @@ const { data: org, error: oErr } = await as.rpc("create_organization", {
   org_type: "local_church", org_denomination: "Methodist",
 });
 if (oErr) throw oErr;
+/*
+  Automations stay OFF on a seeded church, and this is not optional.
+
+  The seeded phone numbers look like real MTN numbers because the register
+  has to look real, and with birthdays switched on the daily job would text
+  a stranger in Kumasi "happy birthday from Ebenezer" at seven in the
+  morning. A demo church exists to be looked at, not to send anything. Turn
+  them on by hand for a demo that needs to show a text, with your own
+  number on the member.
+*/
 await admin.from("organizations").update({
-  sms_sender_id: "EBENEZER", sms_birthday_enabled: true, sms_welcome_enabled: true, sms_thanks_enabled: true,
+  sms_sender_id: "EBENEZER",
+  sms_birthday_enabled: false, sms_welcome_enabled: false, sms_thanks_enabled: false,
   heard_about_us: "another_church", heard_about_detail: "Wesley Society, Tema",
 }).eq("id", org);
 console.log("  church:", org);
