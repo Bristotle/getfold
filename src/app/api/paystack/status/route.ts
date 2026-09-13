@@ -29,24 +29,40 @@ export async function GET(request: Request) {
       ? "test"
       : "unrecognised";
 
-  // /integration is a read only call that tells us whether the key is
-  // accepted and what business it belongs to.
+  /*
+    /balance, not /integration.
+
+    The first version of this asked /integration to name the business, and
+    reported a rejected key when it failed. That was wrong: /integration
+    returns 500 "Error occurred" for every key, test and live alike, while
+    /balance, /bank and /subaccount all answer normally. It made a working
+    key look broken and sent us hunting a problem that was not there.
+
+    /balance is the right probe because it is read only, it requires a
+    valid key, and on a live key it reports the real settlement balance,
+    which is proof the account is actually trading rather than merely
+    holding credentials.
+  */
   let accepted = false;
-  let business: string | null = null;
+  let balances: { currency: string; amount: number }[] = [];
   let message: string | null = null;
   try {
-    const res = await fetch("https://api.paystack.co/integration", {
+    const res = await fetch("https://api.paystack.co/balance", {
       headers: { Authorization: `Bearer ${key}` },
       cache: "no-store",
     });
     const json = (await res.json()) as {
       status?: boolean;
       message?: string;
-      data?: { business_name?: string };
+      data?: { currency: string; balance: number }[];
     };
     accepted = res.ok && Boolean(json.status);
-    business = json.data?.business_name ?? null;
     message = json.message ?? null;
+    balances = (json.data ?? []).map((b) => ({
+      currency: b.currency,
+      // Pesewas to cedis, so the number reads the way a treasurer expects.
+      amount: b.balance / 100,
+    }));
   } catch (e) {
     message = (e as Error).message;
   }
@@ -55,7 +71,7 @@ export async function GET(request: Request) {
     configured: true,
     mode,
     accepted,
-    business,
+    balances,
     message,
     alertEmailSet: Boolean(process.env.ALERT_EMAIL),
     resendKeySet: Boolean(process.env.RESEND_API_KEY),
