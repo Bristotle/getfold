@@ -88,6 +88,33 @@ export async function collectByMomo(formData: FormData) {
     );
   }
 
+  // Where does this money land?
+  //
+  // Refuse outright rather than charging without a destination. A charge
+  // with no subaccount settles into FOLD's account, which would mean
+  // holding a church's tithes: a trust problem, and Bank of Ghana territory
+  // we have no licence for. Better to send the pastor to set it up than to
+  // take a member's money into the wrong account.
+  //
+  // This has to happen BEFORE the payment row is written. It used to run
+  // after, so a church with no settlement account was left with a row
+  // sitting at "Waiting" that Paystack had never been told about, and
+  // Check status answered "Transaction reference not found" forever. A
+  // charge we decided not to send is not a pending payment.
+  const { data: settlement } = await supabase
+    .from("organizations")
+    .select("paystack_subaccount_code")
+    .eq("id", membership.organization.id)
+    .maybeSingle();
+
+  if (!settlement?.paystack_subaccount_code) {
+    redirect(
+      `/payouts?error=${encodeURIComponent(
+        "Set where your giving should be paid before taking mobile money. Cash giving needs nothing set up."
+      )}`
+    );
+  }
+
   const reference = newReference(membership.organization.slug);
 
   // The payment row is written BEFORE calling Paystack. If the request
@@ -103,27 +130,6 @@ export async function collectByMomo(formData: FormData) {
     type,
     status: "pending",
   });
-
-  // Where does this money land?
-  //
-  // Refuse outright rather than charging without a destination. A charge
-  // with no subaccount settles into FOLD's account, which would mean
-  // holding a church's tithes: a trust problem, and Bank of Ghana territory
-  // we have no licence for. Better to send the pastor to set it up than to
-  // take a member's money into the wrong account.
-  const { data: settlement } = await supabase
-    .from("organizations")
-    .select("paystack_subaccount_code")
-    .eq("id", membership.organization.id)
-    .maybeSingle();
-
-  if (!settlement?.paystack_subaccount_code) {
-    redirect(
-      `/payouts?error=${encodeURIComponent(
-        "Set where your giving should be paid before taking mobile money. Cash giving needs nothing set up."
-      )}`
-    );
-  }
 
   if (insertError) {
     redirect(`/contributions?error=${encodeURIComponent(insertError.message)}`);

@@ -67,6 +67,91 @@ export async function GET(request: Request) {
     message = (e as Error).message;
   }
 
+  /*
+    ?reference= and ?recent=1
+
+    A payment can sit at "Waiting" in the dashboard while Paystack has never
+    heard of it, and from the outside the two cases look identical: a charge
+    that was never sent, and a charge sent under a different key. The only
+    way to tell them apart is to ask the deployment's own key, because that
+    is the key the charge would have used.
+
+    /transaction?perPage=n lists what this key has actually seen, which
+    answers "did anything at all reach Paystack" even when a single
+    reference lookup comes back not found.
+  */
+  const url = new URL(request.url);
+  const reference = url.searchParams.get("reference");
+
+  let lookup: unknown = null;
+  if (reference) {
+    try {
+      const res = await fetch(
+        `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
+        { headers: { Authorization: `Bearer ${key}` }, cache: "no-store" }
+      );
+      const json = (await res.json()) as {
+        message?: string;
+        data?: {
+          status?: string;
+          amount?: number;
+          gateway_response?: string;
+          channel?: string;
+          created_at?: string;
+          subaccount?: { subaccount_code?: string };
+        };
+      };
+      lookup = {
+        http: res.status,
+        message: json.message ?? null,
+        status: json.data?.status ?? null,
+        amountCedis: json.data?.amount ? json.data.amount / 100 : null,
+        gatewayResponse: json.data?.gateway_response ?? null,
+        channel: json.data?.channel ?? null,
+        createdAt: json.data?.created_at ?? null,
+        subaccount: json.data?.subaccount?.subaccount_code ?? null,
+      };
+    } catch (e) {
+      lookup = { error: (e as Error).message };
+    }
+  }
+
+  let recent: unknown = null;
+  if (url.searchParams.get("recent")) {
+    try {
+      const res = await fetch("https://api.paystack.co/transaction?perPage=5", {
+        headers: { Authorization: `Bearer ${key}` },
+        cache: "no-store",
+      });
+      const json = (await res.json()) as {
+        message?: string;
+        data?: {
+          reference?: string;
+          status?: string;
+          amount?: number;
+          channel?: string;
+          gateway_response?: string;
+          created_at?: string;
+        }[];
+      };
+      recent = {
+        http: res.status,
+        message: json.message ?? null,
+        count: json.data?.length ?? 0,
+        transactions: (json.data ?? []).map((t) => ({
+          reference: t.reference,
+          status: t.status,
+          amountCedis: t.amount ? t.amount / 100 : null,
+          channel: t.channel,
+          gatewayResponse: t.gateway_response,
+          createdAt: t.created_at,
+        })),
+      };
+    } catch (e) {
+      recent = { error: (e as Error).message };
+    }
+  }
+
   return NextResponse.json({
     configured: true,
     mode,
@@ -75,5 +160,7 @@ export async function GET(request: Request) {
     message,
     alertEmailSet: Boolean(process.env.ALERT_EMAIL),
     resendKeySet: Boolean(process.env.RESEND_API_KEY),
+    ...(lookup ? { lookup } : {}),
+    ...(recent ? { recent } : {}),
   });
 }
