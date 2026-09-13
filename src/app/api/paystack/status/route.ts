@@ -83,6 +83,53 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const reference = url.searchParams.get("reference");
 
+  /*
+    ?probe=1
+
+    /balance answering "Invalid key" while /transaction answers normally on
+    the SAME key is not something a single endpoint can explain, so this
+    asks several and shows the answers side by side.
+
+    It also describes the key without disclosing it. A key pasted with a
+    trailing newline, or truncated by a copy that missed the end, fails in
+    exactly this confusing way, and the length plus a hash prefix identifies
+    which key is deployed without putting the key anywhere it could be read.
+  */
+  let probe: unknown = null;
+  if (url.searchParams.get("probe")) {
+    const endpoints = [
+      ["balance", "https://api.paystack.co/balance"],
+      ["transaction", "https://api.paystack.co/transaction?perPage=1"],
+      ["subaccount", "https://api.paystack.co/subaccount?perPage=5"],
+      ["bank", "https://api.paystack.co/bank?currency=GHS&perPage=1"],
+    ] as const;
+
+    const results: Record<string, { http: number; message: string | null }> = {};
+    for (const [name, endpoint] of endpoints) {
+      try {
+        const res = await fetch(endpoint, {
+          headers: { Authorization: `Bearer ${key}` },
+          cache: "no-store",
+        });
+        const json = (await res.json()) as { message?: string };
+        results[name] = { http: res.status, message: json.message ?? null };
+      } catch (e) {
+        results[name] = { http: 0, message: (e as Error).message };
+      }
+    }
+
+    const { createHash } = await import("node:crypto");
+    probe = {
+      endpoints: results,
+      key: {
+        length: key.length,
+        startsWith: key.slice(0, 8),
+        fingerprint: createHash("sha256").update(key).digest("hex").slice(0, 8),
+        hasSurroundingWhitespace: key !== key.trim(),
+      },
+    };
+  }
+
   let lookup: unknown = null;
   if (reference) {
     try {
@@ -162,5 +209,6 @@ export async function GET(request: Request) {
     resendKeySet: Boolean(process.env.RESEND_API_KEY),
     ...(lookup ? { lookup } : {}),
     ...(recent ? { recent } : {}),
+    ...(probe ? { probe } : {}),
   });
 }
