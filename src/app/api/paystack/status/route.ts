@@ -30,41 +30,62 @@ export async function GET(request: Request) {
       : "unrecognised";
 
   /*
-    /balance, not /integration.
+    /transaction, not /balance, and not /integration.
 
-    The first version of this asked /integration to name the business, and
-    reported a rejected key when it failed. That was wrong: /integration
-    returns 500 "Error occurred" for every key, test and live alike, while
-    /balance, /bank and /subaccount all answer normally. It made a working
-    key look broken and sent us hunting a problem that was not there.
+    This probe has now been wrong twice, both times by picking an endpoint
+    that fails for reasons of its own and reading that as a rejected key.
 
-    /balance is the right probe because it is read only, it requires a
-    valid key, and on a live key it reports the real settlement balance,
-    which is proof the account is actually trading rather than merely
-    holding credentials.
+    /integration returns 500 for every key, test and live alike. /balance
+    answered normally one hour and 401 "Invalid key" the next on a key that
+    was demonstrably working, because a Paystack account that has not
+    finished activation has no balance to report.
+
+    /transaction is the right probe, and it is the only one tested rather
+    than assumed. A deliberately invalid key returns 401 "Invalid key"; the
+    deployed key returns 200 "Transactions retrieved". That difference is
+    what makes it evidence. /bank proves nothing either way, it answers 200
+    for any string at all because it needs no authentication.
+
+    The lesson worth keeping: a probe is only a probe if a bad key fails it.
+    Check that before trusting what it says.
   */
   let accepted = false;
-  let balances: { currency: string; amount: number }[] = [];
   let message: string | null = null;
+  try {
+    const res = await fetch("https://api.paystack.co/transaction?perPage=1", {
+      headers: { Authorization: `Bearer ${key}` },
+      cache: "no-store",
+    });
+    const json = (await res.json()) as { status?: boolean; message?: string };
+    accepted = res.ok && Boolean(json.status);
+    message = json.message ?? null;
+  } catch (e) {
+    message = (e as Error).message;
+  }
+
+  /*
+    The balance is reported separately and never decides whether the key is
+    accepted, because a live account awaiting activation has none.
+  */
+  let balances: { currency: string; amount: number }[] = [];
+  let balanceMessage: string | null = null;
   try {
     const res = await fetch("https://api.paystack.co/balance", {
       headers: { Authorization: `Bearer ${key}` },
       cache: "no-store",
     });
     const json = (await res.json()) as {
-      status?: boolean;
       message?: string;
       data?: { currency: string; balance: number }[];
     };
-    accepted = res.ok && Boolean(json.status);
-    message = json.message ?? null;
+    balanceMessage = json.message ?? null;
     balances = (json.data ?? []).map((b) => ({
       currency: b.currency,
       // Pesewas to cedis, so the number reads the way a treasurer expects.
       amount: b.balance / 100,
     }));
   } catch (e) {
-    message = (e as Error).message;
+    balanceMessage = (e as Error).message;
   }
 
   /*
@@ -204,6 +225,7 @@ export async function GET(request: Request) {
     mode,
     accepted,
     balances,
+    balanceMessage,
     message,
     alertEmailSet: Boolean(process.env.ALERT_EMAIL),
     resendKeySet: Boolean(process.env.RESEND_API_KEY),

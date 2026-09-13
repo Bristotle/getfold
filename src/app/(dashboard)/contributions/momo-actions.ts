@@ -194,9 +194,6 @@ export async function refreshPayment(formData: FormData) {
   if (!reference) redirect(`/contributions?error=${encodeURIComponent("Missing reference.")}`);
 
   const result = await verifyTransaction(reference);
-  if (!result.ok) {
-    redirect(`/contributions?error=${encodeURIComponent(result.error)}`);
-  }
 
   const supabase = await createClient();
   const { data: payment } = await supabase
@@ -208,6 +205,36 @@ export async function refreshPayment(formData: FormData) {
 
   if (!payment) {
     redirect(`/contributions?error=${encodeURIComponent("Payment not found.")}`);
+  }
+
+  if (!result.ok) {
+    /*
+      "Transaction reference not found" is Paystack saying it has no record
+      of this charge, which means we never successfully sent it. Left as
+      raw gateway wording it reads like a fault at Paystack's end and the
+      row sits at "Waiting" forever, so it is settled here instead.
+
+      Anything else is a real gateway error and is shown as it came.
+    */
+    const neverSent = /reference not found/i.test(result.error);
+    if (!neverSent) {
+      redirect(`/contributions?error=${encodeURIComponent(result.error)}`);
+    }
+
+    await supabase
+      .from("payments")
+      .update({
+        status: "failed",
+        gateway_response: "Never reached Paystack, no prompt was sent.",
+      })
+      .eq("id", payment.id);
+
+    revalidatePath("/contributions");
+    redirect(
+      `/contributions?error=${encodeURIComponent(
+        "This prompt was never sent, so nobody was charged. Send it again."
+      )}`
+    );
   }
 
   if (result.status !== "success") {
