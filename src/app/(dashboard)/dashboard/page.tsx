@@ -13,6 +13,8 @@ type Stats = {
   member_count: number;
   week_attendance: number;
   month_tithe: string | number;
+  /** All giving this month, not only tithe. Added in migration 0033. */
+  month_giving: string | number;
   pending_transfers: number;
 };
 
@@ -64,11 +66,14 @@ export default async function DashboardPage() {
   // amount is DECIMAL(12,2); PostgREST serialises it as a string to avoid
   // float rounding, so parse rather than assuming a number.
   const tithe = stats ? Number(stats.month_tithe) : 0;
+  const giving = stats ? Number(stats.month_giving ?? 0) : 0;
   const isEmpty =
     !stats ||
     (stats.member_count === 0 &&
       stats.week_attendance === 0 &&
-      (!showFinance || tithe === 0) &&
+      // Any giving at all means the dashboard has something to say, so an
+      // offering no longer leaves it showing the empty state.
+      (!showFinance || giving === 0) &&
       stats.pending_transfers === 0);
 
   return (
@@ -112,9 +117,21 @@ export default async function DashboardPage() {
           <CardStat>{stats?.week_attendance ?? 0}</CardStat>
         </Card>
         {showFinance && (
+          /*
+            Given this month, everything, with the tithe named underneath.
+
+            This card used to show the tithe alone, so an offering taken on
+            Sunday left the dashboard reading zero and looking broken. The
+            tithe still has to be visible, because that is the figure a
+            circuit asks for by name, but it belongs under the total rather
+            than standing in for it.
+          */
           <Card>
-            <CardLabel>This month&rsquo;s tithe</CardLabel>
-            <CardStat>{cedis.format(tithe)}</CardStat>
+            <CardLabel>Given this month</CardLabel>
+            <CardStat>{cedis.format(giving)}</CardStat>
+            <p className="mt-1 font-numeric text-xs text-muted-foreground">
+              {cedis.format(tithe)} of it tithe
+            </p>
           </Card>
         )}
         <Card>

@@ -12,7 +12,12 @@
  *   node scripts/rls-guard.mjs
  */
 import { readFileSync } from "node:fs";
-import pg from "pg";
+// "postgres", not "pg". This script imported pg, which is not a dependency
+// of this project and never has been, so the guard CLAUDE.md tells you to
+// run after every migration died on a missing module instead of checking
+// anything. A safety check that cannot run is worse than none, because it
+// is still on the checklist.
+import postgres from "postgres";
 
 const url = readFileSync(".env", "utf8")
   .split("\n")
@@ -21,10 +26,14 @@ const url = readFileSync(".env", "utf8")
   .replace(/^["']|["']$/g, "")
   .trim();
 
-const c = new pg.Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
-await c.connect();
+if (!url) {
+  console.error("  DIRECT_URL is not set in .env, cannot check anything.");
+  process.exit(1);
+}
 
-const { rows } = await c.query(`
+const sql = postgres(url, { prepare: false });
+
+const rows = await sql.unsafe(`
   select c.relname as table_name,
          c.relrowsecurity as rls,
          (select count(*) from pg_policies p
@@ -38,7 +47,7 @@ const { rows } = await c.query(`
   where n.nspname='public' and c.relkind='r'
   order by c.relname;
 `);
-await c.end();
+await sql.end();
 
 const exposed = rows.filter((r) => !r.rls && r.public_roles !== "");
 const rlsNoPolicy = rows.filter((r) => r.rls && r.policies === 0);
