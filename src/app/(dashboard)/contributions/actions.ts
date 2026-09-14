@@ -45,6 +45,38 @@ export async function recordContribution(formData: FormData) {
     redirect(`/contributions?error=${encodeURIComponent("That member is not in your church.")}`);
   }
 
+  /*
+    Has this already been counted?
+
+    A mobile money payment records itself the moment Paystack confirms it,
+    and the first live one was then typed in again by hand, so GHS 10
+    received showed as GHS 20 given. The treasurer was not being careless:
+    money arriving on its own is unfamiliar, and the honest instinct is to
+    write it in the book.
+
+    So this refuses an identical amount that mobile money already recorded
+    in the last half hour, and says where to look. Only mobile money, and
+    only that window: two people genuinely giving the same amount in cash on
+    a Sunday is ordinary and must not be blocked.
+  */
+  const halfAnHourAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  const { data: alreadyCounted } = await supabase
+    .from("contributions")
+    .select("id, created_at")
+    .eq("organization_id", membership.organization.id)
+    .eq("payment_method", "momo")
+    .eq("amount", amount.toFixed(2))
+    .gte("created_at", halfAnHourAgo)
+    .limit(1);
+
+  if (alreadyCounted && alreadyCounted.length > 0) {
+    redirect(
+      `/contributions?error=${encodeURIComponent(
+        `GHS ${amount.toFixed(2)} came in by mobile money a few minutes ago and is already counted, see the list below. Record this only if it is a different gift.`
+      )}`
+    );
+  }
+
   const { error } = await supabase.from("contributions").insert({
     organization_id: membership.organization.id,
     // Anonymous giving is normal, an offering collected in a bowl has no

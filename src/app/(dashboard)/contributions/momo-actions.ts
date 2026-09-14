@@ -286,7 +286,9 @@ export async function refreshPayment(formData: FormData) {
   const supabase = await createClient();
   const { data: payment } = await supabase
     .from("payments")
-    .select("id, member_id, type, phone, contribution_id, status")
+    .select(
+      "id, member_id, type, phone, provider, contribution_id, status, members ( full_name )"
+    )
     .eq("reference", reference)
     .eq("organization_id", membership.organization.id)
     .maybeSingle();
@@ -359,7 +361,9 @@ export async function refreshPayment(formData: FormData) {
       type: payment.type,
       amount: result.amountCedis.toFixed(2),
       payment_method: "momo",
-      note: `Mobile money · ${payment.phone}`,
+      // Names the network and the number that paid, so the row explains
+      // itself in the ledger without anyone opening the payment behind it.
+      note: `${networkName(payment.provider)} ${payment.phone}, confirmed by Paystack`,
     })
     .select("id")
     .single();
@@ -394,9 +398,37 @@ export async function refreshPayment(formData: FormData) {
 
   revalidatePath("/contributions");
   revalidatePath("/dashboard");
+
+  /*
+    Say who paid, how much, by what, and that it is already in the books.
+
+    The old message was "Payment confirmed and recorded (GHS 10.00)", which
+    does not tell a treasurer the money is already counted. The first live
+    payment was then typed in a second time by hand, so GHS 10 received
+    showed as GHS 20 given. A confirmation that leaves any doubt about
+    whether to also write it down will be written down twice.
+  */
+  const payer =
+    nameOfMember(payment.members) ??
+    `${networkName(payment.provider)} ${payment.phone}`;
+
   redirect(
     `/contributions?message=${encodeURIComponent(
-      `Payment confirmed and recorded (GHS ${result.amountCedis.toFixed(2)}).`
+      `GHS ${result.amountCedis.toFixed(2)} received from ${payer} and recorded as a ${payment.type}. It is already counted, do not enter it again.`
     )}`
   );
+}
+
+/** "mtn" as a Ghanaian reads it, for a ledger note or a confirmation. */
+function networkName(provider: string | null): string {
+  const match = MOMO_PROVIDERS.find((p) => p.value === provider);
+  return match ? match.label : "Mobile money";
+}
+
+/** PostgREST returns an embedded row as an object or a one item array. */
+function nameOfMember(
+  m: { full_name: string } | { full_name: string }[] | null | undefined
+): string | null {
+  const v = Array.isArray(m) ? m[0] : m;
+  return v?.full_name ?? null;
 }

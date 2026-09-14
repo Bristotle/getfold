@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { getMembership } from "@/lib/org";
 import { Card } from "@/components/ui/card";
 import { Input, StatusBanner } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -29,6 +31,29 @@ export default async function SignUpPage({
   searchParams: Promise<{ error?: string; message?: string }>;
 }) {
   const { error, message } = await searchParams;
+
+  /*
+    Somebody already signed in does not need to sign up.
+
+    Every "Start 30 days free" button on the marketing site points here,
+    including the ones on the pricing page, and a pastor who was already
+    signed in and looking at the bands was asked to create their church a
+    second time. That is how a church that wanted to pay us ended up going
+    in a circle instead. Onboarding has guarded against this since it was
+    written; signup never did.
+
+    Sent to billing rather than the dashboard, because the plan is what
+    somebody reading the pricing page came for.
+  */
+  const { email, membership } = await getMembership();
+  if (membership) {
+    redirect(
+      `/billing?message=${encodeURIComponent(
+        `You are already signed in for ${membership.organization.name}. Here is your plan.`
+      )}`
+    );
+  }
+  if (email) redirect("/onboarding");
 
   return (
     <main className="grid min-h-screen lg:grid-cols-[1fr_1.05fr]">

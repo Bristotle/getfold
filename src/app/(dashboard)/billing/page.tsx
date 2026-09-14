@@ -7,7 +7,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { payInvoice } from "./actions";
+import { payInvoice, startSubscription } from "./actions";
 
 export const metadata = { title: "Billing, Fold" };
 
@@ -142,16 +142,37 @@ export default async function BillingPage({
         </div>
 
         {band && (
-          <p className="mt-5 border-t border-border pt-4 font-numeric text-sm text-muted-foreground">
-            GHS {band.monthly} a month, billed as GHS {band.monthly * 3} every
-            three months.{" "}
-            <Link
-              href="/pricing"
-              className="rounded font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            >
-              See the bands
-            </Link>
-          </p>
+          <div className="mt-5 border-t border-border pt-4">
+            <p className="font-numeric text-sm text-muted-foreground">
+              GHS {band.monthly} a month, billed as GHS {band.monthly * 3} every
+              three months. Your band follows your membership, so it moves with
+              you rather than being chosen once and forgotten.
+            </p>
+
+            {/*
+              The button that was missing. Without it a church on trial had
+              nowhere to pay, and the only link out went to the public pricing
+              page, which offers a free trial to somebody already on one.
+              Hidden while an invoice is outstanding, because the To pay card
+              above is then the right thing to press.
+            */}
+            {outstanding.length === 0 && (
+              <form action={startSubscription} className="mt-4">
+                <SubmitButton size="sm" pendingLabel="Opening…">
+                  {trial?.status === "active"
+                    ? "Renew for three months"
+                    : "Subscribe, three months"}
+                </SubmitButton>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {trial?.status === "trialing"
+                    ? `Paying now does not shorten your trial. The three months start on ${shortDate(trial.ends_at)}, when it ends, and you keep the ${trial.days_left} days you have left.`
+                    : trial?.status === "active"
+                      ? `Your next three months start on ${shortDate(trial.ends_at)}, when the current period ends. Nothing overlaps.`
+                      : "Mobile money or card. You will see the amount before anything is charged."}
+                </p>
+              </form>
+            )}
+          </div>
         )}
 
         {!band && (
