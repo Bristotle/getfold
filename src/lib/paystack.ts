@@ -430,7 +430,7 @@ export const INVOICE_METHODS: {
   {
     value: "card",
     label: "Visa or Mastercard",
-    hint: "Any card that works online, Ghanaian or foreign.",
+    hint: "Any card that works online. If card is not yet switched on for our payment account, you will be offered mobile money instead rather than being stopped.",
   },
   {
     value: "bank",
@@ -445,10 +445,11 @@ export async function createInvoicePaymentLink(params: {
   reference: string;
   churchName: string;
   periodLabel: string;
-  /** Which channel to open. Omitted means offer both online methods. */
+  /** Which channel to open. Omitted means offer whatever is enabled. */
   method?: Exclude<InvoiceMethod, "bank">;
 }): Promise<
-  { ok: true; url: string } | { ok: false; error: string }
+  | { ok: true; url: string; fellBack?: boolean }
+  | { ok: false; error: string }
 > {
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!secret) return { ok: false, error: "Payments are not configured yet." };
@@ -492,6 +493,28 @@ export async function createInvoicePaymentLink(params: {
     };
 
     if (!res.ok || !json.status || !json.data?.authorization_url) {
+      /*
+        "No active channel to process transaction. Please contact merchant."
+
+        Paystack says this when the channel asked for is not switched on for
+        the account. Card is not enabled on ours, so a church choosing Visa
+        was stopped dead, and told to contact the merchant, which is us. A
+        church trying to pay us should never be the one chasing.
+
+        So rather than fail, ask again without naming a channel, which lets
+        Paystack offer whatever the account does support. The treasurer
+        still pays, on this visit, and the caller is told the method
+        changed so it can say so plainly.
+      */
+      const channelOff = /no active channel/i.test(json.message ?? "");
+      if (channelOff && params.method) {
+        const retry = await createInvoicePaymentLink({
+          ...params,
+          method: undefined,
+        });
+        return retry.ok ? { ...retry, fellBack: true } : retry;
+      }
+
       return { ok: false, error: json.message ?? "Could not create a payment link." };
     }
     return { ok: true, url: json.data.authorization_url };

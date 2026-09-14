@@ -189,7 +189,13 @@ async function openPaymentLink(invoiceId: string, method: InvoiceMethod) {
     .update({
       paystack_reference: reference,
       paystack_authorization_url: result.url,
-      payment_method: method,
+      /*
+        The method the link actually carries, not the one asked for. When a
+        channel is not enabled the link falls back to whatever is, and
+        storing the request would make the reuse check hand out a link that
+        does not do what it claims.
+      */
+      payment_method: result.fellBack ? null : method,
       status: "sent",
       updated_at: new Date().toISOString(),
     })
