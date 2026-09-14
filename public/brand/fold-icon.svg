@@ -1,14 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Fold">
   <title>Fold</title>
   <rect width="120" height="120" rx="26" fill="#6b2fd9"/>
-  <g fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
-     transform="translate(60 62) scale(0.78) translate(-60 -58)">
-    <path d="M60 8v16M52 16h16"/>
-    <path d="M42 40 60 22l18 18"/>
-    <path d="M47 40v18M73 40v18"/>
-    <path d="M18 82 60 50l42 32"/>
-    <path d="M29 80v28M91 80v28"/>
-    <path d="M50 108V90a10 10 0 0 1 20 0v18"/>
-    <path d="M12 108h96"/>
+  <g transform="translate(60 61) scale(0.76) translate(-60 -56)" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 6V20M53 12h14"/>
+    <path d="M46 36 60 20l14 16"/>
+    <path d="M52 29.1V55.5M68 29.1V55.5"/>
+    <path d="M30 76 60 48l30 28"/>
+    <path d="M40 66.7V106M80 66.7V106"/>
+    <path d="M50 106V91a10 10 0 0 1 20 0V106"/>
+    <path d="M40 80 14 92M18 90.2V106"/>
+    <path d="M80 80 106 92M102 90.2V106"/>
+    <path d="M10 106h100"/>
   </g>
 </svg>
