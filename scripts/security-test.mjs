@@ -92,6 +92,28 @@ if (session?.session) {
   check("rollup_stats leaks nothing across churches", rollBlind, rollBlind ? "" : JSON.stringify(roll[0]));
 }
 
+console.log("\n=== 3b. We must never store a bank or mobile money number ===");
+/*
+  The pricing page tells churches we do not hold their account number, and
+  a promise like that is only worth making if something checks it. Paystack
+  holds the number; we keep an opaque subaccount code and a label.
+*/
+{
+  const { data: sample } = await admin.from("organizations").select("*").limit(1).single();
+  const cols = Object.keys(sample ?? {});
+  const banned = cols.filter((c) => /account_number|bank_account|iban|nuban|momo_number|msisdn/i.test(c));
+  check("organizations holds no account number column", banned.length === 0, banned.join(", "));
+
+  const { data: mem } = await admin.from("members").select("*").limit(1);
+  const memCols = Object.keys(mem?.[0] ?? {});
+  const memBanned = memCols.filter((c) => /account_number|bank_account|iban|nuban/i.test(c));
+  check("members holds no account number column", memBanned.length === 0, memBanned.join(", "));
+
+  const label = (sample ?? {}).settlement_label;
+  const looksLikeANumber = typeof label === "string" && /\d{6,}/.test(label);
+  check("settlement label is not a full number", !looksLikeANumber, String(label ?? ""));
+}
+
 console.log("\n=== 4. SQL injection through PostgREST filters ===");
 const payloads = ["' or 1=1--", "'; drop table members;--", "1) or (1=1", "%27%20or%201=1"];
 for (const p of payloads) {

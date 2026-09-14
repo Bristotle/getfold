@@ -36,6 +36,25 @@ export type Tier = {
   /** What makes this band different from the one below it. */
   highlights: string[];
   featured?: boolean;
+  /**
+   * The band's colour, taken from the dashboard's own chart palette in
+   * src/components/charts.tsx rather than invented here. A church that
+   * trials us and then comes back to the pricing page should recognise the
+   * colours, and there is no reason for the marketing site to run a second
+   * palette nobody else uses.
+   */
+  accent: string;
+  /**
+   * The same colour, darkened until it passes WCAG AA against our
+   * background. The chart palette is made of fills sitting beside labels,
+   * never of text, so passing on the dashboard says nothing about passing
+   * here: teal came out at 2.50:1, amber at 1.89:1 and pink at 2.54:1
+   * against 4.5:1 for the small uppercase type they carry.
+   *
+   * Computed by scripts/band-contrast.mjs, not chosen by eye. Run it if a
+   * band colour changes.
+   */
+  accentText: string;
 };
 
 /** Quarterly is the default. Annual is priced at ten months, not twelve. */
@@ -48,11 +67,17 @@ export const TIERS: Tier[] = [
     who: "A single congregation finding its feet",
     monthly: 149,
     memberLimit: "Up to 100 members",
+    // Teal, the dashboard's "male" series.
+    accent: "#00b3a4",
+    accentText: "#008176",
     highlights: [
       "The full product, nothing withheld",
-      "Members, Bible classes, attendance and giving",
-      "Your statistical return, any period",
-      "Unlimited people on your team",
+      "Members, Bible classes, groups and attendance",
+      "Tithes, offerings and funds, cash or mobile money",
+      "Your statistical return for any period, printed or saved as PDF",
+      "Baptisms, marriages and funerals on the record",
+      "Bring your register across from Excel, take it away as a spreadsheet",
+      "Unlimited people on your team, each with their own role",
     ],
   },
   {
@@ -62,11 +87,16 @@ export const TIERS: Tier[] = [
     monthly: 299,
     memberLimit: "101 to 400 members",
     featured: true,
+    // The brand purple, the dashboard's "attendance" series.
+    accent: "#6b2fd9",
+    accentText: "#6b2fd9",
     highlights: [
       "Everything in Society",
       "Insights: who has quietly stopped coming",
-      "Mobile money giving alongside cash",
-      "Text your members from the register",
+      "Birthday, welcome and thank you texts, in your church's own name",
+      "Visitors followed up, and members transferred between churches",
+      "Attendance and giving charted month by month",
+      "Text any group straight from the register",
     ],
   },
   {
@@ -75,8 +105,12 @@ export const TIERS: Tier[] = [
     who: "A town society or a large assembly",
     monthly: 499,
     memberLimit: "401 to 1,000 members",
+    // Amber, the dashboard's "offering" series.
+    accent: "#ffa400",
+    accentText: "#9e6600",
     highlights: [
       "Everything in Society Plus",
+      "Branches, with figures that roll up to the top",
       "Priority support, same day",
       "We move your register across for you",
       "Help setting up your first return",
@@ -88,9 +122,13 @@ export const TIERS: Tier[] = [
     who: "A circuit, district, presbytery or diocese with several societies",
     monthly: null,
     memberLimit: "More than 1,000 members, or more than one society",
+    // Pink, the dashboard's "other" series.
+    accent: "#ff6b9d",
+    accentText: "#b84d71",
     highlights: [
       "Every society keeps its own register",
-      "One account oversees them all",
+      "Headquarters over regions over districts, to any depth",
+      "Oversight from above is read only, by design",
       "A rate agreed for the whole circuit",
       "Invoiced by bank transfer if your treasurer needs it",
     ],

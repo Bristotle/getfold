@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, Info, Banknote, Cake, HandHeart, MessageCircleHeart } from "lucide-react";
+import {
+  Check,
+  Info,
+  Banknote,
+  Cake,
+  HandHeart,
+  MessageCircleHeart,
+  Wallet,
+  Lock,
+  ShieldCheck,
+  ScrollText,
+  FileText,
+  Scale,
+} from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
@@ -95,6 +108,47 @@ const FAQS = [
   },
 ];
 
+/**
+ * The assurances under the bands.
+ *
+ * Held as data rather than markup so the same claims can be quoted on the
+ * features page or in a help article without being retyped and drifting.
+ * Each one is verifiable: the settlement claim was proved with a live GHS
+ * 10 gift that settled to the church while our own balance stayed at zero.
+ */
+const ASSURANCES = [
+  {
+    Icon: Wallet,
+    title: "Giving goes to your account, never ours",
+    body: "Each church has its own Paystack settlement account, so a tithe paid by mobile money lands with you. It never passes through Fold's balance, which is the line between software and handling your money.",
+  },
+  {
+    Icon: Lock,
+    title: "We never hold your account number",
+    body: "Paystack does. We keep a reference code and a label like MTN ending 2348, and a test fails if a column for an account number is ever added.",
+  },
+  {
+    Icon: ShieldCheck,
+    title: "One church cannot see another",
+    body: "Separation is enforced in the database itself, not in the screens, so a request that went around the app entirely would still be refused. We attack our own system to check that it holds.",
+  },
+  {
+    Icon: ScrollText,
+    title: "Every sign in is recorded",
+    body: "Successful and failed, with password changes, in a log nobody can read through the API. Sessions are revoked when a password changes, and repeated failures are rate limited.",
+  },
+  {
+    Icon: FileText,
+    title: "Your records leave as easily as they arrive",
+    body: "Bring your register in from Excel, take it out as a spreadsheet whenever you like, and print or save any statistical return as a PDF. Nothing here is a trap.",
+  },
+  {
+    Icon: Scale,
+    title: "Built to the Data Protection Act",
+    body: "Under Act 843 your church is the data controller and religious belief is special personal data. We say so plainly, and we built to it rather than adding a policy page afterwards.",
+  },
+] as const;
+
 export default function PricingPage() {
   return (
     <div className="min-h-screen">
@@ -143,12 +197,29 @@ export default function PricingPage() {
               {TIERS.map((t) => (
                 <li
                   key={t.slug}
-                  className={`flex flex-col rounded-2xl border bg-background p-6 ${
+                  /*
+                    The accent is set as a CSS variable on the card and read
+                    by the rule, the badge, the ticks and the member limit,
+                    so a band's colour is decided in one place in pricing.ts
+                    rather than in four class names here.
+                  */
+                  style={{
+                    ["--accent" as string]: t.accent,
+                    ["--accent-text" as string]: t.accentText,
+                  }}
+                  className={`relative flex flex-col overflow-hidden rounded-2xl border bg-background p-6 ${
                     t.featured
                       ? "border-primary/50 shadow-[0_18px_50px_-24px_rgba(107,47,217,0.4)]"
                       : "border-border"
                   }`}
                 >
+                  {/* The band's colour, along the top edge. */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 top-0 h-1.5"
+                    style={{ background: "var(--accent)" }}
+                  />
+
                   {t.featured && (
                     <span className="mb-4 self-start rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground">
                       Most churches
@@ -186,7 +257,10 @@ export default function PricingPage() {
                         </p>
                       </>
                     )}
-                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <p
+                      className="mt-3 text-xs font-semibold uppercase tracking-wide"
+                      style={{ color: "var(--accent-text)" }}
+                    >
                       {t.memberLimit}
                     </p>
                   </div>
@@ -196,7 +270,8 @@ export default function PricingPage() {
                       <li key={h} className="flex gap-2.5">
                         <span
                           aria-hidden="true"
-                          className="mt-0.5 shrink-0 text-primary"
+                          className="mt-0.5 shrink-0"
+                          style={{ color: "var(--accent-text)" }}
                         >
                           <Check size={15} strokeWidth={2.6} />
                         </span>
@@ -227,6 +302,38 @@ export default function PricingPage() {
                         Start 30 days free
                       </Link>
                     )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {/*
+              What happens to the money, under the prices.
+
+              A church handing a system its tithes wants this answered before
+              it wants a feature list, and the answers here are unusually
+              good, so burying them in a privacy policy nobody opens was
+              leaving the best argument unmade.
+
+              Every line is something the product actually does and has been
+              verified doing with real money. Nothing aspirational.
+            */}
+            <ul className="m-0 mx-auto mt-10 grid max-w-5xl list-none gap-x-8 gap-y-5 p-0 sm:grid-cols-2">
+              {ASSURANCES.map((a) => (
+                <li key={a.title} className="flex gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"
+                  >
+                    <a.Icon size={17} strokeWidth={1.9} />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-foreground">
+                      {a.title}
+                    </h3>
+                    <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+                      {a.body}
+                    </p>
                   </div>
                 </li>
               ))}
