@@ -1,7 +1,24 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import { toE164, providerStatus, deliver } from "@/lib/messaging";
+import {
+  toE164,
+  providerStatus,
+  deliver,
+  DEFAULT_TEMPLATES,
+  renderTemplate,
+} from "@/lib/messaging";
+
+/**
+ * The narrow slice of supabase-js this module uses, so a service role
+ * client and a session client are interchangeable here without either
+ * pretending to be the other.
+ */
+type SupabaseLike = {
+  from: (table: string) => never extends never
+    ? ReturnType<Awaited<ReturnType<typeof createClient>>["from"]>
+    : never;
+};
 
 type Queue = {
   organizationId: string;
@@ -51,14 +68,25 @@ export async function queueMessage({
   body,
   automatic,
   sendNow,
-}: Queue): Promise<string | null> {
+  client,
+}: Queue & {
+  /*
+    A client to use instead of the caller's session.
+
+    The Paystack webhook has no session, so it could not queue anything, and
+    that is why a tithe paid by mobile money was never thanked while one
+    typed in by hand was. The webhook passes its service role client here.
+    Everything else leaves this alone and keeps row level security.
+  */
+  client?: SupabaseLike;
+}): Promise<string | null> {
   const to = toE164(phone);
   if (!to) return null;
 
   let senderId: string | null = null;
 
   try {
-    const supabase = await createClient();
+    const supabase = client ?? (await createClient());
 
     /*
       An automatic message needs the church to have asked for it.
@@ -130,5 +158,86 @@ export async function queueMessage({
     return id;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Thanks somebody for a gift that arrived through the gateway.
+ *
+ * This existed only on the hand typed path, keyed to a member on the
+ * register, so a tithe paid by mobile money was never acknowledged at all.
+ * That is the wrong way round: a gift typed in by the treasurer was given
+ * in front of them, while a gift sent from a phone had no acknowledgement
+ * whatsoever, and silence after sending money is exactly when a member
+ * rings the church to ask whether it arrived.
+ *
+ * Anonymous giving is thanked here, which the hand typed path deliberately
+ * does not do. The difference is real: there, thanking would mean guessing
+ * who gave. Here the number is the one that actually paid, so there is
+ * nothing to guess.
+ *
+ * It comes from the church's own sender name, never ours. That is the
+ * point of the feature.
+ */
+export async function thankForGiving(params: {
+  organizationId: string;
+  memberId: string | null;
+  /** The number that paid. Used when the gift is not attributed. */
+  payingPhone: string | null;
+  amountCedis: number;
+  type: string;
+  client?: SupabaseLike;
+}): Promise<void> {
+  try {
+    const supabase = params.client ?? (await createClient());
+
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("name, sms_template_thanks")
+      .eq("id", params.organizationId)
+      .maybeSingle();
+
+    if (!org) return;
+
+    let name = "friend";
+    let phone = params.payingPhone;
+
+    if (params.memberId) {
+      const { data: member } = await supabase
+        .from("members")
+        .select("full_name, phone")
+        .eq("id", params.memberId)
+        .maybeSingle();
+      if (member) {
+        name = (member as { full_name: string }).full_name;
+        // The member's own number wins: it is the one the church holds for
+        // them, and somebody may well have paid on their behalf.
+        phone = (member as { phone: string | null }).phone ?? phone;
+      }
+    }
+
+    if (!phone) return;
+
+    await queueMessage({
+      organizationId: params.organizationId,
+      memberId: params.memberId,
+      type: "contribution_receipt",
+      automatic: true,
+      sendNow: true,
+      phone,
+      body: renderTemplate(
+        (org as { sms_template_thanks: string | null }).sms_template_thanks ??
+          DEFAULT_TEMPLATES.thanks,
+        {
+          name,
+          church: (org as { name: string }).name,
+          amount: `GHS ${params.amountCedis.toFixed(2)}`,
+          type: params.type,
+        }
+      ),
+      client: params.client,
+    });
+  } catch {
+    // Never let a thank you break a payment being recorded.
   }
 }

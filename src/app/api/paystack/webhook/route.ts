@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { thankForGiving } from "@/lib/notify";
 import { verifyWebhookSignature } from "@/lib/paystack";
 
 /**
@@ -155,7 +156,7 @@ export async function POST(request: Request) {
       type: payment.type,
       amount: amountCedis.toFixed(2),
       payment_method: "momo",
-      note: `Mobile money · ${payment.phone}`,
+      note: `Mobile money ${payment.phone}, confirmed by Paystack`,
       recorded_by_profile_id: null,
     })
     .select("id")
@@ -175,6 +176,26 @@ export async function POST(request: Request) {
       gateway_response: event.data?.gateway_response ?? "Successful",
     })
     .eq("id", payment.id);
+
+  /*
+    Thank them, from the church's own name.
+
+    This is the first place it could ever have happened for mobile money and
+    it was not here, so a member who gave from their phone heard nothing at
+    all while one whose gift the treasurer typed in got a text. The webhook
+    has no session, so it hands its own client over.
+
+    After the payment is marked settled, never before: a failure to text
+    must not cost the church the record of the money.
+  */
+  await thankForGiving({
+    organizationId: payment.organization_id,
+    memberId: payment.member_id,
+    payingPhone: payment.phone,
+    amountCedis,
+    type: payment.type,
+    client: supabase,
+  });
 
   return new Response("OK", { status: 200 });
 }

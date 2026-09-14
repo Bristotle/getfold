@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
@@ -80,6 +81,23 @@ export default async function ContributionsPage({
       .order("full_name"),
     supabase.from("funds").select("id, name").order("name"),
   ]);
+
+  /*
+    Are thank you texts actually switched on?
+
+    A church that has not set a sender name, or has the switch off, gets no
+    thank you and no explanation, which reads as the feature being broken.
+    The first live tithe went through and the giver heard nothing, and there
+    was nowhere on this page that would have told anybody why.
+  */
+  const { data: smsSettings } = await supabase
+    .from("organizations")
+    .select("sms_thanks_enabled, sms_sender_id")
+    .eq("id", membership.organization.id)
+    .maybeSingle<{ sms_thanks_enabled: boolean | null; sms_sender_id: string | null }>();
+
+  const thanksOff =
+    !smsSettings?.sms_thanks_enabled || !smsSettings?.sms_sender_id;
 
   const { data: paymentRows } = await supabase
     .from("payments")
@@ -177,6 +195,20 @@ export default async function ContributionsPage({
                 and enter it below. Nothing is counted as given until the
                 payment goes through.
               </p>
+
+              {thanksOff && (
+                <p className="mt-3 rounded-lg bg-surface-soft px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                  Thank you texts are off, so nobody who gives will hear from
+                  you.{" "}
+                  <Link
+                    href="/messages"
+                    className="rounded font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  >
+                    Set your church name and switch them on
+                  </Link>
+                  , and every gift is acknowledged in your own name.
+                </p>
+              )}
               <form
                 action={collectByMomo}
                 className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"

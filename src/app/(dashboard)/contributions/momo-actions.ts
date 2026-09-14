@@ -17,6 +17,7 @@ import {
   type MomoProvider,
 } from "@/lib/paystack";
 import { CONTRIBUTION_TYPES, values } from "@/lib/constants";
+import { thankForGiving } from "@/lib/notify";
 
 export async function collectByMomo(formData: FormData) {
   const { userId, membership } = await getMembership();
@@ -395,6 +396,21 @@ export async function refreshPayment(formData: FormData) {
     revalidatePath("/contributions");
     redirect(`/contributions?message=${encodeURIComponent("Already recorded.")}`);
   }
+
+  /*
+    Thank them from the church's own name, exactly as the webhook does.
+
+    Both paths settle a payment, so both have to thank, or whether a member
+    hears from their church depends on which one happened to get there
+    first.
+  */
+  await thankForGiving({
+    organizationId: membership.organization.id,
+    memberId: payment.member_id,
+    payingPhone: payment.phone,
+    amountCedis: result.amountCedis,
+    type: payment.type,
+  });
 
   revalidatePath("/contributions");
   revalidatePath("/dashboard");

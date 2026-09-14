@@ -238,7 +238,7 @@ export default async function LandingPage({
 
       <CongregationBand />
 
-      <GettingStarted />
+      <GettingStarted contactHref="#contact" />
 
       {/* ---------- the differentiator ---------- */}
       <section className="relative isolate overflow-hidden">

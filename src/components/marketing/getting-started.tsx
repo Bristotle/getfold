@@ -60,7 +60,23 @@ function Arrow() {
   );
 }
 
-export function GettingStarted() {
+/**
+ * The three steps, shared by the homepage and /getting-started.
+ *
+ * contactHref exists because this component is rendered on two pages and
+ * "Talk to us first" used to be hardwired to "#contact". That anchor only
+ * exists on the homepage, which renders the enquiry form, so on
+ * /getting-started the button appended a hash to the URL and did nothing at
+ * all. A shared component cannot assume the page around it.
+ *
+ * The homepage passes the anchor and keeps its scroll. Everywhere else gets
+ * the contact page, which exists on every page by definition.
+ */
+export function GettingStarted({
+  contactHref = "/contact",
+}: {
+  contactHref?: string;
+} = {}) {
   return (
     <section className="relative isolate overflow-hidden border-y border-border bg-surface">
       <SectionBg variant="orbs" />
@@ -117,7 +133,7 @@ export function GettingStarted() {
           <Link href="/signup">
             <Button size="lg">Start your 30 day free trial</Button>
           </Link>
-          <Link href="#contact">
+          <Link href={contactHref as "/contact"}>
             <Button size="lg" variant="secondary">
               Talk to us first
             </Button>

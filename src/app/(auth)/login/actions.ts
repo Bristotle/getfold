@@ -45,6 +45,35 @@ export async function signIn(formData: FormData) {
   redirect("/dashboard");
 }
 
+/**
+ * Turns Supabase's wording into something a church secretary can act on.
+ *
+ * The password rule came back as "Password should contain at least one
+ * character of each: abcdefghijklmnopqrstuvwxyz, ABCDEFGHIJKLMNOPQRSTUVWXYZ,
+ * 0123456789." Three alphabets printed in full, telling somebody who has
+ * just tried to sign up that they must read them. It is accurate and it is
+ * useless.
+ *
+ * Only messages we recognise are rewritten. An unrecognised one is passed
+ * through unchanged rather than replaced with something vague, because a
+ * real fault is easier to report when it says what it said.
+ */
+function readable(message: string): string {
+  if (/at least one character of each/i.test(message)) {
+    return "Your password needs a capital letter, a small letter and a number, and at least 8 characters. Something like Hosanna2026 works.";
+  }
+  if (/password.*(at least|should be).*(6|8|characters)/i.test(message)) {
+    return "Your password needs to be at least 8 characters. A short phrase you will remember beats a short word you will not.";
+  }
+  if (/invalid.*email|email.*invalid/i.test(message)) {
+    return "That email address does not look right. Check for a missing letter or an extra space.";
+  }
+  if (/rate limit|too many/i.test(message)) {
+    return "That is a few too many attempts in a row. Wait a minute and try again.";
+  }
+  return message;
+}
+
 export async function signUp(formData: FormData) {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
@@ -76,7 +105,7 @@ export async function signUp(formData: FormData) {
         )}`
       );
     }
-    redirect(`/signup?error=${encodeURIComponent(error.message)}`);
+    redirect(`/signup?error=${encodeURIComponent(readable(error.message))}`);
   }
 
   await logAuthEvent(email, "signup_ok");

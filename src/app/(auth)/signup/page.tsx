@@ -99,7 +99,17 @@ export default async function SignUpPage({
               autoComplete="new-password"
               minLength={8}
               required
-              hint="At least 8 characters. A short phrase you will remember beats a short word you will not."
+              /*
+                The rule, before it is broken rather than after.
+
+                This used to say only "at least 8 characters", while the
+                project also requires a capital, a small letter and a
+                number. So the form invited a password it was going to
+                reject, and the rejection was Supabase printing three
+                alphabets in full. Telling somebody the rule up front costs
+                one line and saves the round trip.
+              */
+              hint="At least 8 characters, with a capital letter, a small letter and a number. Something like Hosanna2026 works."
             />
             <SubmitButton className="mt-1" pendingLabel="Creating your account…">
               Create account
