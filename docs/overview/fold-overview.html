@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Fold, project overview</title>
+<style>
+  /*
+    One page of A4. Everything here is taken from getfold.org, because a
+    document that outruns the website is a document that has to be corrected
+    in front of a customer.
+  */
+  @page { size: A4; margin: 12mm 13mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 8.9pt/1.38 -apple-system, "Segoe UI", system-ui, sans-serif;
+    color: #1a1033;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .verse {
+    text-align: center; font-style: italic; color: #6b6478;
+    font-size: 8.4pt; padding-bottom: 7px; border-bottom: 1px solid #e7e2da;
+  }
+  .verse b { display: block; font-style: normal; font-weight: 600;
+    letter-spacing: .13em; font-size: 6.6pt; color: #6b2fd9; margin-top: 3px; }
+
+  header { display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 9px 0 8px; border-bottom: 2.5px solid #6b2fd9; }
+  header .url { font-size: 8.6pt; color: #6b6478; }
+
+  h1 { font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-size: 14.6pt; margin: 9px 0 4px; letter-spacing: -.2px; }
+  .lede { color: #3a3350; font-size: 9.3pt; margin: 0 0 8px; }
+
+  .chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 9px; }
+  .chip { border: 1px solid #cbb8f2; color: #5a27b8; border-radius: 99px;
+    padding: 2.5px 8px; font-size: 7.4pt; font-weight: 600; }
+
+  h2 { font-size: 7.5pt; letter-spacing: .13em; text-transform: uppercase;
+    color: #6b2fd9; margin: 9px 0 5px; }
+
+  .problem { color: #3a3350; margin: 0; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 20px; }
+  .grid li { list-style: none; position: relative; padding-left: 10px; margin: 0 0 1px; }
+  .grid li::before { content: ""; position: absolute; left: 0; top: 5.2px;
+    width: 4px; height: 4px; border-radius: 99px; background: #6b2fd9; }
+  .grid b { font-weight: 700; }
+  .grid span { color: #56506a; }
+  ul { margin: 0; padding: 0; }
+
+  table { width: 100%; border-collapse: collapse; }
+  .diff td { padding: 3px 0; vertical-align: top; border-bottom: 1px solid #efece6; }
+  .diff td:first-child { width: 92px; font-weight: 700; }
+  .diff td:last-child { color: #3a3350; }
+
+  .price { margin-top: 2px; }
+  .price th { text-align: left; font-size: 7.4pt; letter-spacing: .07em;
+    text-transform: uppercase; color: #6b6478; padding: 4px 8px;
+    background: #f5f2ec; border-bottom: 1px solid #e7e2da; }
+  .price td { padding: 4px 8px; border-bottom: 1px solid #efece6; }
+  .price td:nth-child(3), .price td:nth-child(4) { font-variant-numeric: tabular-nums; }
+  .price .q { font-weight: 700; }
+  .price .m { color: #6b6478; font-size: 8.3pt; }
+  .note { color: #6b6478; font-size: 8pt; margin: 5px 0 0; }
+
+  .pay { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid #efece6; }
+  .pay .lbl { font-size: 7.8pt; font-weight: 600; color: #6b6478; }
+  .pill { border-radius: 3.5px; padding: 3px 7px; font-size: 7.3pt; font-weight: 700; color: #fff; }
+
+  .stand { background: #f7f4ff; border-left: 3px solid #6b2fd9;
+    padding: 7px 10px; color: #3a3350; margin-top: 4px; }
+
+  footer { margin-top: 9px; padding-top: 6px; border-top: 1px solid #e7e2da;
+    display: flex; justify-content: space-between; color: #6b6478; font-size: 7.9pt; }
+</style>
+</head>
+<body>
+
+<div class="verse">
+  “Know well the condition of your flocks, and give attention to your herds.”
+  <b>PROVERBS 27:23</b>
+</div>
+
+<header>
+  <svg viewBox="0 0 148 36" width="132" height="32" aria-label="Fold, know your flock">
+    <g fill="none" stroke="#6b2fd9" stroke-width="2.6" stroke-linecap="round" transform="translate(0 2)">
+      <path d="M4.5 27.5V16a11.5 11.5 0 0 1 23 0v11.5"/>
+      <path d="M11.5 27.5v-9.5a4.5 4.5 0 0 1 9 0v9.5"/>
+    </g>
+    <text x="42" y="24" font-family="Iowan Old Style, Palatino, Georgia, serif"
+          font-size="25" font-weight="700" fill="#1a1033" letter-spacing="-0.6">Fold</text>
+    <text x="43" y="33.5" font-family="system-ui, sans-serif"
+          font-size="6.6" font-weight="600" fill="#6b6478" letter-spacing="1.7">KNOW YOUR FLOCK</text>
+  </svg>
+  <span class="url">getfold.org</span>
+</header>
+
+<h1>Church management software built in Ghana, around how a denomination actually works</h1>
+<p class="lede">
+  Members, Bible classes, attendance and giving recorded in your church's own
+  words, with the statistical return your circuit asks for already filled in.
+  Cash first, mobile money optional, and built for a phone on a weak signal.
+</p>
+
+<div class="chips">
+  <span class="chip">Six denominations modelled</span>
+  <span class="chip">Cash first, MoMo optional</span>
+  <span class="chip">Installs from the browser, no app store</span>
+  <span class="chip">Built and supported in Ghana</span>
+</div>
+
+<h2>The problem</h2>
+<p class="problem">
+  Church software built abroad assumes card giving, a single independent
+  congregation, and a connection that never drops. It has no idea what a
+  circuit is, a society, a catechumen, or a quarterly return to a
+  superintendent. Churches buy it, use a tenth of it, and keep the paper
+  register anyway.
+</p>
+
+<h2>What is in the product</h2>
+<ul class="grid">
+  <li><b>Digital Giving.</b> <span>MTN MoMo, Telecel Cash and AirtelTigo alongside cash, settling into the church's own account.</span></li>
+  <li><b>Financial Management.</b> <span>Tithes, offerings, funds and the figures your circuit asks for, in cedis.</span></li>
+  <li><b>Member Management.</b> <span>One register for the whole church, searchable from a phone, in your denomination's words.</span></li>
+  <li><b>Leadership Management.</b> <span>Pastor, secretary, treasurer and class leaders each with a login and a role.</span></li>
+  <li><b>Branch Management.</b> <span>Headquarters over regions over districts, each keeping its own register, figures rolling up.</span></li>
+  <li><b>Groups and Cells.</b> <span>Bible classes, fellowships, cells and societies, each with its leader and members.</span></li>
+  <li><b>Communication.</b> <span>Birthday, welcome and thank you texts, sent in the church's own name rather than ours.</span></li>
+  <li><b>Attendance, returns and insights.</b> <span>A service marked in one save, the return printed or saved as PDF, and quietly dropping attendance surfaced early.</span></li>
+</ul>
+
+<h2>Why it is different</h2>
+<table class="diff">
+  <tr>
+    <td>The money</td>
+    <td>Giving is paid directly into the church's own settlement account. It never passes through Fold's balance, and we take nothing from what members give.</td>
+  </tr>
+  <tr>
+    <td>The structure</td>
+    <td>Six denominational structures modelled against each church's own published material: Methodist, Presbyterian, Pentecostal, Anglican, AME Zion and Baptist. Branches to any depth, with oversight from above that is read only.</td>
+  </tr>
+  <tr>
+    <td>The security</td>
+    <td>One church cannot see another's records, enforced by the database rather than hidden behind a menu. Giving is visible only to leadership. Every change is logged, and nobody can edit the log.</td>
+  </tr>
+</table>
+
+<h2>Pricing, in cedis, billed quarterly</h2>
+<table class="price">
+  <tr><th>Band</th><th>Members</th><th>Per quarter</th><th>Equivalent</th></tr>
+  <tr><td>Society</td><td>Up to 100</td><td class="q">GHS 447</td><td class="m">GHS 149 / month</td></tr>
+  <tr><td>Society Plus</td><td>101 to 400</td><td class="q">GHS 897</td><td class="m">GHS 299 / month</td></tr>
+  <tr><td>Large Society</td><td>401 to 1,000</td><td class="q">GHS 1,497</td><td class="m">GHS 499 / month</td></tr>
+  <tr><td>Circuit and above</td><td>More than 1,000, or several societies</td><td class="q">Agreed rate</td><td class="m">Talk to us</td></tr>
+</table>
+<p class="note">
+  Billed every three months, the same cycle as the statistical return. Thirty
+  days free, no card. Unlimited team members on every band, the price held for
+  twelve months, and a year costs ten months rather than twelve.
+</p>
+
+<div class="pay">
+  <span class="lbl">Payments secured by Paystack</span>
+  <span class="pill" style="background:#FFCC00;color:#000">MTN</span>
+  <span class="pill" style="background:#E4002B">Telecel</span>
+  <span class="pill" style="background:#ED1C24">Airtel<span style="background:#0A3D91;margin-left:4px;padding:0 3px;border-radius:2px">Tigo</span></span>
+  <span class="pill" style="background:#1434CB;font-style:italic">VISA</span>
+  <span class="pill" style="background:#EB001B">Mastercard</span>
+  <span class="pill" style="background:#6b6478">Bank transfer</span>
+</div>
+
+<h2>Where things stand</h2>
+<div class="stand">
+  Live at <b>getfold.org</b>, built and supported by Manuel Technologies in
+  Ghana. Mobile money giving is proven with real funds: a live gift settled
+  into a church's own account while Fold's balance stayed at zero. Churches
+  are being invited onto the thirty day free trial now.
+</div>
+
+<footer>
+  <span>Built by Manuel Technologies &middot; manueltechnologies.com</span>
+  <span>emmanuelakyeam@gmail.com &middot; getfold.org</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Fold">
+  <title>Fold</title>
+  <!--
+    A fold is an enclosure for a flock, so the mark is a shelter rather than
+    a steeple or a cross. Two arcs, one folded inside the other: the outer
+    is the wall, the inner is the fold itself, and the gap at the foot is
+    the gate the shepherd stands in.
+
+    Open at the bottom on purpose. A closed shape reads as a pen; an open
+    one reads as somewhere a flock is led in and out of.
+  -->
+  <g fill="none" stroke="#6b2fd9" stroke-width="2.6" stroke-linecap="round">
+    <path d="M4.5 27.5V16a11.5 11.5 0 0 1 23 0v11.5"/>
+    <path d="M11.5 27.5v-9.5a4.5 4.5 0 0 1 9 0v9.5"/>
+  </g>
+</svg>
