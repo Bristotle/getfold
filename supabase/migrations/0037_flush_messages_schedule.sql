@@ -34,7 +34,11 @@ create or replace function public.flush_due_messages()
 returns void
 language plpgsql
 security definer
-set search_path = public, extensions
+-- pg_net registers itself in the extensions schema but puts its
+-- functions in a schema of its own called net, so net has to be on the
+-- path. Writing extensions.net.http_get parses as database.schema.function
+-- and fails with "cross-database references are not implemented".
+set search_path = public, net, extensions
 as $$
 declare
   base   text;
@@ -51,7 +55,7 @@ begin
     return;
   end if;
 
-  perform extensions.net.http_get(
+  perform net.http_get(
     url     := base || '/api/cron/send-due',
     headers := jsonb_build_object('Authorization', 'Bearer ' || secret),
     timeout_milliseconds := 20000
