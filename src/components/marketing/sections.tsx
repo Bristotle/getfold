@@ -125,22 +125,22 @@ const ON_PHONE = [
   {
     Icon: Smartphone,
     title: "Install it like an app",
-    body: "Add Fold to your home screen from the browser. No app store, no download over a slow connection, no update to chase. It opens full screen like anything else on the phone.",
+    body: "Add it to your home screen from the browser. No app store, no download, no update to chase.",
   },
   {
     Icon: ClipboardCheck,
     title: "Record the service from the back row",
-    body: "Search a name, tap who came, save once. Marking a whole congregation is a single save, not one round trip per person, so it works on a weak signal.",
+    body: "Search a name, tap who came, save once. A whole congregation is one save, so it works on a weak signal.",
   },
   {
     Icon: HandCoins,
     title: "Take mobile money on the spot",
-    body: "Send a prompt to a member's phone for MTN MoMo, Telecel Cash or AirtelTigo. Nothing counts as given until they approve it, so the books match the money.",
+    body: "MTN MoMo, Telecel Cash or AirtelTigo. Nothing counts as given until they approve it.",
   },
   {
     Icon: TrendingDown,
     title: "See who has stopped coming",
-    body: "The members who used to be here every week and quietly are not, ranked and ready to call, in your hand before you leave the building.",
+    body: "The members who used to be here every week and quietly are not, ranked and ready to call.",
   },
 ];
 
@@ -152,9 +152,8 @@ export function OnYourPhone() {
           Your church office, in your pocket.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          The register does not live on a computer in the vestry any more. It
-          lives on the phone you already carry, and it works on the connection
-          you actually have.
+          The register does not live on a computer in the vestry any more.
+          It lives on the phone you already carry.
         </p>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">

@@ -211,13 +211,10 @@ export default async function LandingPage({
               congregation.
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              None of them knows what a circuit is, or a society, or a Bible
-              class, or a catechumen, or a quarterly return to a
-              superintendent. They offer you a fixed list of member types
-              somebody else wrote and a small group model borrowed from
-              somewhere else. Fold starts from how your denomination is
-              actually organised, and stays out of the way of the parts that
-              already work.
+              None of them knows what a circuit is, or a society, or a
+              catechumen, or a quarterly return to a superintendent. Fold
+              starts from how your denomination is actually organised, and
+              stays out of the way of the parts that already work.
             </p>
           </div>
 
