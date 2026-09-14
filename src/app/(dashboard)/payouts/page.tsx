@@ -6,7 +6,11 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { listSettlementOptions, paystackStatus } from "@/lib/paystack";
+import {
+  listSettlementOptions,
+  paystackStatus,
+  MERCHANT_NAME,
+} from "@/lib/paystack";
 import { setSettlement } from "./actions";
 
 export const metadata = { title: "Where giving is paid, Fold" };
@@ -70,6 +74,40 @@ export default async function PayoutsPage({
           </div>
         </div>
       </Card>
+
+      {/*
+        What the member actually sees.
+
+        Paystack shows the main account's business name on the approval
+        message, never the subaccount's, which they confirmed in writing.
+        A pastor who finds that out from a confused member has been let
+        down by us, so it is said here, before the first collection.
+      */}
+      {isSet && (
+        <Card>
+          <div className="flex gap-3.5">
+            <span aria-hidden="true" className="mt-0.5 shrink-0 text-muted-foreground">
+              <Info size={20} strokeWidth={1.9} />
+            </span>
+            <div>
+              <h2 className="text-sm font-bold text-foreground">
+                What your members will see
+              </h2>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                The approval text from MTN names{" "}
+                <span className="font-semibold text-foreground">
+                  {MERCHANT_NAME}
+                </span>
+                , the payment processor&rsquo;s account, not your church. That
+                is set by Paystack and cannot be changed per church. Your
+                thank you text goes out straight afterwards in your own
+                church&rsquo;s name, so mention it once from the pulpit and
+                nobody will be surprised.
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* ---------- current state ---------- */}
       {isSet && (

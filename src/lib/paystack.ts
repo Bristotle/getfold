@@ -17,6 +17,24 @@ export const MOMO_PROVIDERS = [
 
 export type MomoProvider = (typeof MOMO_PROVIDERS)[number]["value"];
 
+/**
+ * The name a member sees on the mobile money approval text.
+ *
+ * Not the church's name, and it cannot be. Paystack support confirmed it
+ * directly: "at checkout the name that is displayed to your customers is
+ * your Business name. The sub-account is for receiving payouts... and this
+ * will not be shown to the customer." There is no field on the Charge API
+ * for it either.
+ *
+ * So the only honest thing to do is tell the church what its members will
+ * see, before a member rings the church office to ask who this is. Held in
+ * one place, and read from the environment, so the day the Paystack
+ * business name changes this changes with it rather than the product
+ * quietly lying on three screens.
+ */
+export const MERCHANT_NAME =
+  process.env.NEXT_PUBLIC_PAYSTACK_MERCHANT_NAME ?? "Manuel Technologies";
+
 export function paystackStatus(): {
   configured: boolean;
   missing: string[];

@@ -58,6 +58,60 @@ getfold.org
 
 ---
 
+## The answer, received 14 September 2026
+
+From Makafui at Paystack Support:
+
+> Please note that, at checkout the name that is displayed to your customers
+> is your Business name. The sub-account is for receiving payouts into the
+> designated account for the product or services you're receiving payments
+> for and this will not be shown to the customer.
+
+So it is settled, and it is the least convenient of the three possible
+answers. It cannot be done per church, per transaction, or at all. The
+subaccount governs where money goes and nothing about what the payer sees.
+
+### What follows from that
+
+**One. The business name is now a product decision, not a company one.**
+Every church's members see it, so it should be a name that makes sense to
+somebody in a pew, not to a registrar. "Manuel Technologies" means nothing
+to a member of Calvary Bethel being asked for GHS 50. "Fold" at least
+matches what their pastor calls the system. Something like "Fold Church
+Giving" is better still, because it tells the member what the payment is
+for in the three words they will actually read.
+
+Worth asking Paystack whether the displayed name can differ from the
+registered one, since the registered name is tied to the certificate and
+the TIN. Many processors keep a separate trading or display name for this.
+
+**Two. We tell churches, before their first collection, rather than after.**
+This is built: the payouts page now says what the member will see, and
+names it. A pastor who discovers it from a confused member has been let
+down by us. A pastor who was told, and mentioned it once from the pulpit,
+has not.
+
+**Three. The thank you text is the mitigation, and it is the only one.**
+It goes out in the church's own sender name within seconds of the payment
+succeeding, so the last thing the member sees is their own church. That
+makes it worth more than a nicety: it is the only place in the whole flow
+where the church's name appears. Every church should have a sender name set
+and thank you texts switched on, and both are off by default, so onboarding
+has to push it.
+
+### What we are not doing
+
+Giving each church its own full Paystack account would fix the name and is
+still the wrong trade. Every church would have to pass Paystack's own
+business verification before collecting a single cedi, and most Ghanaian
+congregations will not get through that. The subaccount model exists
+precisely so they do not have to, and that is worth more than the name on
+one SMS.
+
+---
+
+## The original reasoning, kept for the record
+
 ## What to do with the answer
 
 **If it can be done per subaccount.** Set it and nothing else changes. We
