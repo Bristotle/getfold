@@ -109,44 +109,18 @@ const FAQS = [
 ];
 
 /**
- * The assurances under the bands.
- *
- * Held as data rather than markup so the same claims can be quoted on the
- * features page or in a help article without being retyped and drifting.
- * Each one is verifiable: the settlement claim was proved with a live GHS
- * 10 gift that settled to the church while our own balance stayed at zero.
+ * The methods a church can actually pay with, in the order a Ghanaian
+ * treasurer would reach for them. Card is listed because it is on the way;
+ * if it is still not enabled when a church tries, the payment falls back to
+ * a method that is, rather than failing.
  */
-const ASSURANCES = [
-  {
-    Icon: Wallet,
-    title: "Giving goes to your account, never ours",
-    body: "Each church has its own Paystack settlement account, so a tithe paid by mobile money lands with you. It never passes through Fold's balance, which is the line between software and handling your money.",
-  },
-  {
-    Icon: Lock,
-    title: "We never hold your account number",
-    body: "Paystack does. We keep a reference code and a label like MTN ending 4417, and a test fails if a column for an account number is ever added.",
-  },
-  {
-    Icon: ShieldCheck,
-    title: "One church cannot see another",
-    body: "Separation is enforced in the database itself, not in the screens, so a request that went around the app entirely would still be refused. We attack our own system to check that it holds.",
-  },
-  {
-    Icon: ScrollText,
-    title: "Every sign in is recorded",
-    body: "Successful and failed, with password changes, in a log nobody can read through the API. Sessions are revoked when a password changes, and repeated failures are rate limited.",
-  },
-  {
-    Icon: FileText,
-    title: "Your records leave as easily as they arrive",
-    body: "Bring your register in from Excel, take it out as a spreadsheet whenever you like, and print or save any statistical return as a PDF. Nothing here is a trap.",
-  },
-  {
-    Icon: Scale,
-    title: "Built to the Data Protection Act",
-    body: "Under Act 843 your church is the data controller and religious belief is special personal data. We say so plainly, and we built to it rather than adding a policy page afterwards.",
-  },
+const ACCEPTED = [
+  "MTN MoMo",
+  "Telecel Cash",
+  "AirtelTigo Money",
+  "Visa",
+  "Mastercard",
+  "Bank transfer",
 ] as const;
 
 export default function PricingPage() {
@@ -308,36 +282,36 @@ export default function PricingPage() {
             </ul>
 
             {/*
-              What happens to the money, under the prices.
+              What we take, and who handles it.
 
-              A church handing a system its tithes wants this answered before
-              it wants a feature list, and the answers here are unusually
-              good, so burying them in a privacy policy nobody opens was
-              leaving the best argument unmade.
+              This replaced six paragraphs explaining our settlement
+              architecture, row level security and the Data Protection Act.
+              All true, all things a church cares about once it is already
+              interested, and all of it read as a wall of reassurance nobody
+              asked for at the moment they are comparing prices. A shopper
+              looking at a price wants to know the payment is safe and that
+              their method is accepted, which is one line, not six.
 
-              Every line is something the product actually does and has been
-              verified doing with real money. Nothing aspirational.
+              The detail still exists for anyone who wants it, on the
+              security and privacy pages.
             */}
-            <ul className="m-0 mx-auto mt-10 grid max-w-5xl list-none gap-x-8 gap-y-5 p-0 sm:grid-cols-2">
-              {ASSURANCES.map((a) => (
-                <li key={a.title} className="flex gap-3">
-                  <span
-                    aria-hidden="true"
-                    className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"
+            <div className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-2 text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold">
+                <Lock size={14} strokeWidth={2.2} aria-hidden="true" />
+                Payments secured by Paystack
+              </span>
+              <span aria-hidden="true" className="hidden h-4 w-px bg-border sm:block" />
+              <ul className="m-0 flex list-none flex-wrap items-center justify-center gap-2 p-0">
+                {ACCEPTED.map((m) => (
+                  <li
+                    key={m}
+                    className="rounded-md border border-border bg-surface px-2.5 py-1 text-[12px] font-semibold text-foreground/70"
                   >
-                    <a.Icon size={17} strokeWidth={1.9} />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-bold text-foreground">
-                      {a.title}
-                    </h3>
-                    <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-                      {a.body}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    {m}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <div className="mx-auto mt-8 flex max-w-3xl gap-3.5 rounded-xl border border-primary/25 bg-primary-soft p-5">
               <span aria-hidden="true" className="mt-0.5 shrink-0 text-primary">

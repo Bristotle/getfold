@@ -71,13 +71,12 @@ export const TIERS: Tier[] = [
     accent: "#00b3a4",
     accentText: "#008176",
     highlights: [
-      "The full product, nothing withheld",
       "Members, Bible classes, groups and attendance",
       "Tithes, offerings and funds, cash or mobile money",
-      "Your statistical return for any period, printed or saved as PDF",
-      "Baptisms, marriages and funerals on the record",
-      "Bring your register across from Excel, take it away as a spreadsheet",
-      "Unlimited people on your team, each with their own role",
+      "Baptisms, marriages and funerals recorded",
+      "Your statistical return, printed or as a PDF",
+      "An activity log of who changed what, and when",
+      "Unlimited team members, each with a role",
     ],
   },
   {
@@ -93,10 +92,9 @@ export const TIERS: Tier[] = [
     highlights: [
       "Everything in Society",
       "Insights: who has quietly stopped coming",
-      "Birthday, welcome and thank you texts, in your church's own name",
-      "Visitors followed up, and members transferred between churches",
-      "Attendance and giving charted month by month",
-      "Text any group straight from the register",
+      "Birthday and thank you texts, in your church's name",
+      "Visitors followed up, members transferred",
+      "Attendance and giving charted by month",
     ],
   },
   {
@@ -110,10 +108,10 @@ export const TIERS: Tier[] = [
     accentText: "#9e6600",
     highlights: [
       "Everything in Society Plus",
-      "Branches, with figures that roll up to the top",
-      "Priority support, same day",
+      "Branches, with figures that roll up",
       "We move your register across for you",
       "Help setting up your first return",
+      "Priority support, same day",
     ],
   },
   {
@@ -127,10 +125,10 @@ export const TIERS: Tier[] = [
     accentText: "#b84d71",
     highlights: [
       "Every society keeps its own register",
-      "Headquarters over regions over districts, to any depth",
-      "Oversight from above is read only, by design",
+      "Headquarters over regions over districts",
+      "Oversight from above is read only",
       "A rate agreed for the whole circuit",
-      "Invoiced by bank transfer if your treasurer needs it",
+      "Invoiced by bank transfer if you need it",
     ],
   },
 ];

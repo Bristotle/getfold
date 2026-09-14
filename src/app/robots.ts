@@ -20,6 +20,7 @@ export default function robots(): MetadataRoute.Robots {
         // reason to invite a crawler to follow it.
         "/whatsapp",
         "/dashboard",
+        "/activity",
         "/members",
         "/attendance",
         "/contributions",
