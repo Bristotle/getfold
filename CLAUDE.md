@@ -232,3 +232,31 @@ BASE=https://www.getfold.org node scripts/audit-mobile.mjs   # live site
 
 Playwright is deliberately not a dependency. It is installed for the run
 and thrown away, so it costs the deploy nothing.
+
+### Real money found four things no amount of reading did
+
+The first live cedis through the product broke four things, each invisible
+until money moved. They are worth knowing as a class of bug: every one was
+a place where the code was correct and the *church's experience* was not.
+
+- **Ghana does not send a payment prompt.** MTN texts a code, "Enter code
+  098055 to pay GHS 5.00 to <merchant>", and somebody has to type it back.
+  Paystack signals this with `send_otp` from `/charge`, answered by
+  `/charge/submit_otp`. A charge with nowhere to submit the code can never
+  succeed, no matter how long anyone waits.
+- **The settlement check ran after the payment row was written**, so a
+  church with nowhere to settle got a row stuck at "Waiting" that Paystack
+  had never been told about. Decide whether to charge before recording that
+  you did.
+- **Money that records itself gets recorded twice.** A confirmation that
+  leaves any doubt about whether to also write it in the book will be
+  written in the book. Say who paid, how much, and that it is already
+  counted.
+- **The dashboard filtered on `type = 'tithe'`**, so an offering left it
+  reading zero and looking broken.
+
+And a probe is only a probe if a bad key fails it. `/integration` returns
+500 for every Paystack key, `/bank` returns 200 for the string "garbage",
+and `/balance` answers 401 for an account still completing activation.
+`/transaction` is the one that distinguishes them, and that was established
+by trying a deliberately invalid key rather than by assuming.
