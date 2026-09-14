@@ -6,7 +6,12 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { createInvoicePaymentLink, invoiceReference } from "@/lib/paystack";
+import {
+  createInvoicePaymentLink,
+  invoiceReference,
+  INVOICE_METHODS,
+  type InvoiceMethod,
+} from "@/lib/paystack";
 
 /**
  * Produces a payment link for an invoice and hands the church to Paystack.
@@ -18,7 +23,20 @@ import { createInvoicePaymentLink, invoiceReference } from "@/lib/paystack";
  */
 export async function payInvoice(formData: FormData) {
   const invoiceId = String(formData.get("invoiceId") ?? "");
-  await openPaymentLink(invoiceId);
+  await openPaymentLink(invoiceId, methodFrom(formData));
+}
+
+/**
+ * Reads the chosen method, refusing anything not on the list.
+ *
+ * Form data is whatever was posted, so an unrecognised value falls back to
+ * mobile money rather than being passed to Paystack as a channel name.
+ */
+function methodFrom(formData: FormData): InvoiceMethod {
+  const raw = String(formData.get("method") ?? "momo");
+  return INVOICE_METHODS.some((m) => m.value === raw)
+    ? (raw as InvoiceMethod)
+    : "momo";
 }
 
 /**
@@ -34,7 +52,8 @@ export async function payInvoice(formData: FormData) {
  * decides the period rather than trusting anything sent from here. Paying
  * during a trial does not shorten it.
  */
-export async function startSubscription() {
+export async function startSubscription(formData: FormData) {
+  const method = methodFrom(formData);
   const { membership } = await getMembership();
   if (!membership) redirect("/onboarding");
 
@@ -70,13 +89,13 @@ export async function startSubscription() {
     );
   }
 
-  await openPaymentLink(String(invoiceId));
+  await openPaymentLink(String(invoiceId), method);
 }
 
 /**
  * Shared by both buttons: turn an invoice into a Paystack link and go there.
  */
-async function openPaymentLink(invoiceId: string) {
+async function openPaymentLink(invoiceId: string, method: InvoiceMethod) {
   const { membership, email } = await getMembership();
   if (!membership) redirect("/onboarding");
 
@@ -92,15 +111,57 @@ async function openPaymentLink(invoiceId: string) {
 
   const { data: invoice } = await supabase
     .from("invoices")
-    .select("id, amount_pesewas, period_start, period_end, status, paystack_authorization_url")
+    .select(
+      "id, amount_pesewas, period_start, period_end, status, paystack_authorization_url, payment_method"
+    )
     .eq("id", invoiceId)
     .maybeSingle();
 
   if (!invoice) redirect("/billing?error=Could not find that invoice.");
   if (invoice.status === "paid") redirect("/billing?message=That invoice is already paid.");
 
-  // Reuse an existing link rather than opening a second transaction.
-  if (invoice.paystack_authorization_url) {
+  /*
+    Bank transfer and cheque never touch Paystack. The invoice records the
+    intent and waits, we are told so the details go out, and it is marked
+    paid by hand when the money clears. Anything else would be pretending a
+    gateway is involved in a payment that is settled between two banks.
+  */
+  if (method === "bank") {
+    await supabase
+      .from("invoices")
+      .update({
+        payment_method: "bank",
+        status: "sent",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", invoice.id);
+
+    await notifyBankTransfer({
+      church: membership.organization.name,
+      email: email ?? "no email on the account",
+      amountPesewas: invoice.amount_pesewas as number,
+      period: `${invoice.period_start} to ${invoice.period_end}`,
+    });
+
+    revalidatePath("/billing");
+    redirect(
+      `/billing?message=${encodeURIComponent(
+        "Noted. We will send your bank details and a copy of the invoice today, and mark this paid once it clears. If it is urgent, message us on WhatsApp."
+      )}`
+    );
+  }
+
+  /*
+    Reuse an existing link rather than opening a second transaction for the
+    same quarter, which is how a church pays twice and nobody notices until
+    the treasurer does.
+
+    But only when it is a link for the method now being asked for. A stored
+    link carries the channel it was created with, so a church that opened a
+    card page and then wanted mobile money would otherwise be handed the
+    card page again every time.
+  */
+  if (invoice.paystack_authorization_url && invoice.payment_method === method) {
     // Off site by design: typedRoutes only knows our own routes.
     redirect(invoice.paystack_authorization_url as Route);
   }
@@ -116,6 +177,7 @@ async function openPaymentLink(invoiceId: string) {
     reference,
     churchName: membership.organization.name,
     periodLabel: `${invoice.period_start} to ${invoice.period_end}`,
+    method,
   });
 
   if (!result.ok) {
@@ -127,6 +189,7 @@ async function openPaymentLink(invoiceId: string) {
     .update({
       paystack_reference: reference,
       paystack_authorization_url: result.url,
+      payment_method: method,
       status: "sent",
       updated_at: new Date().toISOString(),
     })
@@ -134,4 +197,32 @@ async function openPaymentLink(invoiceId: string) {
 
   revalidatePath("/billing");
   redirect(result.url as Route);
+}
+
+/**
+ * Tells us a church wants to pay off the gateway.
+ *
+ * Nothing in the product can send bank details, because we do not hold
+ * them, so this is the honest mechanism: the church is told we will send
+ * them, and we are told to send them. Failing to alert must not fail the
+ * church's action, so the result is deliberately ignored.
+ */
+async function notifyBankTransfer(params: {
+  church: string;
+  email: string;
+  amountPesewas: number;
+  period: string;
+}) {
+  const { sendAlert } = await import("@/lib/alert");
+  await sendAlert({
+    subject: `${params.church} wants to pay by bank transfer or cheque`,
+    body: [
+      `Church:  ${params.church}`,
+      `Contact: ${params.email}`,
+      `Amount:  GHS ${(params.amountPesewas / 100).toFixed(2)}`,
+      `Period:  ${params.period}`,
+      "",
+      "Send the bank details and a copy of the invoice, then mark it paid when it clears.",
+    ].join("\n"),
+  }).catch(() => {});
 }

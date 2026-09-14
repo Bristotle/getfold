@@ -411,12 +411,42 @@ export function settlementLabel(optionName: string, accountNumber: string) {
  * quietly and often, and a treasurer would rather authorise each payment
  * anyway. The link accepts MoMo and card without us choosing for them.
  */
+/**
+ * How a church chose to pay. Mobile money and card open Paystack on that
+ * method; bank and cheque never reaches Paystack at all.
+ */
+export type InvoiceMethod = "momo" | "card" | "bank";
+
+export const INVOICE_METHODS: {
+  value: InvoiceMethod;
+  label: string;
+  hint: string;
+}[] = [
+  {
+    value: "momo",
+    label: "Mobile money",
+    hint: "MTN MoMo, Telecel Cash or AirtelTigo Money. You approve it with the code sent to your phone.",
+  },
+  {
+    value: "card",
+    label: "Visa or Mastercard",
+    hint: "Any card that works online, Ghanaian or foreign.",
+  },
+  {
+    value: "bank",
+    label: "Bank transfer or cheque",
+    hint: "We send you the account details and the invoice, and mark it paid when it clears.",
+  },
+];
+
 export async function createInvoicePaymentLink(params: {
   email: string;
   amountPesewas: number;
   reference: string;
   churchName: string;
   periodLabel: string;
+  /** Which channel to open. Omitted means offer both online methods. */
+  method?: Exclude<InvoiceMethod, "bank">;
 }): Promise<
   { ok: true; url: string } | { ok: false; error: string }
 > {
@@ -435,8 +465,18 @@ export async function createInvoicePaymentLink(params: {
         amount: params.amountPesewas,
         currency: "GHS",
         reference: params.reference,
-        // Both, so a church that has one and not the other is never stuck.
-        channels: ["mobile_money", "card"],
+        /*
+          Paystack opens its page on the channel it is given, so asking for
+          one lands the treasurer on that method rather than on a menu. With
+          no method named it still carries both, so a church that has one
+          and not the other is never stuck.
+        */
+        channels:
+          params.method === "momo"
+            ? ["mobile_money"]
+            : params.method === "card"
+              ? ["card"]
+              : ["mobile_money", "card"],
         metadata: {
           church: params.churchName,
           period: params.periodLabel,

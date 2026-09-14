@@ -57,6 +57,20 @@ async function sendEmail(subject: string, body: string): Promise<boolean> {
   }
 }
 
+/**
+ * A plain operational alert to whoever ALERT_EMAIL names.
+ *
+ * For things that need a person rather than a record: a church asking to
+ * pay by bank transfer, for instance, where the product cannot complete the
+ * job on its own because we do not hold the bank details it would need.
+ */
+export async function sendAlert(a: {
+  subject: string;
+  body: string;
+}): Promise<boolean> {
+  return sendEmail(a.subject, a.body);
+}
+
 export async function alertNewEnquiry(e: Enquiry): Promise<void> {
   const lines = [
     `New enquiry from ${e.name}`,

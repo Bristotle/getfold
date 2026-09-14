@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
 import { payInvoice, startSubscription } from "./actions";
+import { INVOICE_METHODS } from "@/lib/paystack";
 
 export const metadata = { title: "Billing, Fold" };
 
@@ -32,6 +33,41 @@ type Invoice = {
   due_on: string | null;
   paid_at: string | null;
 };
+
+/**
+ * Pick the way to pay, then go.
+ *
+ * The button used to say "Pay by mobile money or card" and open one Paystack
+ * page carrying both, which is not a choice, it is a screen a treasurer has
+ * to work out. Churches ask for the method by name, so it is named here and
+ * Paystack opens on it. Bank transfer stays on this side entirely.
+ *
+ * A plain select and a submit, so it works with no JavaScript, which is the
+ * same reason the help centre search is a GET form.
+ */
+function PayMethod({ label }: { label: string }) {
+  return (
+    <div className="flex flex-wrap items-end gap-2">
+      <label className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-foreground">How to pay</span>
+        <select
+          name="method"
+          defaultValue="momo"
+          className="h-10 rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+        >
+          {INVOICE_METHODS.map((m) => (
+            <option key={m.value} value={m.value}>
+              {m.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <SubmitButton size="sm" pendingLabel="Opening…">
+        {label}
+      </SubmitButton>
+    </div>
+  );
+}
 
 export default async function BillingPage({
   searchParams,
@@ -96,7 +132,8 @@ export default async function BillingPage({
         <h1 className="text-xl font-bold text-foreground">Billing</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           Billed every three months, the same cycle as your statistical
-          return. Pay by mobile money or card, whichever suits your treasurer.
+          return. Pay by mobile money, card, or a bank transfer against the
+          invoice, whichever suits your treasurer.
         </p>
       </div>
 
@@ -158,17 +195,19 @@ export default async function BillingPage({
             */}
             {outstanding.length === 0 && (
               <form action={startSubscription} className="mt-4">
-                <SubmitButton size="sm" pendingLabel="Opening…">
-                  {trial?.status === "active"
-                    ? "Renew for three months"
-                    : "Subscribe, three months"}
-                </SubmitButton>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                <PayMethod
+                  label={
+                    trial?.status === "active"
+                      ? "Renew for three months"
+                      : "Subscribe, three months"
+                  }
+                />
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
                   {trial?.status === "trialing"
                     ? `Paying now does not shorten your trial. The three months start on ${shortDate(trial.ends_at)}, when it ends, and you keep the ${trial.days_left} days you have left.`
                     : trial?.status === "active"
                       ? `Your next three months start on ${shortDate(trial.ends_at)}, when the current period ends. Nothing overlaps.`
-                      : "Mobile money or card. You will see the amount before anything is charged."}
+                      : "You will see the amount before anything is charged."}
                 </p>
               </form>
             )}
@@ -217,9 +256,7 @@ export default async function BillingPage({
                 </div>
                 <form action={payInvoice}>
                   <input type="hidden" name="invoiceId" value={i.id} />
-                  <SubmitButton size="sm" pendingLabel="Opening…">
-                    Pay by mobile money or card
-                  </SubmitButton>
+                  <PayMethod label="Pay this invoice" />
                 </form>
               </li>
             ))}
