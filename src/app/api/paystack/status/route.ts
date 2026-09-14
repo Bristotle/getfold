@@ -125,15 +125,33 @@ export async function GET(request: Request) {
       ["bank", "https://api.paystack.co/bank?currency=GHS&perPage=1"],
     ] as const;
 
-    const results: Record<string, { http: number; message: string | null }> = {};
+    const results: Record<
+      string,
+      { http: number; message: string | null; found?: string[] }
+    > = {};
     for (const [name, endpoint] of endpoints) {
       try {
         const res = await fetch(endpoint, {
           headers: { Authorization: `Bearer ${key}` },
           cache: "no-store",
         });
-        const json = (await res.json()) as { message?: string };
+        const json = (await res.json()) as {
+          message?: string;
+          data?: { subaccount_code?: string; business_name?: string }[];
+        };
         results[name] = { http: res.status, message: json.message ?? null };
+
+        /*
+          Name the subaccounts this key can see. A charge quotes a
+          subaccount code, and a code the key cannot see fails the charge,
+          so "the key works" is not the same question as "the key can settle
+          this church". Codes are opaque identifiers, not account numbers.
+        */
+        if (name === "subaccount" && Array.isArray(json.data)) {
+          results[name].found = json.data.map(
+            (s) => `${s.subaccount_code} (${s.business_name ?? "unnamed"})`
+          );
+        }
       } catch (e) {
         results[name] = { http: 0, message: (e as Error).message };
       }
