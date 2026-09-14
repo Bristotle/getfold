@@ -116,6 +116,53 @@ export async function GET(request: Request) {
     exactly this confusing way, and the length plus a hash prefix identifies
     which key is deployed without putting the key anywhere it could be read.
   */
+  /*
+    ?channels=1
+
+    Which payment channels will this account actually accept?
+
+    A church picked "Visa or Mastercard" on the billing page and Paystack
+    answered "No active channel to process transaction. Please contact
+    merchant", which is what it says when the requested channel is not
+    enabled on the integration. That is an account setting, not a bug in
+    our code, and there is no endpoint that lists enabled channels, so the
+    only way to know is to ask for each one and see which are refused.
+
+    Initialising creates a pending transaction and charges nobody, so this
+    is safe to run. The transactions are abandoned and cost nothing.
+  */
+  let channels: unknown = null;
+  if (url.searchParams.get("channels")) {
+    const each = ["mobile_money", "card", "bank_transfer", "ussd", "qr", "eft"];
+    const results: Record<string, { ok: boolean; message: string | null }> = {};
+    for (const channel of each) {
+      try {
+        const res = await fetch("https://api.paystack.co/transaction/initialize", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${key}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: "channel-probe@example.com",
+            amount: 100,
+            currency: "GHS",
+            channels: [channel],
+            reference: `probe_${channel}_${Date.now()}`,
+          }),
+        });
+        const json = (await res.json()) as { status?: boolean; message?: string };
+        results[channel] = {
+          ok: res.ok && Boolean(json.status),
+          message: json.message ?? null,
+        };
+      } catch (e) {
+        results[channel] = { ok: false, message: (e as Error).message };
+      }
+    }
+    channels = results;
+  }
+
   let probe: unknown = null;
   if (url.searchParams.get("probe")) {
     const endpoints = [
@@ -250,5 +297,6 @@ export async function GET(request: Request) {
     ...(lookup ? { lookup } : {}),
     ...(recent ? { recent } : {}),
     ...(probe ? { probe } : {}),
+    ...(channels ? { channels } : {}),
   });
 }
