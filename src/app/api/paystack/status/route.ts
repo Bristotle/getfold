@@ -133,7 +133,7 @@ export async function GET(request: Request) {
   */
   let channels: unknown = null;
   if (url.searchParams.get("channels")) {
-    const each = ["mobile_money", "card", "bank_transfer", "ussd", "qr", "eft"];
+    const each = ["mobile_money", "card", "bank_transfer", "ussd", "qr", "eft", "NONE"];
     const results: Record<string, { ok: boolean; message: string | null }> = {};
     for (const channel of each) {
       try {
@@ -147,7 +147,10 @@ export async function GET(request: Request) {
             email: "channel-probe@example.com",
             amount: 100,
             currency: "GHS",
-            channels: [channel],
+            // NONE omits the key entirely, which is what the fallback does
+            // when a named channel is refused. Verified to work, so the
+            // fallback is not itself relying on a channel being enabled.
+            ...(channel === "NONE" ? {} : { channels: [channel] }),
             reference: `probe_${channel}_${Date.now()}`,
           }),
         });

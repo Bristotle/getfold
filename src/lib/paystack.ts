@@ -472,12 +472,16 @@ export async function createInvoicePaymentLink(params: {
           no method named it still carries both, so a church that has one
           and not the other is never stuck.
         */
-        channels:
-          params.method === "momo"
-            ? ["mobile_money"]
-            : params.method === "card"
-              ? ["card"]
-              : ["mobile_money", "card"],
+        ...(params.method === "momo"
+          ? { channels: ["mobile_money"] }
+          : params.method === "card"
+            ? { channels: ["card"] }
+            : // No method named means no channels key at all, so Paystack
+              // offers whatever the account has enabled. Naming a list that
+              // included a disabled channel happens to work today, but the
+              // fallback exists precisely because a channel was refused, and
+              // it should not depend on that tolerance continuing.
+              {}),
         metadata: {
           church: params.churchName,
           period: params.periodLabel,
