@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { getMembership } from "@/lib/org";
 import { Card } from "@/components/ui/card";
 import { Input, StatusBanner } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -26,6 +28,20 @@ export default async function LoginPage({
   searchParams: Promise<{ error?: string; message?: string }>;
 }) {
   const { error, message } = await searchParams;
+
+  /*
+    Somebody already signed in does not need to sign in again.
+
+    The marketing header carries Log in and Sign up on every public page and
+    cannot tell whether you are signed in, because those pages are static
+    HTML and must stay that way for a weak connection. So the guard belongs
+    here, at the destination: a pastor who is already signed in and clicks
+    Log in goes to their dashboard rather than to a form asking for a
+    password they have already given.
+  */
+  const { email, membership } = await getMembership();
+  if (membership) redirect("/dashboard");
+  if (email) redirect("/onboarding");
 
   return (
     <main className="grid min-h-screen lg:grid-cols-[1fr_1.05fr]">
