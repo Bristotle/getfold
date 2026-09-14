@@ -14,6 +14,10 @@ import {
   FileText,
   Scale,
 } from "lucide-react";
+import {
+  PaymentMarks,
+  PaystackMark,
+} from "@/components/marketing/payment-marks";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
@@ -107,21 +111,6 @@ const FAQS = [
     a: "Talk to us. Each society keeps its own register and its own team, and one account oversees them all, which is not something a per congregation price handles sensibly. We agree a rate for the circuit, and it is almost always less than each society paying separately.",
   },
 ];
-
-/**
- * The methods a church can actually pay with, in the order a Ghanaian
- * treasurer would reach for them. Card is listed because it is on the way;
- * if it is still not enabled when a church tries, the payment falls back to
- * a method that is, rather than failing.
- */
-const ACCEPTED = [
-  "MTN MoMo",
-  "Telecel Cash",
-  "AirtelTigo Money",
-  "Visa",
-  "Mastercard",
-  "Bank transfer",
-] as const;
 
 export default function PricingPage() {
   return (
@@ -295,22 +284,13 @@ export default function PricingPage() {
               The detail still exists for anyone who wants it, on the
               security and privacy pages.
             */}
-            <div className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-2 text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold">
+            <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-3">
+              <span className="inline-flex items-center gap-2 text-[13px] font-semibold text-muted-foreground">
                 <Lock size={14} strokeWidth={2.2} aria-hidden="true" />
-                Payments secured by Paystack
+                Payments secured by
+                <PaystackMark />
               </span>
-              <span aria-hidden="true" className="hidden h-4 w-px bg-border sm:block" />
-              <ul className="m-0 flex list-none flex-wrap items-center justify-center gap-2 p-0">
-                {ACCEPTED.map((m) => (
-                  <li
-                    key={m}
-                    className="rounded-md border border-border bg-surface px-2.5 py-1 text-[12px] font-semibold text-foreground/70"
-                  >
-                    {m}
-                  </li>
-                ))}
-              </ul>
+              <PaymentMarks />
             </div>
 
             <div className="mx-auto mt-8 flex max-w-3xl gap-3.5 rounded-xl border border-primary/25 bg-primary-soft p-5">
