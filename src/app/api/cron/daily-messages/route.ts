@@ -96,6 +96,10 @@ export async function GET(request: Request) {
       .select("id, recipient, body, organization_id")
       .in("organization_id", orgIds)
       .in("status", ["queued", "no_provider"])
+      // Never send a message before its time. A thank you is deliberately
+      // held back a few minutes, and this job must not undo that just
+      // because it happened to run in the same window.
+      .lte("send_after", new Date().toISOString())
       // A cap, because one runaway import should not spend a church's
       // entire SMS balance in a single run.
       .limit(200);

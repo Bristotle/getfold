@@ -68,8 +68,19 @@ export async function queueMessage({
   body,
   automatic,
   sendNow,
+  sendAfterMinutes,
   client,
 }: Queue & {
+  /*
+    Hold the message back this many minutes.
+
+    A thank you sent the instant a payment confirms arrives on top of MTN's
+    own two texts, the approval code and the debit alert, and reads as part
+    of the machinery. A few minutes later it arrives on its own and reads as
+    the church. Nothing is sent inline when this is set; the flush job picks
+    it up once it is due.
+  */
+  sendAfterMinutes?: number;
   /*
     A client to use instead of the caller's session.
 
@@ -111,6 +122,10 @@ export async function queueMessage({
           null;
       }
     }
+    const dueAt = sendAfterMinutes
+      ? new Date(Date.now() + sendAfterMinutes * 60_000).toISOString()
+      : new Date().toISOString();
+
     const { data, error } = await supabase
       .from("notifications")
       .insert({
@@ -120,6 +135,7 @@ export async function queueMessage({
         channel: "sms",
         recipient: to,
         body,
+        send_after: dueAt,
         // Distinguishes "waiting to go" from "nothing can send it", so the
         // UI can tell the church which it is.
         status: providerStatus().configured ? "queued" : "no_provider",
@@ -145,7 +161,9 @@ export async function queueMessage({
       daily job retries it, so the worst case is the behaviour we had
       before rather than a lost message.
     */
-    if (id && sendNow) {
+    // Deliberately not inline when the message is being held back. The
+    // flush job owns it from here.
+    if (id && sendNow && !sendAfterMinutes) {
       const result = await deliver(to, body, senderId);
       if (result.ok) {
         await supabase
@@ -179,6 +197,9 @@ export async function queueMessage({
  * It comes from the church's own sender name, never ours. That is the
  * point of the feature.
  */
+/** How long a thank you waits. One place, so it is a decision not a magic number. */
+export const THANK_YOU_DELAY_MINUTES = 3;
+
 export async function thankForGiving(params: {
   organizationId: string;
   memberId: string | null;
@@ -224,6 +245,12 @@ export async function thankForGiving(params: {
       type: "contribution_receipt",
       automatic: true,
       sendNow: true,
+      /*
+        Three minutes. Long enough for MTN's debit alert to have landed and
+        been read, short enough that the member still connects it to the
+        gift they just made.
+      */
+      sendAfterMinutes: THANK_YOU_DELAY_MINUTES,
       phone,
       body: renderTemplate(
         (org as { sms_template_thanks: string | null }).sms_template_thanks ??
