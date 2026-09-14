@@ -3,6 +3,12 @@ import { Logo } from "@/components/marketing/logo";
 import { SupportWidgets } from "@/components/marketing/support-widgets";
 import { OPPORTUNITIES } from "@/lib/join";
 import { DENOMINATIONS } from "@/lib/denominations";
+import { MODULES } from "@/lib/modules";
+import {
+  PaymentMarks,
+  PaystackMark,
+} from "@/components/marketing/payment-marks";
+import { Lock } from "lucide-react";
 
 /**
  * The public footer.
@@ -24,9 +30,18 @@ import { DENOMINATIONS } from "@/lib/denominations";
  */
 const COLUMNS = [
   {
+    heading: "Features",
+    links: [
+      ...MODULES.map((m) => ({
+        label: m.title,
+        href: `/features/${m.slug}` as const,
+      })),
+      { label: "Everything, in one place", href: "/features" },
+    ],
+  },
+  {
     heading: "Product",
     links: [
-      { label: "Features", href: "/features" },
       { label: "Compare", href: "/compare" },
       { label: "Pricing", href: "/pricing" },
       { label: "Getting started", href: "/getting-started" },
@@ -109,7 +124,7 @@ export function SiteFooter() {
         />
 
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.15fr_1fr_1fr_1fr_1fr_1fr]">
             <div>
               <Logo showTagline variant="light" />
               <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
@@ -147,7 +162,23 @@ export function SiteFooter() {
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col gap-2 border-t border-white/20 pt-6 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
+          {/*
+            The payment methods, at the very bottom.
+
+            This is where a shopper looks for it, which is why every
+            e-commerce site on earth puts it there. It is the same component
+            the pricing page uses, so the two can never fall out of step.
+          */}
+          <div className="mt-12 flex flex-col items-center gap-3 border-t border-white/20 pt-8">
+            <span className="inline-flex items-center gap-2 text-[13px] font-semibold text-white/75">
+              <Lock size={14} strokeWidth={2.2} aria-hidden="true" />
+              Payments secured by
+              <PaystackMark />
+            </span>
+            <PaymentMarks />
+          </div>
+
+          <div className="mt-10 flex flex-col gap-2 border-t border-white/20 pt-6 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
             <p>&copy; {year} Fold. All rights reserved.</p>
             <p>
               Built by{" "}

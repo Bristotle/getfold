@@ -3,6 +3,7 @@ import { POSTS } from "@/lib/posts";
 import { CATEGORIES, ALL_ARTICLES } from "@/lib/help";
 import { OPPORTUNITIES } from "@/lib/join";
 import { DENOMINATIONS } from "@/lib/denominations";
+import { MODULES } from "@/lib/modules";
 
 /**
  * The public pages only. Everything behind a login is deliberately absent,
@@ -37,6 +38,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    /*
+      One page per area of the product. A church does not search for
+      "church management software", it searches for the thing it is trying
+      to fix, so these answer the search that actually happens.
+    */
+    ...MODULES.map((m) => ({
+      url: `${BASE}/features/${m.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
     {
       url: `${BASE}/compare`,
       lastModified: now,
