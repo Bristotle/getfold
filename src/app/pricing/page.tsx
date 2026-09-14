@@ -125,7 +125,7 @@ const ASSURANCES = [
   {
     Icon: Lock,
     title: "We never hold your account number",
-    body: "Paystack does. We keep a reference code and a label like MTN ending 2348, and a test fails if a column for an account number is ever added.",
+    body: "Paystack does. We keep a reference code and a label like MTN ending 4417, and a test fails if a column for an account number is ever added.",
   },
   {
     Icon: ShieldCheck,
