@@ -260,3 +260,29 @@ And a probe is only a probe if a bad key fails it. `/integration` returns
 and `/balance` answers 401 for an account still completing activation.
 `/transaction` is the one that distinguishes them, and that was established
 by trying a deliberately invalid key rather than by assuming.
+
+## Security is tested by attacking it, not by asserting it
+
+`node scripts/security-test.mjs` tries 78 things that must not work, against
+the live system, and exits non zero if any of them does. Run it after any
+change to a policy, a grant, a SECURITY DEFINER function, or a route guard.
+
+It covers, in order: what the public anon key can read and write across
+every table; whether a signed in stranger with their own account can see or
+reach another church's members, giving, payments, invoices or dashboard
+figures, or insert themselves into it as a pastor; SQL injection through
+PostgREST filters; every private route refusing an unauthenticated request;
+the cron and diagnostic endpoints refusing a missing or wrong secret; the
+Paystack webhook refusing unsigned and forged signatures; security headers;
+whether any secret appears in the delivered HTML; and whether robots.txt or
+the sitemap advertise a private route.
+
+It creates one throwaway user at `example.com`, reserved by RFC 2606 so it
+can never receive mail, and deletes it afterwards. It never writes to a real
+church.
+
+Two things it does not cover, so do not read a pass as more than it is: it
+does not test the browser layer (CSRF on server actions is handled by Next,
+and XSS by React's escaping, neither of which this exercises), and it
+cannot test a privilege boundary between two roles inside one church while
+only one member exists.
