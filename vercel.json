@@ -8,10 +8,6 @@
     {
       "path": "/api/cron/daily-messages",
       "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/cron/send-due",
-      "schedule": "*/5 * * * *"
     }
   ]
 }
