@@ -13,20 +13,30 @@ attachment does not.
 | `fold-logo-light.svg` | On a dark or purple background. |
 | `fold-logo@1200.png` | Slides, documents, anyone who cannot take an SVG. |
 | `fold-logo@600.png` | Email signatures, smaller placements. |
-| `fold-mark.svg`, `fold-mark@512.png` | The mark on its own, no wordmark. |
+| `fold-mark.svg`, `fold-mark@1024.png` | The church on its own, no wordmark. Down to about 40px. |
+| `fold-mark-small.svg` | The same church with the detail removed, for anything under 40px. |
 | `fold-icon.svg`, `fold-icon@512.png` | Profile pictures, app icons, favicons. Square. |
 
 Live links: `getfold.org/brand/fold-logo.svg`, and the same for every file
 above.
 
-**The mark.** A fold is an enclosure for a flock, so it is a shelter rather
-than a steeple or a cross. Two arcs, one folded inside the other: the outer
-is the wall, the inner is the fold itself, and it is open at the foot
-because a fold has a gate. It holds down to 16 pixels and reverses to white
-without losing the inner arc.
+**The mark.** A church: steeple, cross, bell window, the arched door, and
+the two side wings. Drawn as line art in one weight so it prints, embroiders
+and reverses cleanly.
 
-**Colours.** Brand purple `#6b2fd9`. Text `#1a1033`. Ground `#faf9f6`. Do
-not put the purple mark on a dark ground, use the light version.
+**Two versions, one building.** The detailed mark carries the wings, the
+rose window and the small windows, and it holds down to about 40px. Below
+that those details close into a smudge, so use `fold-mark-small.svg`, which
+is the same church with the detail taken out rather than a different idea.
+The website header and the app icon both use the simplified one.
+
+**The wordmark.** FOLD in heavy italic capitals, with KNOW YOUR FLOCK and
+(PROVERBS 27:23) beneath it, centred. It is part of the lockup files, so
+nobody needs to set it by hand.
+
+**Colours.** Brand purple `#6b2fd9` for everything, mark and type alike. On
+a dark or purple ground use the light version, which is white throughout.
+Do not put the purple mark on a dark ground.
 
 **Clear space.** Leave the height of the mark's arch on all four sides.
 Never redraw it, stretch it, add a shadow, or set the wordmark in another

@@ -1,8 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Fold">
   <title>Fold</title>
-  <rect width="120" height="120" rx="26" fill="#6b2fd9"/>
-  <g fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
-     transform="translate(60 62) scale(0.78) translate(-60 -58)">
+  <!--
+    The same church with the side wings, the small windows and the rose
+    window taken out, for a favicon, an app icon, or anything under 40px.
+    Simplified rather than redrawn, so the two read as one mark.
+  -->
+  <g fill="none" stroke="#6b2fd9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M60 8v16M52 16h16"/>
     <path d="M42 40 60 22l18 18"/>
     <path d="M47 40v18M73 40v18"/>

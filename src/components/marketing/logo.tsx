@@ -1,9 +1,9 @@
 /**
  * The Fold mark.
  *
- * A church door rather than a steeple or a cross: a door is what a fold has,
- * and it reads at 20px where a detailed building does not. The arch doubles
- * as the shelter the name refers to.
+ * The church, matching the brand files in public/brand exactly. It used to
+ * be a plain house outline with an arched door, which read as a generic
+ * home icon and did not match anything we sent anybody.
  *
  * `showTagline` is off by default so the mark can sit in the app header
  * without repeating the pitch on every page.
@@ -34,38 +34,38 @@ export function Logo({
       <svg
         width={dims}
         height={dims}
-        viewBox="0 0 32 32"
+        viewBox="0 0 120 120"
         fill="none"
         aria-hidden="true"
         className="shrink-0"
       >
-        {/* roof */}
-        <path
-          d="M4 14.5 16 4l12 10.5"
+        {/*
+          The church, simplified. The full mark in public/brand carries the
+          side wings, the rose window and the small windows; below about
+          40px those close into a smudge, and the header renders at 24 to 40.
+          This is the same building with that detail removed, not a second
+          idea, so the site and the brand kit read as one mark.
+        */}
+        <g
           stroke="currentColor"
-          strokeWidth="2.4"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
           className={markClass}
-        />
-        {/* walls */}
-        <path
-          d="M6.5 13.5V27h19V13.5"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={markClass}
-        />
-        {/* the door: an arch, the fold itself */}
-        <path
-          d="M12.5 27v-6a3.5 3.5 0 1 1 7 0v6"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={markClass}
-        />
+        >
+          {/* cross */}
+          <path d="M60 8v16M52 16h16" />
+          {/* steeple */}
+          <path d="M42 40 60 22l18 18" />
+          <path d="M47 40v18M73 40v18" />
+          {/* nave roof and walls */}
+          <path d="M18 82 60 50l42 32" />
+          <path d="M29 80v28M91 80v28" />
+          {/* the door */}
+          <path d="M50 108V90a10 10 0 0 1 20 0v18" />
+          {/* ground */}
+          <path d="M12 108h96" />
+        </g>
       </svg>
 
       <span className="flex flex-col leading-none">

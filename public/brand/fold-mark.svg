@@ -1,16 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Fold">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Fold">
   <title>Fold</title>
   <!--
-    A fold is an enclosure for a flock, so the mark is a shelter rather than
-    a steeple or a cross. Two arcs, one folded inside the other: the outer
-    is the wall, the inner is the fold itself, and the gap at the foot is
-    the gate the shepherd stands in.
+    A church, drawn the way a Ghanaian church is drawn: steeple, cross, bell
+    window, the arched door, and the two side wings. Detailed on purpose,
+    because this is the mark people see on a document or a poster.
 
-    Open at the bottom on purpose. A closed shape reads as a pen; an open
-    one reads as somewhere a flock is led in and out of.
+    Below about 40px the wings and windows close up. Use fold-mark-small.svg
+    there instead, which is the same building with the detail removed rather
+    than a different idea.
   -->
-  <g fill="none" stroke="#6b2fd9" stroke-width="2.6" stroke-linecap="round">
-    <path d="M4.5 27.5V16a11.5 11.5 0 0 1 23 0v11.5"/>
-    <path d="M11.5 27.5v-9.5a4.5 4.5 0 0 1 9 0v9.5"/>
+  <g fill="none" stroke="#6b2fd9" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 4v14M53.5 10h13"/>
+    <path d="M45 34 60 18l15 16"/>
+    <path d="M49 34v20M71 34v20"/>
+    <circle cx="60" cy="44" r="5.5"/>
+    <path d="M23 79 60 50l37 29"/>
+    <path d="M33 78v28M87 78v28"/>
+    <path d="M56 74v-4a4 4 0 0 1 8 0v4"/>
+    <path d="M52 106V90a8 8 0 0 1 16 0v16"/>
+    <path d="M31 76 11 92M15 92v14"/>
+    <path d="M89 76l20 16M105 92v14"/>
+    <path d="M22 106v-6a3.5 3.5 0 0 1 7 0v6"/>
+    <path d="M91 106v-6a3.5 3.5 0 0 1 7 0v6"/>
+    <path d="M8 106h104"/>
   </g>
 </svg>
