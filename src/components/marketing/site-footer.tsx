@@ -36,7 +36,7 @@ const COLUMNS = [
         label: m.title,
         href: `/features/${m.slug}` as const,
       })),
-      { label: "Everything, in one place", href: "/features" },
+      { label: "All features", href: "/features" },
     ],
   },
   {
@@ -124,7 +124,7 @@ export function SiteFooter() {
         />
 
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.15fr_1fr_1fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1fr_1.35fr_0.85fr_0.9fr_1fr_1.05fr]">
             <div>
               <Logo showTagline variant="light" />
               <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
