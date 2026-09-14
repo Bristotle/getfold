@@ -208,6 +208,65 @@ export async function verifyTransaction(reference: string): Promise<
   }
 }
 
+/**
+ * Submits the approval code MTN sends by SMS.
+ *
+ * Ghana does not work the way the phrase "mobile money prompt" suggests. On
+ * MTN the member does not get a push notification to accept. They get a
+ * text: "Enter code 098055 to pay GHS 5.00 to <merchant>". Somebody then
+ * has to type that code back to Paystack, and until they do the charge sits
+ * untouched and Paystack eventually marks it `abandoned`.
+ *
+ * Paystack signals this by returning `send_otp` from /charge. Without this
+ * call there is no way to finish such a payment at all, which is why the
+ * first live charge could never have succeeded no matter how long anyone
+ * waited for a prompt that was never coming.
+ *
+ * The code is single use and short lived, so a wrong or late one is an
+ * ordinary outcome, not an error to hide.
+ */
+export async function submitOtp(params: {
+  reference: string;
+  otp: string;
+}): Promise<
+  | { ok: true; status: string; displayText: string | null }
+  | { ok: false; error: string }
+> {
+  const status = paystackStatus();
+  if (!status.configured) {
+    return { ok: false, error: "Paystack is not configured." };
+  }
+
+  try {
+    const res = await fetch("https://api.paystack.co/charge/submit_otp", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ otp: params.otp, reference: params.reference }),
+    });
+
+    const json = (await res.json()) as {
+      status?: boolean;
+      message?: string;
+      data?: { status?: string; display_text?: string; gateway_response?: string };
+    };
+
+    if (!res.ok || !json.status) {
+      return { ok: false, error: json.message ?? `HTTP ${res.status}` };
+    }
+
+    return {
+      ok: true,
+      status: json.data?.status ?? "pending",
+      displayText: json.data?.display_text ?? json.data?.gateway_response ?? null,
+    };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Settlement destinations and subaccounts
 //

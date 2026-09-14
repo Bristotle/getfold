@@ -11,6 +11,7 @@ import {
   initiateMomoCharge,
   newReference,
   paystackStatus,
+  submitOtp,
   verifyTransaction,
   MOMO_PROVIDERS,
   type MomoProvider,
@@ -166,13 +167,100 @@ export async function collectByMomo(formData: FormData) {
     redirect(`/contributions?error=${encodeURIComponent(result.error)}`);
   }
 
+  /*
+    What Paystack asks for next is the whole story on MTN Ghana, and it used
+    to be shown once in a banner and then lost on the next page load.
+    `send_otp` means the member has been texted a code that somebody must
+    type back, and a treasurer who does not know that is waiting for a
+    prompt that is never coming. It is stored on the row so the instruction
+    survives a refresh and sits next to the payment it belongs to.
+  */
+  const awaitingCode = result.status === "send_otp";
+  await supabase
+    .from("payments")
+    .update({
+      gateway_response: awaitingCode
+        ? (result.displayText ??
+          "Waiting for the code MTN texted to this number.")
+        : (result.displayText ?? "Sent to Paystack, waiting for approval."),
+    })
+    .eq("reference", reference);
+
   revalidatePath("/contributions");
   redirect(
     `/contributions?message=${encodeURIComponent(
-      result.displayText ??
-        "Prompt sent. Ask them to approve it on their phone, it will appear here once confirmed."
+      awaitingCode
+        ? "MTN has texted a code to that number. Enter it below to complete the payment."
+        : (result.displayText ??
+          "Sent. Ask them to approve it on their phone, it will appear here once confirmed.")
     )}`
   );
+}
+
+/**
+ * Completes a payment with the code the member was texted.
+ *
+ * See `submitOtp` in lib/paystack for why this exists at all: on MTN Ghana
+ * the member receives a code by SMS rather than a prompt to accept, and
+ * without somewhere to type it back a charge can never be completed.
+ */
+export async function submitPaymentOtp(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  if (!can(membership.role, "finance.write")) {
+    redirect(`/contributions?error=${encodeURIComponent("Not permitted.")}`);
+  }
+
+  const reference = String(formData.get("reference") ?? "").trim();
+  const otp = String(formData.get("otp") ?? "").trim();
+  if (!reference || !otp) {
+    redirect(`/contributions?error=${encodeURIComponent("Enter the code from the text message.")}`);
+  }
+
+  const supabase = await createClient();
+
+  // Scoped to this church, so a reference from elsewhere cannot be completed
+  // from here even if somebody guessed one.
+  const { data: payment } = await supabase
+    .from("payments")
+    .select("id")
+    .eq("reference", reference)
+    .eq("organization_id", membership.organization.id)
+    .maybeSingle();
+
+  if (!payment) {
+    redirect(`/contributions?error=${encodeURIComponent("Payment not found.")}`);
+  }
+
+  const result = await submitOtp({ reference, otp });
+
+  if (!result.ok) {
+    await supabase
+      .from("payments")
+      .update({ gateway_response: result.error })
+      .eq("id", payment.id);
+    revalidatePath("/contributions");
+    redirect(`/contributions?error=${encodeURIComponent(result.error)}`);
+  }
+
+  await supabase
+    .from("payments")
+    .update({
+      gateway_response:
+        result.displayText ?? "Code accepted, waiting for Paystack to confirm.",
+    })
+    .eq("id", payment.id);
+
+  /*
+    Paystack confirms asynchronously, so the code being accepted is not the
+    same as the money having moved. Verify straight away rather than leaving
+    the treasurer to press Check status: on a successful charge this is what
+    writes the contribution.
+  */
+  revalidatePath("/contributions");
+  const followUp = new FormData();
+  followUp.set("reference", reference);
+  await refreshPayment(followUp);
 }
 
 /**

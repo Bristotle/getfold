@@ -11,7 +11,11 @@ import {
   labelFor,
 } from "@/lib/constants";
 import { recordContribution } from "./actions";
-import { collectByMomo, refreshPayment } from "./momo-actions";
+import {
+  collectByMomo,
+  refreshPayment,
+  submitPaymentOtp,
+} from "./momo-actions";
 import { MOMO_PROVIDERS, paystackStatus } from "@/lib/paystack";
 
 type Row = {
@@ -169,8 +173,9 @@ export default async function ContributionsPage({
           ) : (
             <>
               <p className="mt-1 text-xs text-muted-foreground">
-                Sends a prompt to the member&rsquo;s phone. Nothing is counted
-                as given until they approve it.
+                On MTN the member is texted a code. Ask them to read it to you
+                and enter it below. Nothing is counted as given until the
+                payment goes through.
               </p>
               <form
                 action={collectByMomo}
@@ -241,7 +246,7 @@ export default async function ContributionsPage({
                   </select>
                 </label>
                 <div className="flex items-end sm:col-span-2 lg:col-span-5">
-                  <SubmitButton>Send payment prompt</SubmitButton>
+                  <SubmitButton>Request payment</SubmitButton>
                 </div>
               </form>
             </>
@@ -280,12 +285,53 @@ export default async function ContributionsPage({
                     )}
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <form action={refreshPayment}>
-                      <input type="hidden" name="reference" value={p.reference} />
-                      <SubmitButton variant="quiet" size="xs" pendingLabel="Checking…">
-                        Check status
-                      </SubmitButton>
-                    </form>
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      {/*
+                        On MTN Ghana the member is texted a code rather than
+                        shown a prompt to accept, so a payment cannot be
+                        completed without somewhere to type that code back.
+                        Offered on anything still waiting, because a charge
+                        can ask for a code at any point before it settles.
+                      */}
+                      {p.status === "pending" && (
+                        <form
+                          action={submitPaymentOtp}
+                          className="flex items-center gap-2"
+                        >
+                          <input
+                            type="hidden"
+                            name="reference"
+                            value={p.reference}
+                          />
+                          <input
+                            name="otp"
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            required
+                            placeholder="Code from text"
+                            aria-label={`Approval code for ${p.phone}`}
+                            className={`${inputClass} w-36 font-numeric`}
+                          />
+                          <SubmitButton size="xs" pendingLabel="Sending…">
+                            Approve
+                          </SubmitButton>
+                        </form>
+                      )}
+                      <form action={refreshPayment}>
+                        <input
+                          type="hidden"
+                          name="reference"
+                          value={p.reference}
+                        />
+                        <SubmitButton
+                          variant="quiet"
+                          size="xs"
+                          pendingLabel="Checking…"
+                        >
+                          Check status
+                        </SubmitButton>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               ))}
