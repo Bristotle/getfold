@@ -1,5 +1,16 @@
 # Reply to Paystack, display name vs registered name
 
+> **Status, 15 September 2026.** Sent. Makafui replied: "Unfortunately, the
+> name displayed cannot differ for each customer." That answers the first
+> question again rather than this one. We never asked for a different name
+> per customer; we asked whether ONE account level display name can differ
+> from the registered name. The question is still open.
+>
+> **Check the dashboard before writing again.** Paystack, Settings,
+> Business. If the business name is editable there, change it and stop.
+> A support thread that has already been misread once is slower than
+> looking. The draft below is only for the case where the field is locked.
+
 Send as a reply on the existing thread, so Makafui has the context. Keep
 the subject line as it is.
 
@@ -51,11 +62,49 @@ getfold.org
 
 ---
 
+---
+
+## Second reply, if the field is locked in the dashboard
+
+Send this only if Settings, Business does not let you edit the name. Keep
+it to one question. The last one had four, and the answer addressed none of
+them.
+
+---
+
+Hello Makafui,
+
+Sorry, I asked that badly. I am not asking for a different name per
+customer, and I understand that is not possible.
+
+I am asking about a single name for the whole account.
+
+At the moment every payer sees **Manuel Technologies**, which is our
+registered company name. We would like every payer to see **Fold Church
+Giving** instead. One name, the same for everybody.
+
+**How do we change the business name shown at checkout?** Is it a setting
+we can edit ourselves, or does it need documentation and re-verification
+from your side?
+
+Thank you,
+
+Emmanuel Akyeam
+Manuel Technologies
+getfold.org
+
+---
+
 ## Notes before sending
 
-**Ask about the character limit and mean it.** The MTN approval message is
-short and gets truncated. "Fold Church Giving" is 18 characters. If they
-cap it lower, "Fold" is the fallback and still beats the status quo.
+**One question per message.** The first follow up asked four things and got
+an answer to none of them. Ask the single thing that decides the outcome,
+and ask the next thing after it is answered.
+
+**Ask about the character limit only once the name change is agreed.** The
+MTN approval message is short and truncates. "Fold Church Giving" is 18
+characters. If they cap it lower, "Fold" is the fallback and still beats
+the status quo.
 
 **The question about interrupting collections is the important one.** If
 changing the registered name pauses the account even briefly, that is a
