@@ -1,15 +1,84 @@
-# Reply to Paystack, display name vs registered name
+# The name a church member sees on their phone
 
-> **Status, 15 September 2026.** Sent. Makafui replied: "Unfortunately, the
-> name displayed cannot differ for each customer." That answers the first
-> question again rather than this one. We never asked for a different name
-> per customer; we asked whether ONE account level display name can differ
-> from the registered name. The question is still open.
+> **Resolved, 15 September 2026.** Paystack has a self serve **Change
+> trading name** form: "Your trading name is the brand your customers know
+> you by. It appears in customer-facing communications but does not affect
+> your legal business registration or your Merchant Service Agreement."
 >
-> **Check the dashboard before writing again.** Paystack, Settings,
-> Business. If the business name is editable there, change it and stop.
-> A support thread that has already been misread once is slower than
-> looking. The draft below is only for the case where the field is locked.
+> That is exactly the separation we were asking about. Support answered the
+> wrong question twice; the dashboard had it all along. Review takes under
+> 24 hours, the account keeps working meanwhile, and approved changes take
+> effect automatically.
+>
+> **The two support drafts below are kept only as a record.** Do not send
+> them.
+
+## What to enter
+
+**New trading name**
+
+```
+Fold Church Giving
+```
+
+Eighteen characters. If Paystack or MTN truncates, it degrades well: "Fold
+Church" still reads as a church payment. The compact alternative, if a
+limit is enforced, is `Fold Giving` at eleven.
+
+Not plain `Fold`, even though it is our name. A member approving a payment
+has one line to decide from, and "Church Giving" tells them what the money
+is for. That is worth more to them than our brand is to us.
+
+**Reason for change**
+
+```
+We operate Fold (getfold.org), church management software used by Ghanaian
+churches to record their members and collect tithes and offerings by mobile
+money.
+
+Our customers are churches, but the people who actually approve payments
+are their members. When a member gives a tithe, the MTN approval message
+names Manuel Technologies, our registered company, which they have never
+heard of. Several pastors have raised this with us, and an unfamiliar
+company name on a payment request causes hesitation and abandoned
+transactions.
+
+Fold Church Giving is the brand those churches and their members know, and
+it tells the payer what the payment is for. The legal entity, our business
+certificate and our TIN are unchanged.
+```
+
+## After it is approved
+
+One variable, in Vercel, production:
+
+```
+NEXT_PUBLIC_PAYSTACK_MERCHANT_NAME=Fold Church Giving
+```
+
+Then redeploy. The payouts page tells every church what its members will
+see, and it reads that variable, so the product stops naming Manuel
+Technologies the moment the name actually changes. Setting it before
+approval would make the product lie, so wait for the email.
+
+Nothing else changes. The subaccounts, the settlement and the money path
+are untouched: this is a label.
+
+---
+
+## Record of the support thread
+
+Two replies from Paystack support, neither answering the question, kept
+because the lesson is worth more than the exchange: **ask one question per
+message, and look in the dashboard first.**
+
+The first reply settled that a subaccount's name is never shown to the
+payer. The second, to a follow up asking whether a display name could
+differ from the registered one, came back "the name displayed cannot differ
+for each customer", which answers the first question again. The follow up
+had four questions in it, which is why.
+
+---
 
 Send as a reply on the existing thread, so Makafui has the context. Keep
 the subject line as it is.
