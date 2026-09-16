@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { alertNewEnquiry } from "@/lib/alert";
+import { scoreEnquiry } from "@/lib/spam";
 
 /**
  * An enquiry from the public site.
@@ -48,14 +49,25 @@ export async function submitEnquiry(formData: FormData) {
     and the text both carry every detail. The row is the record; the alert
     is the thing that gets somebody to answer.
   */
-  const alert = await alertNewEnquiry({
+  const enquiry = {
     name,
     email,
     phone: phone || null,
     church: church || null,
     message: message || null,
     source: String(formData.get("source") ?? "homepage"),
-  });
+  };
+
+  /*
+    A cold pitch is saved and readable, it just does not wake anybody up.
+    The sender is told the same thing either way: telling somebody they were
+    scored as spam only teaches them how to get through next time, and would
+    be a horrible thing to show a church we got wrong.
+  */
+  const verdict = scoreEnquiry(enquiry);
+  const alert = verdict.spam
+    ? { ok: false, error: undefined }
+    : await alertNewEnquiry(enquiry);
 
   const supabase = await createClient();
   const { error } = await supabase.from("contact_requests").insert({
@@ -66,7 +78,14 @@ export async function submitEnquiry(formData: FormData) {
     message: message.slice(0, 4000) || null,
     source: "homepage",
     alerted_at: alert.ok ? new Date().toISOString() : null,
-    alert_error: alert.ok ? null : (alert.error ?? "Unknown error"),
+    alert_error: verdict.spam
+      ? null
+      : alert.ok
+        ? null
+        : (alert.error ?? "Unknown error"),
+    spam: verdict.spam,
+    spam_score: verdict.score,
+    spam_reasons: verdict.reasons.join("; ") || null,
   });
 
   if (error) {

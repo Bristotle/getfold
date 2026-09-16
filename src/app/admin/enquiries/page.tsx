@@ -35,6 +35,9 @@ type Row = {
   created_at: string;
   alerted_at: string | null;
   alert_error: string | null;
+  spam: boolean;
+  spam_score: number | null;
+  spam_reasons: string | null;
 };
 
 function allowed(email: string | null): boolean {
@@ -45,7 +48,12 @@ function allowed(email: string | null): boolean {
   return Boolean(email && list.includes(email.toLowerCase()));
 }
 
-export default async function EnquiriesPage() {
+export default async function EnquiriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ spam?: string }>;
+}) {
+  const showSpam = (await searchParams).spam === "1";
   const supabase = await createClient();
   const {
     data: { user },
@@ -67,12 +75,19 @@ export default async function EnquiriesPage() {
   const { data } = await service
     .from("contact_requests")
     .select(
-      "id, name, email, phone, church, message, source, created_at, alerted_at, alert_error"
+      "id, name, email, phone, church, message, source, created_at, alerted_at, alert_error, spam, spam_score, spam_reasons"
     )
     .order("created_at", { ascending: false })
     .limit(200);
 
-  const rows = (data ?? []) as Row[];
+  const all = (data ?? []) as Row[];
+  /*
+    Sales pitches are kept and readable, never deleted. They are simply not
+    the first thing you see, because the point of this page is not missing a
+    church.
+  */
+  const rows = showSpam ? all.filter((r) => r.spam) : all.filter((r) => !r.spam);
+  const spamCount = all.filter((r) => r.spam).length;
 
   return (
     <main id="main" className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
@@ -83,10 +98,28 @@ export default async function EnquiriesPage() {
         </span>
       </div>
 
-      <h1 className="mt-8 text-xl font-bold text-foreground">Enquiries</h1>
+      <h1 className="mt-8 text-xl font-bold text-foreground">
+        {showSpam ? "Sales pitches" : "Enquiries"}
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Everything sent through the contact form and the homepage.
+        {showSpam
+          ? "Scored as cold outreach, so no alert was sent. Nothing is ever deleted, and if one of these is a real church the scoring is wrong and worth fixing."
+          : "Everything sent through the contact form and the homepage."}
       </p>
+
+      {/* The pitches are one click away, never gone. */}
+      {(spamCount > 0 || showSpam) && (
+        <p className="mt-3 text-sm">
+          <a
+            href={showSpam ? "/admin/enquiries" : "/admin/enquiries?spam=1"}
+            className="rounded font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            {showSpam
+              ? "Back to enquiries"
+              : `View ${spamCount} sales ${spamCount === 1 ? "pitch" : "pitches"}`}
+          </a>
+        </p>
+      )}
 
       {rows.length === 0 ? (
         <Card className="mt-6">
@@ -129,7 +162,17 @@ export default async function EnquiriesPage() {
                   "worked" is noise, and the one that says it did not is the
                   whole point.
                 */}
-                {!r.alerted_at && (
+                {r.spam && (
+                  <p className="mt-2 rounded-lg bg-surface-soft px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                    <span className="font-semibold">
+                      Scored {r.spam_score} as a sales pitch, so no alert went
+                      out.
+                    </span>{" "}
+                    {r.spam_reasons}
+                  </p>
+                )}
+
+                {!r.spam && !r.alerted_at && (
                   <p className="mt-2 rounded-lg bg-warning/10 px-3 py-2 text-xs leading-relaxed text-warning-text">
                     <span className="font-semibold">
                       No email alert was sent for this one.
