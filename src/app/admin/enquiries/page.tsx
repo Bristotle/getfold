@@ -33,6 +33,8 @@ type Row = {
   message: string | null;
   source: string | null;
   created_at: string;
+  alerted_at: string | null;
+  alert_error: string | null;
 };
 
 function allowed(email: string | null): boolean {
@@ -64,7 +66,9 @@ export default async function EnquiriesPage() {
 
   const { data } = await service
     .from("contact_requests")
-    .select("id, name, email, phone, church, message, source, created_at")
+    .select(
+      "id, name, email, phone, church, message, source, created_at, alerted_at, alert_error"
+    )
     .order("created_at", { ascending: false })
     .limit(200);
 
@@ -118,6 +122,23 @@ export default async function EnquiriesPage() {
                     })}
                   </time>
                 </div>
+
+                {/*
+                  Whether anybody was actually told. Shown only when the
+                  email did not go, because a badge on every row that says
+                  "worked" is noise, and the one that says it did not is the
+                  whole point.
+                */}
+                {!r.alerted_at && (
+                  <p className="mt-2 rounded-lg bg-warning/10 px-3 py-2 text-xs leading-relaxed text-warning-text">
+                    <span className="font-semibold">
+                      No email alert was sent for this one.
+                    </span>{" "}
+                    {r.alert_error
+                      ? r.alert_error
+                      : "It arrived before we started recording why, or the alert never ran."}
+                  </p>
+                )}
 
                 <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                   <a

@@ -34,6 +34,29 @@ export async function submitEnquiry(formData: FormData) {
     );
   }
 
+  /*
+    Alert first, then save with the outcome on the row.
+
+    The obvious order is the other way round, and it was: save, then alert
+    best effort. The trouble is that recording whether the alert worked then
+    needs an UPDATE, and this runs as an anonymous visitor with one INSERT
+    policy and nothing else. The update would have written nothing at all,
+    silently, which is precisely the failure being fixed.
+
+    Alerting first needs no new policy and no wider access, and if the
+    insert somehow fails afterwards the enquiry is still not lost: the email
+    and the text both carry every detail. The row is the record; the alert
+    is the thing that gets somebody to answer.
+  */
+  const alert = await alertNewEnquiry({
+    name,
+    email,
+    phone: phone || null,
+    church: church || null,
+    message: message || null,
+    source: String(formData.get("source") ?? "homepage"),
+  });
+
   const supabase = await createClient();
   const { error } = await supabase.from("contact_requests").insert({
     name: name.slice(0, 120),
@@ -42,6 +65,8 @@ export async function submitEnquiry(formData: FormData) {
     church: church.slice(0, 200) || null,
     message: message.slice(0, 4000) || null,
     source: "homepage",
+    alerted_at: alert.ok ? new Date().toISOString() : null,
+    alert_error: alert.ok ? null : (alert.error ?? "Unknown error"),
   });
 
   if (error) {
@@ -51,20 +76,6 @@ export async function submitEnquiry(formData: FormData) {
       )}#contact`
     );
   }
-
-  /*
-    Tell somebody. The row is already saved, so this is best effort: an
-    alert that fails must not turn into an enquiry that fails, which would
-    lose the very thing we are trying not to miss.
-  */
-  await alertNewEnquiry({
-    name,
-    email,
-    phone: phone || null,
-    church: church || null,
-    message: message || null,
-    source: String(formData.get("source") ?? "homepage"),
-  });
 
   redirect(`/?sent=1#contact`);
 }

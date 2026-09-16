@@ -29,11 +29,24 @@ export type Enquiry = {
   source: string;
 };
 
-async function sendEmail(subject: string, body: string): Promise<boolean> {
+/**
+ * Sends one alert, and says what happened.
+ *
+ * It used to return a bare boolean that every caller ignored, so an email
+ * that never sent was indistinguishable from one that did. An enquiry came
+ * in, the SMS went out, the email did not, and there was nothing anywhere
+ * to say why. The reason is now carried back and recorded.
+ */
+async function sendEmail(
+  subject: string,
+  body: string,
+  replyTo?: string | null
+): Promise<{ ok: boolean; error?: string }> {
   const key = process.env.RESEND_API_KEY;
   const to = process.env.ALERT_EMAIL;
   const from = process.env.ALERT_FROM ?? "Fold <no-reply@getfold.org>";
-  if (!key || !to) return false;
+  if (!key) return { ok: false, error: "RESEND_API_KEY is not set" };
+  if (!to) return { ok: false, error: "ALERT_EMAIL is not set" };
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -47,13 +60,27 @@ async function sendEmail(subject: string, body: string): Promise<boolean> {
         to: to.split(",").map((t) => t.trim()).filter(Boolean),
         subject,
         text: body,
-        // So hitting reply in the inbox goes to the church, not to us.
-        reply_to: undefined,
+        /*
+          So hitting reply in the inbox goes to the person who wrote in.
+          The comment here used to say exactly that while the value was
+          `undefined`, which is a promise the code was not keeping: every
+          reply went to no-reply@getfold.org and died.
+        */
+        ...(replyTo ? { reply_to: replyTo } : {}),
       }),
     });
-    return res.ok;
-  } catch {
-    return false;
+
+    if (res.ok) return { ok: true };
+
+    // Resend explains itself in the body, and that explanation is the whole
+    // value of this function when something is wrong.
+    const detail = await res
+      .json()
+      .then((j: { message?: string; name?: string }) => j.message ?? j.name)
+      .catch(() => null);
+    return { ok: false, error: `HTTP ${res.status}${detail ? `, ${detail}` : ""}` };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
   }
 }
 
@@ -68,10 +95,12 @@ export async function sendAlert(a: {
   subject: string;
   body: string;
 }): Promise<boolean> {
-  return sendEmail(a.subject, a.body);
+  return (await sendEmail(a.subject, a.body)).ok;
 }
 
-export async function alertNewEnquiry(e: Enquiry): Promise<void> {
+export async function alertNewEnquiry(
+  e: Enquiry
+): Promise<{ ok: boolean; error?: string }> {
   const lines = [
     `New enquiry from ${e.name}`,
     e.church ? `Church: ${e.church}` : null,
@@ -84,10 +113,11 @@ export async function alertNewEnquiry(e: Enquiry): Promise<void> {
 
   const full = lines.join("\n");
 
-  // Email, with everything.
-  await sendEmail(
+  // Email, with everything, and replies going back to whoever wrote in.
+  const email = await sendEmail(
     `Fold enquiry: ${e.name}${e.church ? ` (${e.church})` : ""}`,
-    full
+    full,
+    e.email
   );
 
   // SMS, trimmed, because it is billed by the segment and this is an alert
@@ -106,4 +136,6 @@ export async function alertNewEnquiry(e: Enquiry): Promise<void> {
       // Already saved. An alert failing is not the enquiry failing.
     }
   }
+
+  return email;
 }
