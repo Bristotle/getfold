@@ -4,6 +4,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
+import { can } from "@/lib/permissions";
 import { CONTRIBUTION_TYPES, labelFor } from "@/lib/constants";
 import { updateMember, archiveMember, restoreMember } from "../actions";
 
@@ -66,6 +67,7 @@ export default async function MemberDetailPage({
   }[];
 
   const givenTotal = contributions.reduce((s, c) => s + Number(c.amount), 0);
+  const showFinance = can(membership.role, "finance.view");
   const isArchived = member.status === "archived";
 
   return (
@@ -100,21 +102,36 @@ export default async function MemberDetailPage({
         </p>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className={`grid grid-cols-2 gap-4 ${showFinance ? "sm:grid-cols-3" : ""}`}>
         <Card>
           <CardLabel>Member since</CardLabel>
           <CardStat className="text-xl">
             {dateFmt.format(new Date(member.joined_at))}
           </CardStat>
         </Card>
-        <Card>
-          <CardLabel>Recorded giving</CardLabel>
-          <CardStat className="text-xl">{cedis.format(givenTotal)}</CardStat>
-        </Card>
-        <Card>
-          <CardLabel>Entries</CardLabel>
-          <CardStat className="text-xl">{contributions.length}</CardStat>
-        </Card>
+        {/*
+          Giving is omitted for roles that may not see it, rather than shown
+          as zero.
+
+          Row level security already returns nothing here, so there was
+          never a leak. The problem was the confident "GHS 0.00" that
+          resulted, which reads as "this member has given nothing" and is a
+          thing a class leader could repeat to a pastor in good faith. The
+          dashboard and the statistical return both handle this correctly
+          already; this page was the one that did not.
+        */}
+        {showFinance && (
+          <>
+            <Card>
+              <CardLabel>Recorded giving</CardLabel>
+              <CardStat className="text-xl">{cedis.format(givenTotal)}</CardStat>
+            </Card>
+            <Card>
+              <CardLabel>Entries</CardLabel>
+              <CardStat className="text-xl">{contributions.length}</CardStat>
+            </Card>
+          </>
+        )}
       </div>
 
       <Card>
@@ -216,6 +233,17 @@ export default async function MemberDetailPage({
         </form>
       </Card>
 
+      {!showFinance && (
+        <Card>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Giving is not shown to your role, so this page leaves it out
+            rather than showing you a zero. The pastor, an administrator and
+            the finance officer can see it.
+          </p>
+        </Card>
+      )}
+
+      {showFinance && (
       <Card className="p-0">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-sm font-bold text-foreground">Giving history</h2>
@@ -244,6 +272,7 @@ export default async function MemberDetailPage({
           </table>
         )}
       </Card>
+      )}
 
       <Card>
         <h2 className="text-sm font-bold text-foreground">

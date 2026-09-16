@@ -122,10 +122,31 @@ export default async function ContributionsPage({
   const members = (memberList ?? []) as { id: string; full_name: string }[];
   const funds = (fundList ?? []) as { id: string; name: string }[];
 
-  const total = rows.reduce((s, r) => s + Number(r.amount), 0);
-  const titheTotal = rows
-    .filter((r) => r.type === "tithe")
-    .reduce((s, r) => s + Number(r.amount), 0);
+  /*
+    Summed over every contribution, not over the fifty on screen.
+
+    These used to be reduce() over `rows`, which is capped at 50, so a
+    church recording more than that was shown a confident figure that was
+    simply wrong. A treasurer cannot tell a truncated total from a complete
+    one by looking at it, which is what made it worth fixing rather than
+    raising the cap.
+
+    contribution_totals is SECURITY INVOKER, so a role that cannot see
+    giving gets zero here exactly as it gets zero rows.
+  */
+  const { data: totalsRows } = await supabase.rpc("contribution_totals", {
+    org_id: membership.organization.id,
+  });
+  const totals = (totalsRows?.[0] ?? null) as {
+    entries: number | string;
+    total: string | number;
+    tithe_total: string | number;
+  } | null;
+
+  const entries = Number(totals?.entries ?? rows.length);
+  const total = Number(totals?.total ?? 0);
+  const titheTotal = Number(totals?.tithe_total ?? 0);
+  const truncated = entries > rows.length;
 
   const nameOf = (m: Row["members"]) => {
     const v = Array.isArray(m) ? m[0] : m;
@@ -470,11 +491,11 @@ export default async function ContributionsPage({
       {rows.length > 0 && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Card>
-            <CardLabel>Entries shown</CardLabel>
-            <CardStat>{rows.length}</CardStat>
+            <CardLabel>Entries</CardLabel>
+            <CardStat>{entries}</CardStat>
           </Card>
           <Card>
-            <CardLabel>Total</CardLabel>
+            <CardLabel>Total given</CardLabel>
             <CardStat className="text-2xl">{cedis.format(total)}</CardStat>
           </Card>
           <Card>
@@ -550,6 +571,19 @@ export default async function ContributionsPage({
               </tbody>
             </table>
             </TableWrap>
+
+            {/*
+              Say when the list is not the whole list. A page that shows
+              fifty of four hundred and says nothing is how somebody
+              concludes the other three hundred and fifty were never
+              recorded.
+            */}
+            {truncated && (
+              <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
+                Showing the most recent {rows.length} of {entries}. The totals
+                above cover all {entries}.
+              </p>
+            )}
           </>
         )}
       </Card>

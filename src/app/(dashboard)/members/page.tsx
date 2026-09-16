@@ -31,6 +31,9 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
+/** How many of the register to render at once. */
+const MEMBER_PAGE = 500;
+
 export default async function MembersPage({
   searchParams,
 }: {
@@ -60,7 +63,23 @@ export default async function MembersPage({
       "id, full_name, gender, phone, email, member_type, status, joined_at, member_groups!members_member_group_id_fkey ( name )"
     )
     .eq("status", showArchived ? "archived" : "active")
-    .order("full_name", { ascending: true });
+    .order("full_name", { ascending: true })
+    /*
+      Bounded, and counted separately.
+
+      This query had no limit at all, which is not the same as having no
+      ceiling: PostgREST stops at a thousand rows by default, so a church at
+      the top of the Large Society band would have lost members off the end
+      of its own register with nothing on screen to say so. An explicit
+      limit with an explicit count is honest; an implicit one is not.
+    */
+    .limit(MEMBER_PAGE);
+
+  const { count: memberTotal } = await supabase
+    .from("members")
+    .select("id", { count: "exact", head: true })
+    .eq("organization_id", membership.organization.id)
+    .eq("status", showArchived ? "archived" : "active");
 
   const members = (data ?? []) as MemberRow[];
 
@@ -365,8 +384,20 @@ export default async function MembersPage({
 
       {members.length > 0 && (
         <p className="text-xs text-muted-foreground">
-          {members.length} {showArchived ? "archived" : "active"}{" "}
-          {members.length === 1 ? "member" : "members"}.
+          {/*
+            The count is the register's count, not the page's. They differ
+            once a church passes the page size, and the difference is said
+            out loud rather than left for somebody to discover.
+          */}
+          {memberTotal ?? members.length} {showArchived ? "archived" : "active"}{" "}
+          {(memberTotal ?? members.length) === 1 ? "member" : "members"}.
+          {typeof memberTotal === "number" && memberTotal > members.length && (
+            <>
+              {" "}
+              Showing the first {members.length}, in alphabetical order. Use
+              search to reach the rest.
+            </>
+          )}
         </p>
       )}
     </div>
