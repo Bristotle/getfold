@@ -34,6 +34,28 @@
   --color-primary-soft: #f0eafb;
 
   /*
+    The brand's four. Purple leads; teal, amber and pink are the pricing
+    bands and the chart series, and the owner chose them as the palette for
+    the whole site. Same rule as the status colours: the plain value is for
+    fills, rules and marks, and only the -text value goes on type. Measured
+    against the page ground, the fills come out at 2.50:1, 1.89:1 and
+    2.54:1, and the -text partners at 4.53:1, 4.58:1 and 4.60:1.
+    scripts/band-contrast.mjs is what produced those numbers.
+
+    The -soft values are 10% tints on white, for a tinted card or a chip
+    behind the -text colour.
+  */
+  --color-teal: #00b3a4;
+  --color-teal-text: #008176;
+  --color-teal-soft: #e6f7f5;
+  --color-amber: #ffa400;
+  --color-amber-text: #9e6600;
+  --color-amber-soft: #fff5e0;
+  --color-pink: #ff6b9d;
+  --color-pink-text: #b84d71;
+  --color-pink-soft: #ffeef3;
+
+  /*
     Two variants per status colour. The bright value is for FILLS (tinted
     backgrounds, dots, progress bars) where contrast rules do not apply.
     The -text value is the only one allowed on type: the bright ones measure

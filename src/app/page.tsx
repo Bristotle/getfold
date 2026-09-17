@@ -14,6 +14,7 @@ import { Contact } from "@/components/marketing/contact";
 import { metaDescription } from "@/lib/seo";
 
 import { APP_SCHEMA } from "@/lib/app-schema";
+import { accentAt } from "@/lib/accents";
 /*
   The congregation photograph as the hero background, full rather than the
   blurred wash, with the hero flipped to white type on the same measured
@@ -220,8 +221,10 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="border-t border-border pt-5">
+            {FEATURES.map((f, i) => (
+              <div key={f.title} className="relative border-t border-border pt-5">
+                {/* A short coloured rule over the grey one, one of the four in turn. */}
+                <span aria-hidden="true" className={`absolute left-0 top-0 h-0.5 w-10 ${accentAt(i).rule}`} />
                 <h3 className="text-base font-bold text-foreground">
                   {f.title}
                 </h3>

@@ -5,7 +5,7 @@ import { ArrowLeft, Check, Info } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
-import { MODULES, moduleBySlug } from "@/lib/modules";
+import { MODULES, moduleBySlug, ACCENT } from "@/lib/modules";
 
 /*
   Only the slugs in generateStaticParams exist. Without this, dynamicParams
@@ -58,6 +58,7 @@ export default async function ModulePage({
   const { slug } = await params;
   const m = moduleBySlug(slug);
   if (!m) notFound();
+  const a = ACCENT[m.accent];
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -82,6 +83,8 @@ export default async function ModulePage({
         {/* ---------- hero ---------- */}
         <section className="relative isolate overflow-hidden border-b border-border">
           <SectionBg variant="aurora" />
+          {/* The page's colour, as a rule along the top. */}
+          <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1.5 ${a.rule}`} />
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
             <Link
               href="/features"
@@ -97,7 +100,7 @@ export default async function ModulePage({
             <p className="mt-3 text-lg leading-relaxed text-muted-foreground">
               {m.summary}
             </p>
-            <p className="mt-4 font-numeric text-xs font-semibold uppercase tracking-wide text-primary">
+            <p className={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1 font-numeric text-xs font-semibold uppercase tracking-wide ${a.soft} ${a.text}`}>
               In the app: {m.where}
             </p>
           </div>
@@ -124,7 +127,7 @@ export default async function ModulePage({
                 <li key={d} className="flex gap-3">
                   <span
                     aria-hidden="true"
-                    className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/10 text-primary"
+                    className={`mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full ${a.soft} ${a.text}`}
                   >
                     <Check size={12} strokeWidth={3} />
                   </span>

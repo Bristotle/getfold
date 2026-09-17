@@ -19,8 +19,20 @@
  * underneath, and that is where the copy spends its time.
  */
 
+/** One of the brand's four, used as the page's accent. */
+export type Accent = "teal" | "purple" | "amber" | "pink";
+
+/** Tailwind classes for each accent, written out so the compiler keeps them. */
+export const ACCENT = {
+  teal:   { rule: "bg-teal",   text: "text-teal-text",   soft: "bg-teal-soft" },
+  purple: { rule: "bg-primary", text: "text-primary",     soft: "bg-primary-soft" },
+  amber:  { rule: "bg-amber",  text: "text-amber-text",  soft: "bg-amber-soft" },
+  pink:   { rule: "bg-pink",   text: "text-pink-text",   soft: "bg-pink-soft" },
+} as const;
+
 export type Module = {
   slug: string;
+  accent: Accent;
   /** The label a church would recognise, used in the footer. */
   title: string;
   /** One line for the index, the meta description and the footer tooltip. */
@@ -41,6 +53,7 @@ export type Module = {
 export const MODULES: Module[] = [
   {
     slug: "digital-giving",
+    accent: "teal",
     title: "Digital Giving",
     summary:
       "Take tithes and offerings by MTN MoMo, Telecel Cash or AirtelTigo, with the money settling into your church's own account.",
@@ -98,6 +111,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "financial-management",
+    accent: "amber",
     title: "Financial Management",
     summary:
       "Tithes, offerings, funds and the figures your circuit asks for, in cedis, without a spreadsheet.",
@@ -151,6 +165,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "member-management",
+    accent: "purple",
     title: "Member Management",
     summary:
       "One register for your whole church, searchable from a phone, in your denomination's own words.",
@@ -205,6 +220,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "leadership-management",
+    accent: "pink",
     title: "Leadership Management",
     summary:
       "Give your pastor, secretary, treasurer and class leaders their own login, each seeing only what their role needs.",
@@ -256,6 +272,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "branch-management",
+    accent: "teal",
     title: "Branch Management",
     summary:
       "Headquarters over regions over districts over assemblies, each keeping its own register, with figures that roll up.",
@@ -308,6 +325,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "group-management",
+    accent: "amber",
     title: "Group and Cell Management",
     summary:
       "Bible classes, fellowships, cells and societies, each with its leader and its members.",
@@ -351,6 +369,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "communication",
+    accent: "purple",
     title: "Communication",
     summary:
       "Text your members from the register, in your church's own name rather than ours.",

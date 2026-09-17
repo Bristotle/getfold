@@ -108,11 +108,13 @@ export default async function DashboardPage() {
       )}
 
       <div className={`grid grid-cols-2 gap-4 ${showFinance ? "sm:grid-cols-4" : "sm:grid-cols-3"}`}>
-        <Card>
+        <Card className="relative overflow-hidden">
+          <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-teal" />
           <CardLabel>Active members</CardLabel>
           <CardStat>{stats?.member_count ?? 0}</CardStat>
         </Card>
-        <Card>
+        <Card className="relative overflow-hidden">
+          <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-primary" />
           <CardLabel>This week&rsquo;s attendance</CardLabel>
           <CardStat>{stats?.week_attendance ?? 0}</CardStat>
         </Card>
@@ -126,7 +128,8 @@ export default async function DashboardPage() {
             circuit asks for by name, but it belongs under the total rather
             than standing in for it.
           */
-          <Card>
+          <Card className="relative overflow-hidden">
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-amber" />
             <CardLabel>Given this month</CardLabel>
             <CardStat>{cedis.format(giving)}</CardStat>
             <p className="mt-1 font-numeric text-xs text-muted-foreground">
@@ -134,7 +137,8 @@ export default async function DashboardPage() {
             </p>
           </Card>
         )}
-        <Card>
+        <Card className="relative overflow-hidden">
+          <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-pink" />
           <CardLabel>Pending transfers</CardLabel>
           <CardStat>{stats?.pending_transfers ?? 0}</CardStat>
         </Card>

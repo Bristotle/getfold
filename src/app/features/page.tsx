@@ -19,6 +19,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { metaDescription } from "@/lib/seo";
 import { APP_SCHEMA } from "@/lib/app-schema";
+import { accentAt } from "@/lib/accents";
 
 export const metadata: Metadata = {
   title: "Features, everything Fold does for your church",
@@ -188,14 +189,16 @@ export default function FeaturesPage() {
           <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <ul className="m-0 grid list-none gap-6 p-0 lg:grid-cols-2">
-              {MODULES.map(({ Icon, name, body, points }) => (
+              {MODULES.map(({ Icon, name, body, points }, i) => (
                 <li
                   key={name}
-                  className="flex flex-col rounded-2xl border border-border bg-background p-6 sm:p-7"
+                  className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-background p-6 sm:p-7"
                 >
+                  {/* Each card takes one of the brand's four in turn. */}
+                  <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${accentAt(i).rule}`} />
                   <span
                     aria-hidden="true"
-                    className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary"
+                    className={`grid h-12 w-12 place-items-center rounded-xl ${accentAt(i).icon}`}
                   >
                     <Icon size={22} strokeWidth={1.7} />
                   </span>
@@ -210,7 +213,7 @@ export default function FeaturesPage() {
                       <li key={pt} className="flex gap-3">
                         <span
                           aria-hidden="true"
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
+                          className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full ${accentAt(i).rule}`}
                         />
                         <span className="text-sm leading-relaxed text-foreground/80">
                           {pt}
