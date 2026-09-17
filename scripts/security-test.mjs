@@ -32,7 +32,7 @@ const anon = createClient(URL, ANON, { auth:{persistSession:false} });
 const tables = ["organizations","members","contributions","payments","invoices","attendance_records",
   "organization_members","profiles","notifications","funds","vital_records","visitors",
   "organization_invitations","auth_events","_prisma_migrations","member_transfers",
-  "contact_requests","app_admins","activity_log"];
+  "contact_requests","app_admins","activity_log","newsletter_subscribers"];
 for (const t of tables) {
   const { data, error } = await anon.from(t).select("*").limit(1);
   const leaked = !error && Array.isArray(data) && data.length > 0;
@@ -66,7 +66,7 @@ check("test attacker signed in", Boolean(session?.session), sErr?.message ?? "")
 
 if (session?.session) {
   // No church yet: a signed in stranger.
-  for (const t of ["organizations","members","contributions","payments","invoices","attendance_records","vital_records","notifications","contact_requests","app_admins","activity_log"]) {
+  for (const t of ["organizations","members","contributions","payments","invoices","attendance_records","vital_records","notifications","contact_requests","app_admins","activity_log","newsletter_subscribers"]) {
     const { data } = await asAttacker.from(t).select("*").limit(5);
     check(`signed in stranger sees no ${t}`, !data || data.length === 0, data?.length ? `SAW ${data.length} ROWS` : "");
   }
