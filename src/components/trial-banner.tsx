@@ -50,10 +50,10 @@ export function TrialBanner({
             </span>
           </p>
           <Link
-            href="/contact"
+            href="/billing"
             className="rounded text-xs font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
-            Talk to us about continuing
+            Choose a plan
           </Link>
         </div>
       </div>
