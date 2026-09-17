@@ -100,7 +100,14 @@ export function PhotoBg({
         <img
           src={src.replace(/\.jpg$/, ".webp")}
           srcSet={`${src.replace(/\.jpg$/, "-720.webp")} 720w, ${src.replace(/\.jpg$/, ".webp")} 1280w`}
-          sizes="100vw"
+          /*
+            Deliberately understates the display width on a phone. A 390px
+            screen at 3x density would otherwise ask for 1170 pixels and get
+            the desktop file, and behind an 86% scrim there is nothing in
+            those extra pixels a person can see. Claiming 240px there makes
+            the browser pick the 720 file, which is 31KB rather than 72.
+          */
+          sizes="(max-width: 640px) 240px, 100vw"
           alt=""
           fetchPriority="high"
           decoding="async"
