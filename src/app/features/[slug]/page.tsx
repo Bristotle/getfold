@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { MODULES, moduleBySlug, ACCENT } from "@/lib/modules";
+import { getPost } from "@/lib/posts";
 
 /*
   Only the slugs in generateStaticParams exist. Without this, dynamicParams
@@ -208,6 +209,34 @@ export default async function ModulePage({
                 </div>
               ))}
             </dl>
+
+            {/*
+              The posts on this subject. A feature page that argues for a
+              way of working and a post that explains that way of working
+              should point at each other, or a search engine sees two pages
+              that happen to share words.
+            */}
+            {m.reading && m.reading.length > 0 && (
+              <div className="mt-12 border-t border-border pt-6">
+                <h2 className="text-sm font-bold text-foreground">Further reading</h2>
+                <ul className="m-0 mt-3 flex list-none flex-col gap-2 p-0">
+                  {m.reading.map((slug) => {
+                    const post = getPost(slug);
+                    if (!post) return null;
+                    return (
+                      <li key={slug}>
+                        <Link
+                          href={`/blog/${slug}`}
+                          className="rounded text-[15px] font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          {post.title}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
 
             {/* Sideways links, so a reader lands somewhere useful next. */}
             <div className="mt-12 border-t border-border pt-6">

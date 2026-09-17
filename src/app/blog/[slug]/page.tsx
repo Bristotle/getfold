@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { POSTS, getPost, sortedPosts } from "@/lib/posts";
 import { metaTitle, metaDescription } from "@/lib/seo";
+import { RichText, plainText } from "@/components/marketing/rich-text";
 
 /*
   Only the slugs in generateStaticParams exist. Without this, dynamicParams
@@ -104,7 +105,7 @@ export default async function BlogPostPage({
               mainEntity: faq.items.map((f) => ({
                 "@type": "Question",
                 name: f.q,
-                acceptedAnswer: { "@type": "Answer", text: f.a },
+                acceptedAnswer: { "@type": "Answer", text: plainText(f.a) },
               })),
             }),
           }}
@@ -179,7 +180,7 @@ export default async function BlogPostPage({
                           className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
                         />
                         <span className="text-[17px] leading-relaxed text-foreground/85">
-                          {item}
+                          <RichText text={item} />
                         </span>
                       </li>
                     ))}
@@ -208,7 +209,7 @@ export default async function BlogPostPage({
                           {n + 1}
                         </span>
                         <span className="text-[17px] leading-relaxed text-foreground/85">
-                          {item}
+                          <RichText text={item} />
                         </span>
                       </li>
                     ))}
@@ -226,7 +227,7 @@ export default async function BlogPostPage({
                         <div key={f.q}>
                           <dt className="text-base font-bold text-foreground">{f.q}</dt>
                           <dd className="m-0 mt-1.5 text-[16px] leading-relaxed text-muted-foreground">
-                            {f.a}
+                            <RichText text={f.a} />
                           </dd>
                         </div>
                       ))}
@@ -273,7 +274,7 @@ export default async function BlogPostPage({
                   key={i}
                   className="text-[17px] leading-relaxed text-foreground/85"
                 >
-                  {block.text}
+                  <RichText text={block.text} />
                 </p>
               );
             })}

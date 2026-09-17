@@ -48,6 +48,8 @@ export type Module = {
   notYet?: string[];
   faqs: { q: string; a: string }[];
   keywords: string[];
+  /** Blog posts on the same subject, by slug, for the further reading list. */
+  reading?: string[];
 };
 
 export const MODULES: Module[] = [
@@ -107,6 +109,7 @@ export const MODULES: Module[] = [
       "church online giving Ghana",
       "Paystack church donations",
     ],
+    reading: ["how-to-set-up-mobile-money-giving-for-your-church", "what-mobile-money-costs-a-church"],
   },
 
   {
@@ -161,6 +164,7 @@ export const MODULES: Module[] = [
       "church treasurer software Ghana",
       "church statistical return",
     ],
+    reading: ["how-to-prepare-your-statistical-return", "statistical-return-without-a-spreadsheet"],
   },
 
   {
@@ -216,6 +220,7 @@ export const MODULES: Module[] = [
       "church register software Ghana",
       "import church members from Excel",
     ],
+    reading: ["church-record-keeping-guide-ghana", "moving-your-register-from-a-book"],
   },
 
   {
@@ -268,6 +273,7 @@ export const MODULES: Module[] = [
       "church staff roles and permissions",
       "church admin login Ghana",
     ],
+    reading: ["church-record-keeping-guide-ghana"],
   },
 
   {
@@ -321,6 +327,7 @@ export const MODULES: Module[] = [
       "multi branch church software",
       "circuit district church management",
     ],
+    reading: ["how-to-prepare-your-statistical-return"],
   },
 
   {
@@ -365,6 +372,7 @@ export const MODULES: Module[] = [
       "Bible class management Ghana",
       "church small group software",
     ],
+    reading: ["noticing-when-a-member-stops-coming", "church-record-keeping-guide-ghana"],
   },
 
   {
@@ -423,6 +431,7 @@ export const MODULES: Module[] = [
       "church birthday SMS automatic",
       "send SMS to church members",
     ],
+    reading: ["noticing-when-a-member-stops-coming", "how-to-set-up-mobile-money-giving-for-your-church"],
   },
 ];
 

@@ -13,7 +13,13 @@ const BASE =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  /*
+    A fixed date for pages whose content is data in this repository, moved
+    forward by hand when that content changes. "new Date()" on every build
+    stamped 74 pages with today's date daily, which is a lie a crawler
+    learns to ignore.
+  */
+  const now = new Date("2026-09-17");
 
   return [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1 },
@@ -127,11 +133,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),
+    /*
+      A post's real date. lastModified is only worth sending if it is true:
+      a sitemap that stamps every page with today's date on every build
+      teaches a crawler that the date means nothing, and it stops using it
+      to decide what to fetch first.
+    */
     ...POSTS.map((p) => ({
       url: `${BASE}/blog/${p.slug}`,
-      lastModified: new Date(p.published),
-      changeFrequency: "yearly" as const,
-      priority: 0.6,
+      lastModified: new Date(p.updated ?? p.published),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
   ];
 }

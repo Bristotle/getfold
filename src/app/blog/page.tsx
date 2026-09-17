@@ -15,6 +15,33 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <div className="min-h-screen">
+      {/*
+        Blog with its posts as a list, so the index is a thing a search
+        engine understands rather than a page that mentions eight titles.
+      */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Blog",
+            name: "The Fold blog",
+            url: "https://www.getfold.org/blog",
+            description:
+              "Practical guides for the people who run a Ghanaian church: the register, the statistical return, attendance, giving and mobile money.",
+            inLanguage: "en-GH",
+            publisher: { "@type": "Organization", name: "Fold", url: "https://www.getfold.org" },
+            blogPost: sortedPosts.map((post) => ({
+              "@type": "BlogPosting",
+              headline: post.title,
+              url: `https://www.getfold.org/blog/${post.slug}`,
+              datePublished: post.published,
+              dateModified: post.updated ?? post.published,
+              description: post.excerpt,
+            })),
+          }),
+        }}
+      />
       <SiteHeader />
 
       <main id="main">

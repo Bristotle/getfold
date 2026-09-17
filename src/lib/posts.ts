@@ -64,7 +64,7 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "The exact form differs by denomination, but the numbers underneath are the same five kinds everywhere. Once you know where each lives, any form is a matter of copying across.",
+        text: "The exact form differs by denomination, but the numbers underneath are the same five kinds everywhere, whether you are a [Methodist society](/for/methodist-churches), a [Presbyterian congregation](/for/presbyterian-churches) or a [Pentecostal assembly](/for/pentecostal-churches). Once you know where each lives, any form is a matter of copying across.",
       },
       { type: "h2", text: "The five things every return asks for" },
       {
@@ -85,12 +85,12 @@ export const POSTS: Post[] = [
       { type: "h3", text: "Membership by class" },
       {
         type: "p",
-        text: "This is the count of active members on the last day of the quarter, not the number of names in the book. A book accumulates names for years; a return wants the people who are members now. If your register does not mark active against lapsed, that is the first job, because every quarter after inherits it. Count by class, then add the classes. If the total disagrees with the count of active names, somebody is in two classes or none.",
+        text: "This is the count of active members on the last day of the quarter, not the number of names in the book. A book accumulates names for years; a return wants the people who are members now. If your register does not mark active against lapsed, that is the first job, because every quarter after inherits it. There is a [guide to keeping the register](/blog/church-record-keeping-guide-ghana) if yours needs that work. Count by class, then add the classes. If the total disagrees with the count of active names, somebody is in two classes or none.",
       },
       { type: "h3", text: "Attendance" },
       {
         type: "p",
-        text: "Most returns want an average per Sunday, so you need every Sunday's count and the number of Sundays. A head count of men and women is enough. The common mistake is averaging over the calendar rather than over services actually held: a quarter with a funeral week and a harvest Sunday might have eleven services, and dividing by thirteen understates the church by fifteen percent.",
+        text: "Most returns want an average per Sunday, so you need every Sunday's count and the number of Sundays. A head count of men and women is enough. The common mistake, and [why Fold averages against services held](/help/reports/attendance-averages), is averaging over the calendar rather than over services actually held: a quarter with a funeral week and a harvest Sunday might have eleven services, and dividing by thirteen understates the church by fifteen percent.",
       },
       { type: "h3", text: "Baptisms, confirmations, marriages, deaths" },
       {
@@ -105,7 +105,7 @@ export const POSTS: Post[] = [
       { type: "h3", text: "Income, including the money that never touched the bowl" },
       {
         type: "p",
-        text: "Tithes and offerings for the period, from the offering book or the treasurer's ledger. The figure most often wrong is mobile money. Ghanaians moved GHS 4.54 trillion through mobile money in 2025, up 50.8 percent on the year, across 26.7 million active accounts, and a growing share of church giving arrives that way. It lands on a handset, not in a bowl, so it is frequently absent from the offering book and therefore from the return.",
+        text: "Tithes and offerings for the period, from the offering book or the treasurer's ledger. The figure most often wrong is mobile money. Ghanaians moved GHS 4.54 trillion through mobile money in 2025, up 50.8 percent on the year, across 26.7 million active accounts, and a growing share of church giving arrives that way. It lands on a handset, not in a bowl, so it is frequently absent from the offering book and therefore from the return. [Setting up mobile money giving properly](/blog/how-to-set-up-mobile-money-giving-for-your-church) is what fixes that.",
       },
       { type: "h2", text: "The evening before, in six steps" },
       {
@@ -126,7 +126,7 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "The fix is one record rather than three, so that marking a member transferred out removes her from the class count at the same moment, and recording an offering puts it in the quarter's total at the same moment. A spreadsheet does part of this if one person keeps it. Software built for churches does the rest and produces the return as a page to print.",
+        text: "The fix is one record rather than three, so that marking a member transferred out removes her from the class count at the same moment, and recording an offering puts it in the quarter's total at the same moment. A spreadsheet does part of this if one person keeps it. Software built for churches does the rest and [produces the return as a page to print](/help/reports/statistical-return).",
       },
       {
         type: "quote",
@@ -176,7 +176,7 @@ export const POSTS: Post[] = [
           "Full name as they would write it, family name last, so the register sorts and searches.",
           "A phone number they actually answer, in full: 024 400 0000, not the last six digits somebody remembers. With 26.7 million active mobile money accounts in Ghana, a phone number is also how most members will give.",
           "Date of birth, or at least month and day. This is what makes a birthday text possible, and a birthday text from the church is worth more than it costs.",
-          "Class, fellowship, cell or society, in your denomination's own word. Membership is counted by group on every return.",
+          "Class, fellowship, cell or society, in [your denomination's own word](/help/members/member-types-and-classes). Membership is counted by group on every return.",
           "Status: active, lapsed, transferred out or deceased. The most important field, and the one most registers lack.",
           "The date they joined, were received or were baptised. Membership is usually defined by one of these, and a dispute is settled by it.",
         ],
@@ -189,12 +189,12 @@ export const POSTS: Post[] = [
       { type: "h2", text: "Transfers, in both directions" },
       {
         type: "p",
-        text: "When a member moves within the denomination, the sending church issues a letter of transfer and marks the record transferred out; the receiving church marks a transfer in. Both should happen, and the circuit checks they balance. The commonest failure is a member attending her new church for a year while still counted at the old one.",
+        text: "When a member moves within the denomination, the sending church issues a letter of transfer and marks the record transferred out; the receiving church marks a [transfer in](/help/members/transfers-and-visitors). Both should happen, and the circuit checks they balance. The commonest failure is a member attending her new church for a year while still counted at the old one.",
       },
       { type: "h2", text: "What the Data Protection Act asks of a church" },
       {
         type: "p",
-        text: "Under the Data Protection Act, 2012 (Act 843), a church that keeps a register is a data controller, and religious belief is special personal data. Three consequences follow, none onerous:",
+        text: "Under the Data Protection Act, 2012 (Act 843), a church that keeps a register is a data controller, and religious belief is special personal data. [What that means for a church using Fold](/help/account/data-protection-act) is written up separately; three consequences follow for any church, none onerous:",
       },
       {
         type: "list",
@@ -219,13 +219,13 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "Software gives several people one record, counts itself, and produces the return and the birthday list without anyone compiling them, for a quarterly subscription and an evening moving the register across. Choose one that reads your spreadsheet in, lets you export it out, and understands your denomination rather than treating a society as a small group.",
+        text: "Software gives several people one record, counts itself, and produces the return and the birthday list without anyone compiling them, for a quarterly subscription and an evening moving the register across. Choose one that [reads your spreadsheet in](/help/members/import-from-excel), [lets you export it out](/help/members/export-your-members), and understands your denomination rather than treating a society as a small group.",
       },
       { type: "h2", text: "Moving from a book" },
       {
         type: "steps",
         items: [
-          "Do not type the whole book. Start with last Sunday's congregation, then the Sunday before. Active members first; the rest over a month.",
+          "Do not type the whole book. Start with last Sunday's congregation, then the Sunday before. Active members first; the rest over a month. There is a [longer piece on moving from a book](/blog/moving-your-register-from-a-book).",
           "Decide the six fields before you start. Adding a column halfway means going back over every row.",
           "Set a status for every name as you go. This is the one chance to do it cleanly.",
           "Give each class leader their own list to check. They know who has moved and who has died.",
@@ -289,7 +289,7 @@ export const POSTS: Post[] = [
       { type: "h3", text: "Church software with giving built in" },
       {
         type: "p",
-        text: "Church management software that includes giving does the processor step for you and connects each payment to the register: the gift is recorded against the member and the fund the moment it succeeds, and appears in the quarterly return without anybody copying it across. Underneath it is usually a processor, so the fee is the processor's fee. The question to ask any vendor is not what percentage they take but whether the money ever passes through their account at all. If it does, they are holding your church's tithes, which is a different relationship from selling you software.",
+        text: "[Church management software that includes giving](/features/digital-giving) does the processor step for you and connects each payment to the register: the gift is recorded against the member and the fund the moment it succeeds, and appears in the quarterly return without anybody copying it across. Underneath it is usually a processor, so the fee is the processor's fee. The question to ask any vendor is not what percentage they take but whether the money ever passes through their account at all. If it does, they are holding your church's tithes, which is a different relationship from selling you software.",
       },
       { type: "h2", text: "What your members will actually see" },
       {
@@ -298,14 +298,14 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "Two things follow. The person collecting needs somewhere to enter the code and needs to know to ask for it, or the payment sits unfinished while the member believes they have given. And the merchant name on that text is the processor account's registered name, not necessarily your church's. Whoever sets this up should tell you what that name will be, and a thank you text from the church itself a few minutes later does a great deal to close the gap.",
+        text: "Two things follow. The person collecting needs somewhere to enter the code and needs to know to ask for it, or the payment sits unfinished while the member believes they have given. And the merchant name on that text is the processor account's registered name, not necessarily your church's. Whoever sets this up should tell you what that name will be, and a [thank you text from the church itself](/features/communication) a few minutes later does a great deal to close the gap.",
       },
       { type: "h2", text: "What to tell the congregation" },
       {
         type: "steps",
         items: [
           "Say it from the pulpit once, properly: which method, what the text message will say, and that a thank you will follow from the church.",
-          "Keep cash exactly as it was. Treating cash as the awkward option loses the people who give most.",
+          "Keep cash exactly as it was. [Recording a cash gift](/help/giving/record-a-contribution) is one form, and treating cash as the awkward option loses the people who give most.",
           "Name what the money is for when you ask. A member paying tithe wants it recorded as tithe.",
           "Put it on the notice board and in the bulletin, because half the congregation was talking during the announcement.",
           "Acknowledge it. Money that arrives on a handset and is never thanked is money that stops arriving.",
@@ -314,7 +314,7 @@ export const POSTS: Post[] = [
       { type: "h2", text: "Reconciling it with the books" },
       {
         type: "p",
-        text: "Whichever method you use, the treasurer needs the mobile money total beside the cash total or the return is wrong. With a merchant account that means downloading a statement monthly. With a processor it means the same from its dashboard. With software it means nothing, because the gift was recorded when it succeeded. That difference is the whole argument for the third option, and it is worth more than the fee.",
+        text: "Whichever method you use, the treasurer needs the mobile money total beside the cash total or the return is wrong. With a merchant account that means downloading a statement monthly. With a processor it means the same from its dashboard. With software it means nothing, because the gift was recorded when it succeeded. That difference is the whole argument for the third option, and it is worth more than the fee. [What mobile money actually costs a church](/blog/what-mobile-money-costs-a-church) goes through the fees line by line.",
       },
       {
         type: "faq",
@@ -351,7 +351,7 @@ export const POSTS: Post[] = [
       { type: "h2", text: "What actually matters here" },
       {
         type: "p",
-        text: "Before the products, the criteria. Most lists judge on feature counts, which tells you very little. Four things decide whether church software survives its first year in Ghana:",
+        text: "Before the products, the criteria. Most lists judge on feature counts, which tells you very little, and [our own feature list](/features) is no exception to that. Four things decide whether church software survives its first year in Ghana:",
       },
       {
         type: "list",
@@ -373,7 +373,7 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "Choose Shepherd if WhatsApp is how your church communicates, or if you want to see a price before you speak to anyone. What it does not do is denominational structure: no circuit, no society, no Bible class, no quarterly return.",
+        text: "Choose Shepherd if WhatsApp is how your church communicates, or if you want to see a price before you speak to anyone. What it does not do is denominational structure: no circuit, no society, no Bible class, no [quarterly return](/help/reports/statistical-return). Our own prices are [on the pricing page](/pricing), in cedis.",
       },
       { type: "h2", text: "Asoriba" },
       {
@@ -442,7 +442,7 @@ export const POSTS: Post[] = [
     body: [
       {
         type: "p",
-        text: "Ask a church secretary what the worst evening of the quarter is and you will usually get the same answer. It is the one spent assembling the return: counting the register by hand, adding up the cash book, working out an average attendance from a column of Sunday figures, and chasing the class leaders who have not sent theirs in.",
+        text: "Ask a church secretary what the worst evening of the quarter is and you will usually get the same answer. The [step by step guide to preparing the return](/blog/how-to-prepare-your-statistical-return) is the practical companion to this piece. It is the one spent assembling the return: counting the register by hand, adding up the cash book, working out an average attendance from a column of Sunday figures, and chasing the class leaders who have not sent theirs in.",
       },
       {
         type: "p",
@@ -506,7 +506,7 @@ export const POSTS: Post[] = [
     body: [
       {
         type: "p",
-        text: "Most churches have their register in a hardback book, and it works, until it does not. The book is in the vestry when the person who needs it is at home. It gets wet. The handwriting from 1998 is nobody's now. And the class leader who kept the real list of who still attends has moved away.",
+        text: "Most churches have their register in a hardback book, and it works, until it does not. What a good register should contain is covered in the [register keeping guide](/blog/church-record-keeping-guide-ghana); this piece is about the move. The book is in the vestry when the person who needs it is at home. It gets wet. The handwriting from 1998 is nobody's now. And the class leader who kept the real list of who still attends has moved away.",
       },
       { type: "h2", text: "Do not start by typing everything" },
       {
@@ -564,7 +564,7 @@ export const POSTS: Post[] = [
       { type: "h2", text: "The percentage is the easy part" },
       {
         type: "p",
-        text: "Rates in Ghana cluster closely. At the time of writing the major processors charge around 1.95 per cent on mobile money, and the differences between them are small enough that price alone should not decide it.",
+        text: "Rates in Ghana cluster closely. At the time of writing the major processors charge around 1.95 per cent on mobile money, and the differences between them are small enough that price alone should not decide it. [How to set it up for a church](/blog/how-to-set-up-mobile-money-giving-for-your-church) is a separate piece.",
       },
       {
         type: "p",
@@ -619,7 +619,7 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "By that point a visit is a difficult conversation. Four months earlier it would have been a phone call.",
+        text: "By that point a visit is a difficult conversation. Four months earlier it would have been a phone call. Fold's [insights page](/help/attendance/who-has-stopped-coming) exists to make it a phone call.",
       },
       { type: "h2", text: "Why a head count cannot tell you" },
       {
