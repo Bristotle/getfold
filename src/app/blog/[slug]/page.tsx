@@ -234,6 +234,30 @@ export default async function BlogPostPage({
                   </section>
                 );
               }
+              if (block.type === "sources") {
+                return (
+                  <section key={i} className="mt-4 border-t border-border pt-6">
+                    <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                      Sources
+                    </h2>
+                    <ol className="m-0 mt-3 flex list-none flex-col gap-1.5 p-0">
+                      {block.items.map((src, n) => (
+                        <li key={src.url} className="flex gap-2 text-sm">
+                          <span className="font-numeric shrink-0 text-muted-foreground">{n + 1}.</span>
+                          <a
+                            href={src.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          >
+                            {src.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ol>
+                  </section>
+                );
+              }
               if (block.type === "quote") {
                 return (
                   <blockquote

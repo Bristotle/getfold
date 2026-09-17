@@ -64,6 +64,7 @@ const COLUMNS = [
       { label: "About us", href: "/about" },
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
+      { label: "Security", href: "/security" },
       { label: "Privacy policy", href: "/privacy" },
       { label: "Terms and conditions", href: "/terms" },
     ],
