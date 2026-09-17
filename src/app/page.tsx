@@ -103,12 +103,7 @@ const RETURN_ROWS = [
   ["Total income", "GHS 61,240"],
 ];
 
-export default async function LandingPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ sent?: string; error?: string }>;
-}) {
-  const { sent, error } = await searchParams;
+export default function LandingPage() {
 
 
   return (
@@ -340,7 +335,7 @@ export default async function LandingPage({
 
       <Faq />
 
-      <Contact sent={sent === "1"} error={error} />
+      <Contact />
 
       {/* ---------- close ---------- */}
       <CtaBand>

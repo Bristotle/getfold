@@ -10,7 +10,7 @@ import { Search } from "lucide-react";
  */
 export function HelpSearch({ defaultValue }: { defaultValue?: string }) {
   return (
-    <form action="/help" method="get" role="search" className="mx-auto max-w-xl">
+    <form action="/help/search" method="get" role="search" className="mx-auto max-w-xl">
       <label htmlFor="help-q" className="sr-only">
         Search the help centre
       </label>

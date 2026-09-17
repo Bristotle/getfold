@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { submitEnquiry } from "@/app/contact-actions";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { SectionBg } from "@/components/marketing/section-bg";
+import { QueryBanner } from "@/components/marketing/query-banner";
 
 /**
  * The enquiry section.
@@ -24,13 +25,7 @@ const PROMISES = [
 const fieldClass =
   "h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40";
 
-export function Contact({
-  sent,
-  error,
-}: {
-  sent?: boolean;
-  error?: string;
-}) {
+export function Contact() {
   const phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
 
   return (
@@ -98,22 +93,8 @@ export function Contact({
         <div className="rounded-2xl bg-surface p-6 text-foreground shadow-[0_20px_50px_-24px_rgba(26,16,51,0.5)] sm:p-8">
           <h3 className="text-lg font-bold">Tell us about your church</h3>
 
-          {sent && (
-            <p
-              role="status"
-              className="mt-4 rounded-lg border border-success/30 bg-success/10 px-3 py-2.5 text-sm text-success-text"
-            >
-              Thank you. We have your message and will reply within a day.
-            </p>
-          )}
-          {error && (
-            <p
-              role="alert"
-              className="mt-4 rounded-lg border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger-text"
-            >
-              {error}
-            </p>
-          )}
+          {/* Read on the client so the page around it can be static. */}
+          <QueryBanner />
 
           <form action={submitEnquiry} className="mt-5 flex flex-col gap-4">
             {/* Honeypot: hidden from people, irresistible to bots. */}

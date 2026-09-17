@@ -29,14 +29,11 @@ const POPULAR = [
   ["attendance", "record-a-service"],
 ] as const;
 
-export default async function HelpPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
-  const { q } = await searchParams;
-  const query = (q ?? "").trim();
-  const results = query ? searchArticles(query) : null;
+/*
+  Static now. Search moved to /help/search so this page, the entry to every
+  answer we have, is served from the edge rather than rendered per visitor.
+*/
+export default function HelpPage() {
 
   return (
     <div className="min-h-screen">
@@ -63,72 +60,11 @@ export default async function HelpPage({
             </p>
 
             <div className="mt-8">
-              <HelpSearch defaultValue={query} />
+              <HelpSearch />
             </div>
           </div>
         </section>
 
-        {/* ---------- search results ---------- */}
-        {results !== null ? (
-          <section className="relative isolate overflow-hidden bg-surface">
-            <SectionBg variant="dots" />
-            <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
-              <h2 className="text-xl font-bold text-foreground">
-                {results.length === 0
-                  ? `Nothing matched "${query}"`
-                  : `${results.length} ${
-                      results.length === 1 ? "answer" : "answers"
-                    } for "${query}"`}
-              </h2>
-
-              {results.length === 0 ? (
-                <div className="mt-5 rounded-xl border border-border bg-background p-6">
-                  <p className="text-[15px] leading-relaxed text-muted-foreground">
-                    Try fewer words, or a word your church would use rather
-                    than ours. Failing that, ask us directly and we will
-                    answer, then write the article so the next church finds it.
-                  </p>
-                  <div className="mt-5">
-                    <Link href="/contact">
-                      <Button>Ask us your question</Button>
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <ul className="m-0 mt-6 flex list-none flex-col gap-3 p-0">
-                  {results.map((a) => (
-                    <li key={`${a.category.slug}/${a.slug}`}>
-                      <Link
-                        href={`/help/${a.category.slug}/${a.slug}`}
-                        className="group block rounded-xl border border-border bg-background p-5 transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      >
-                        <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                          {a.category.title}
-                        </span>
-                        <h3 className="mt-1.5 text-balance text-base font-bold text-foreground group-hover:text-primary">
-                          {a.title}
-                        </h3>
-                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                          {a.summary}
-                        </p>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <p className="mt-8 text-sm text-muted-foreground">
-                <Link
-                  href="/help"
-                  className="rounded font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                >
-                  Back to all categories
-                </Link>
-              </p>
-            </div>
-          </section>
-        ) : (
-          <>
             {/* ---------- categories ---------- */}
             <section className="relative isolate overflow-hidden bg-surface">
               <SectionBg variant="grid" />
@@ -199,8 +135,6 @@ export default async function HelpPage({
                 </ul>
               </div>
             </section>
-          </>
-        )}
 
         {/* ---------- still stuck ---------- */}
         <CtaBand>

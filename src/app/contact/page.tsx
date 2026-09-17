@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { submitEnquiry } from "@/app/contact-actions";
 import { SectionBg } from "@/components/marketing/section-bg";
+import { QueryBanner } from "@/components/marketing/query-banner";
 
 export const metadata: Metadata = {
   title: "Contact Fold, church software support in Ghana",
@@ -16,12 +17,7 @@ export const metadata: Metadata = {
 const fieldClass =
   "h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40";
 
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ sent?: string; error?: string }>;
-}) {
-  const { sent, error } = await searchParams;
+export default function ContactPage() {
 
   // Neither is invented. A number that does not ring, or an address that
   // bounces, is worse than no number at all on a page asking a church to
@@ -194,22 +190,8 @@ export default async function ContactPage({
                   Send us a message
                 </h2>
 
-                {sent && (
-                  <p
-                    role="status"
-                    className="mt-4 rounded-lg border border-success/30 bg-success/10 px-3 py-2.5 text-sm text-success-text"
-                  >
-                    Thank you. We have your message and will reply within a day.
-                  </p>
-                )}
-                {error && (
-                  <p
-                    role="alert"
-                    className="mt-4 rounded-lg border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger-text"
-                  >
-                    {error}
-                  </p>
-                )}
+                {/* Read on the client so this page can be static. */}
+                <QueryBanner />
 
                 <form action={submitEnquiry} className="mt-5 flex flex-col gap-4">
                   <div aria-hidden="true" className="absolute left-[-9999px]">
