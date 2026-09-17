@@ -9,6 +9,7 @@ import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
 import { renderTemplate, DEFAULT_TEMPLATES, cedis, toE164 } from "@/lib/messaging";
 import { CONTRIBUTION_TYPES, PAYMENT_METHODS, values } from "@/lib/constants";
+import { friendly } from "@/lib/errors";
 
 export async function recordContribution(formData: FormData) {
   const { userId, membership } = await getMembership();
@@ -96,7 +97,7 @@ export async function recordContribution(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/contributions?error=${encodeURIComponent(error.message)}`);
+    redirect(`/contributions?error=${encodeURIComponent(friendly(error))}`);
   }
 
   // Only attributed giving gets a receipt, an anonymous offering has

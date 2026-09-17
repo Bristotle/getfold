@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { friendly } from "@/lib/errors";
 import {
   isRateLimited,
   logAuthEvent,
@@ -150,6 +151,27 @@ export async function requestPasswordReset(formData: FormData) {
     );
   }
 
+  /*
+    Rate limited like the other two.
+
+    Sign in and sign up both checked; this did not, so a known pastor's
+    address could be flooded with reset emails as harassment, and our
+    sending quota with it. Supabase has its own limits, which bound the
+    damage but say nothing about it: without this there was no record at our
+    end that anybody had tried.
+
+    The answer to the sender is unchanged either way, because telling
+    somebody they have been limited tells them the address exists.
+  */
+  if (await isRateLimited(email)) {
+    await logAuthEvent(email, "rate_limited", "requestPasswordReset");
+    redirect(
+      `/forgot-password?message=${encodeURIComponent(
+        "If that address has an account, a reset link is on its way. Check your inbox, and your spam folder."
+      )}`
+    );
+  }
+
   const supabase = await createClient();
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
@@ -202,7 +224,7 @@ export async function updatePassword(formData: FormData) {
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
-    redirect(`/reset-password?error=${encodeURIComponent(error.message)}`);
+    redirect(`/reset-password?error=${encodeURIComponent(friendly(error))}`);
   }
 
   // Changing a password is what somebody does after suspecting their

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
+import { friendly } from "@/lib/errors";
 import {
   createSubaccount,
   listSettlementOptions,
@@ -77,7 +78,7 @@ export async function setSettlement(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/payouts?error=${encodeURIComponent(error.message)}`);
+    redirect(`/payouts?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/payouts");

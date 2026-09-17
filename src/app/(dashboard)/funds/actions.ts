@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
+import { friendly } from "@/lib/errors";
 
 function amountOrNull(formData: FormData, key: string) {
   const raw = String(formData.get(key) ?? "").trim();
@@ -37,7 +38,7 @@ export async function createFund(formData: FormData) {
     // contributions_sync_fund trigger owns it.
   });
 
-  if (error) redirect(`/funds?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/funds?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/funds");
   redirect(`/funds?message=${encodeURIComponent(`${name} created.`)}`);
@@ -68,7 +69,7 @@ export async function updateFund(formData: FormData) {
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
 
-  if (error) redirect(`/funds?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/funds?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/funds");
   redirect("/funds?message=Fund updated.");
@@ -96,7 +97,7 @@ export async function deleteFund(formData: FormData) {
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
 
-  if (error) redirect(`/funds?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/funds?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/funds");
   revalidatePath("/contributions");

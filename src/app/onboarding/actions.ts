@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { friendly } from "@/lib/errors";
 
 const ORG_TYPES = ["local_church", "circuit", "diocese", "denomination_hq"];
 
@@ -39,7 +40,7 @@ export async function createOrganization(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/onboarding?error=${encodeURIComponent(error.message)}`);
+    redirect(`/onboarding?error=${encodeURIComponent(friendly(error))}`);
   }
 
   if (!data) {

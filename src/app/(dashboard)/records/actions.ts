@@ -7,6 +7,7 @@ import { getMembership } from "@/lib/org";
 import { ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { VITAL_RECORD_TYPES, values } from "@/lib/constants";
+import { friendly } from "@/lib/errors";
 
 export async function createVitalRecord(formData: FormData) {
   const { membership } = await getMembership();
@@ -43,7 +44,7 @@ export async function createVitalRecord(formData: FormData) {
     note: note || null,
   });
 
-  if (error) redirect(`/records?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/records?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/records");
   redirect("/records?message=Record saved.");
@@ -68,7 +69,7 @@ export async function deleteVitalRecord(formData: FormData) {
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
 
-  if (error) redirect(`/records?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/records?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/records");
   redirect("/records?message=Record deleted.");

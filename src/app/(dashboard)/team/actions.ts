@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can, assignableRoles } from "@/lib/permissions";
+import { friendly } from "@/lib/errors";
 
 // Which roles this caller may hand out depends on their own. Only the
 // person who holds the church can appoint another pastor, so an
@@ -74,7 +75,7 @@ export async function revokeInvitation(formData: FormData) {
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
 
-  if (error) redirect(`/team?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/team?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/team");
   redirect(`/team?message=${encodeURIComponent("Invitation revoked.")}`);
@@ -107,7 +108,7 @@ export async function changeRole(formData: FormData) {
   if (error) {
     // The prevent_last_admin_removal trigger raises 23514 with a message
     // written for a human, pass it straight through.
-    redirect(`/team?error=${encodeURIComponent(error.message)}`);
+    redirect(`/team?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/team");
@@ -136,7 +137,7 @@ export async function removeMember(formData: FormData) {
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
 
-  if (error) redirect(`/team?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/team?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/team");
   redirect(
@@ -156,7 +157,7 @@ export async function acceptInvitations() {
   const { data, error } = await supabase.rpc("accept_pending_invitations");
 
   if (error) {
-    redirect(`/onboarding?error=${encodeURIComponent(error.message)}`);
+    redirect(`/onboarding?error=${encodeURIComponent(friendly(error))}`);
   }
   if (!data) {
     redirect(

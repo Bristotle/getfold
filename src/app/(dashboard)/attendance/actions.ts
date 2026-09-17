@@ -7,6 +7,7 @@ import { getMembership } from "@/lib/org";
 import { ownsRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { SERVICE_TYPES, values } from "@/lib/constants";
+import { friendly } from "@/lib/errors";
 
 function count(formData: FormData, key: string) {
   const n = Number(String(formData.get(key) ?? "0").trim() || 0);
@@ -50,7 +51,7 @@ export async function recordAttendance(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/attendance?error=${encodeURIComponent(error.message)}`);
+    redirect(`/attendance?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/attendance");
@@ -132,7 +133,7 @@ export async function saveCheckIns(formData: FormData) {
     // 23505 is the unique constraint: someone else saved the same person
     // while this page was open, which is the desired end state anyway.
     if (error && error.code !== "23505") {
-      redirect(`/attendance/${recordId}?error=${encodeURIComponent(error.message)}`);
+      redirect(`/attendance/${recordId}?error=${encodeURIComponent(friendly(error))}`);
     }
   }
 
@@ -143,7 +144,7 @@ export async function saveCheckIns(formData: FormData) {
       .eq("attendance_record_id", recordId)
       .in("member_id", toRemove);
     if (error) {
-      redirect(`/attendance/${recordId}?error=${encodeURIComponent(error.message)}`);
+      redirect(`/attendance/${recordId}?error=${encodeURIComponent(friendly(error))}`);
     }
   }
 

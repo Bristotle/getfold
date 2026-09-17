@@ -7,6 +7,7 @@ import { getMembership } from "@/lib/org";
 import { ownsRow, ownsOptionalRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
 import { GROUP_TYPES, values } from "@/lib/constants";
+import { friendly } from "@/lib/errors";
 
 export async function createGroup(formData: FormData) {
   const { membership } = await getMembership();
@@ -36,7 +37,7 @@ export async function createGroup(formData: FormData) {
     leader_id: leaderId || null,
   });
 
-  if (error) redirect(`/groups?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/groups?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/groups");
   redirect(`/groups?message=${encodeURIComponent(`${name} created.`)}`);
@@ -71,7 +72,7 @@ export async function updateGroup(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/groups/${id}?error=${encodeURIComponent(error.message)}`);
+    redirect(`/groups/${id}?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/groups");
@@ -111,7 +112,7 @@ export async function assignMember(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/groups/${groupId}?error=${encodeURIComponent(error.message)}`);
+    redirect(`/groups/${groupId}?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath(`/groups/${groupId}`);
@@ -139,7 +140,7 @@ export async function unassignMember(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/groups/${groupId}?error=${encodeURIComponent(error.message)}`);
+    redirect(`/groups/${groupId}?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath(`/groups/${groupId}`);
@@ -171,7 +172,7 @@ export async function deleteGroup(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/groups/${id}?error=${encodeURIComponent(error.message)}`);
+    redirect(`/groups/${id}?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/groups");

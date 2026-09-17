@@ -9,6 +9,7 @@ import { parseMembersCsv } from "@/lib/csv";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
 import { renderTemplate, DEFAULT_TEMPLATES } from "@/lib/messaging";
+import { friendly } from "@/lib/errors";
 
 const GENDERS = ["male", "female"];
 
@@ -52,7 +53,7 @@ export async function createMember(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/members?error=${encodeURIComponent(error.message)}`);
+    redirect(`/members?error=${encodeURIComponent(friendly(error))}`);
   }
 
   /*
@@ -118,7 +119,7 @@ export async function archiveMember(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/members?error=${encodeURIComponent(error.message)}`);
+    redirect(`/members?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/members");
@@ -166,7 +167,7 @@ export async function updateMember(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/members/${id}?error=${encodeURIComponent(error.message)}`);
+    redirect(`/members/${id}?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/members");
@@ -194,7 +195,7 @@ export async function restoreMember(formData: FormData) {
     .eq("organization_id", membership.organization.id);
 
   if (error) {
-    redirect(`/members?error=${encodeURIComponent(error.message)}`);
+    redirect(`/members?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/members");

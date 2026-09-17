@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/marketing/logo";
@@ -40,12 +39,17 @@ type Row = {
   spam_reasons: string | null;
 };
 
-function allowed(email: string | null): boolean {
-  const list = (process.env.ALERT_EMAIL ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  return Boolean(email && list.includes(email.toLowerCase()));
+/*
+  Who may look is decided in the database now, by public.app_admins and the
+  contact_admin_read policy. This asks it the same question so the page can
+  answer a non administrator cleanly rather than rendering an empty list
+  that looks like "no enquiries yet".
+*/
+async function allowed(
+  supabase: Awaited<ReturnType<typeof createClient>>
+): Promise<boolean> {
+  const { data } = await supabase.rpc("is_app_admin");
+  return data === true;
 }
 
 export default async function EnquiriesPage({
@@ -60,19 +64,24 @@ export default async function EnquiriesPage({
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
-  if (!allowed(user.email ?? null)) {
+  if (!(await allowed(supabase))) {
     // Deliberately the same answer a signed out visitor gets, so this page
     // does not confirm its own existence to somebody who should not see it.
     redirect("/dashboard");
   }
 
-  const service = createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  );
+  /*
+    The ordinary client, with the user's own session, so row level security
+    decides what comes back.
 
-  const { data } = await service
+    This used the service role key, which bypasses RLS entirely, and then
+    decided for itself who was allowed to look. It failed closed and nothing
+    was ever exposed, but the page was the only thing between a reader and
+    every enquiry ever sent, and a page is the wrong place for that. The
+    decision is in the database now, in the contact_admin_read policy, so a
+    second page or an edited guard cannot widen it by accident.
+  */
+  const { data } = await supabase
     .from("contact_requests")
     .select(
       "id, name, email, phone, church, message, source, created_at, alerted_at, alert_error, spam, spam_score, spam_reasons"

@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership, ACTIVE_ORG_COOKIE } from "@/lib/org";
 import { can } from "@/lib/permissions";
+import { friendly } from "@/lib/errors";
 
 /**
  * Creates a branch under the church the user is currently in.
@@ -36,7 +37,7 @@ export async function createBranch(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/branches?error=${encodeURIComponent(error.message)}`);
+    redirect(`/branches?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/branches");

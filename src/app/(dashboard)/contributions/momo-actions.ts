@@ -18,6 +18,7 @@ import {
 } from "@/lib/paystack";
 import { CONTRIBUTION_TYPES, values } from "@/lib/constants";
 import { thankForGiving } from "@/lib/notify";
+import { friendly } from "@/lib/errors";
 
 export async function collectByMomo(formData: FormData) {
   const { userId, membership } = await getMembership();
@@ -134,7 +135,7 @@ export async function collectByMomo(formData: FormData) {
   });
 
   if (insertError) {
-    redirect(`/contributions?error=${encodeURIComponent(insertError.message)}`);
+    redirect(`/contributions?error=${encodeURIComponent(friendly(insertError))}`);
   }
 
   // Paystack requires an email, but most members have none. We fall back to

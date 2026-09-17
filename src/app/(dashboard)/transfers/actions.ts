@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { ownsRow } from "@/lib/owns";
 import { can } from "@/lib/permissions";
+import { friendly } from "@/lib/errors";
 
 export async function requestTransfer(formData: FormData) {
   const { membership } = await getMembership();
@@ -46,7 +47,7 @@ export async function requestTransfer(formData: FormData) {
     status: "pending",
   });
 
-  if (error) redirect(`/transfers?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/transfers?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/transfers");
   revalidatePath("/dashboard");
@@ -84,7 +85,7 @@ async function resolve(formData: FormData, status: "approved" | "rejected") {
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
 
-  if (error) redirect(`/transfers?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/transfers?error=${encodeURIComponent(friendly(error))}`);
 
   // Approving a transfer is what actually moves the member off the active
   // register. Rejecting leaves them exactly as they were.

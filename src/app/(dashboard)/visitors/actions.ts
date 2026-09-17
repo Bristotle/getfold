@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
+import { friendly } from "@/lib/errors";
 
 const GENDERS = ["male", "female"];
 
@@ -40,7 +41,7 @@ export async function createVisitor(formData: FormData) {
     ...(dateOfVisit ? { date_of_visit: dateOfVisit } : {}),
   });
 
-  if (error) redirect(`/visitors?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/visitors?error=${encodeURIComponent(friendly(error))}`);
 
   revalidatePath("/visitors");
   redirect(`/visitors?message=${encodeURIComponent(`${fullName} recorded.`)}`);

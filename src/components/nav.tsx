@@ -38,12 +38,12 @@ const GROUPS = [
     icon: "people",
     primary: true,
     items: [
-      { href: "/members", label: "Members" },
-      { href: "/groups", label: "Classes and groups" },
-      { href: "/visitors", label: "Visitors" },
-      { href: "/transfers", label: "Transfers" },
-      { href: "/records", label: "Vital records" },
-      { href: "/messages", label: "Messages" },
+      { href: "/members", label: "Members", cap: "people.write" },
+      { href: "/groups", label: "Classes and groups", cap: "people.write" },
+      { href: "/visitors", label: "Visitors", cap: "people.write" },
+      { href: "/transfers", label: "Transfers", cap: "people.write" },
+      { href: "/records", label: "Vital records", cap: "records.write" },
+      { href: "/messages", label: "Messages", cap: "people.write" },
     ],
   },
   {
@@ -51,8 +51,8 @@ const GROUPS = [
     icon: "check",
     primary: true,
     items: [
-      { href: "/attendance", label: "Services" },
-      { href: "/insights", label: "Insights" },
+      { href: "/attendance", label: "Services", cap: "attendance.write" },
+      { href: "/insights", label: "Insights", cap: "people.write" },
     ],
   },
   {
@@ -70,7 +70,9 @@ const GROUPS = [
   {
     label: "Reports",
     icon: "chart",
-    items: [{ href: "/reports", label: "Statistical return" }],
+    items: [
+      { href: "/reports", label: "Statistical return", cap: "finance.view" },
+    ],
   },
   {
     label: "Team",
@@ -87,7 +89,7 @@ const GROUPS = [
   icon: string;
   primary?: boolean;
   cap?: Capability;
-  items: ReadonlyArray<{ href: string; label: string }>;
+  items: ReadonlyArray<{ href: string; label: string; cap?: Capability }>;
 }>;
 
 const PATHS: Record<string, string> = {
@@ -126,7 +128,24 @@ export function Nav({ role }: { role: string }) {
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
-  const visible = GROUPS.filter((g) => !("cap" in g) || can(role, g.cap));
+  /*
+    Filter the items, then the groups.
+
+    This used to filter groups only, so People, Attendance and Reports were
+    shown to every role while each page gated itself. A class leader saw a
+    link to the statistical return, opened it, and found the income omitted.
+    Nothing leaked, the pages were right, but the navigation promised
+    something it could not deliver.
+
+    Each item now carries the same capability its own page checks, and a
+    group whose items have all gone disappears with them.
+  */
+  const visible = GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((i) => !("cap" in i) || can(role, i.cap!)),
+  }))
+    .filter((g) => !("cap" in g) || can(role, g.cap))
+    .filter((g) => g.items.length > 0);
   const primary = visible.filter((g) => "primary" in g && g.primary);
   const secondary = visible.filter((g) => !("primary" in g && g.primary));
 

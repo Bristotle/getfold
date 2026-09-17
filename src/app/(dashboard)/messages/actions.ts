@@ -7,6 +7,7 @@ import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
 import { templates, deliver, providerStatus } from "@/lib/messaging";
+import { friendly } from "@/lib/errors";
 
 /**
  * Queues a "we've missed you" message for everyone currently on the
@@ -29,7 +30,7 @@ export async function queueAbsenceFollowUps(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/insights?error=${encodeURIComponent(error.message)}`);
+    redirect(`/insights?error=${encodeURIComponent(friendly(error))}`);
   }
 
   const candidates = ((data ?? []) as {
@@ -192,7 +193,7 @@ export async function updateMessageSettings(formData: FormData) {
     sender: sender || null,
   });
   if (senderError) {
-    redirect(`/messages?error=${encodeURIComponent(senderError.message)}`);
+    redirect(`/messages?error=${encodeURIComponent(friendly(senderError))}`);
   }
 
   // The church's own wording. Blank means "use ours", which is why these
@@ -205,7 +206,7 @@ export async function updateMessageSettings(formData: FormData) {
     t_thanks: String(formData.get("tplThanks") ?? "").trim() || null,
   });
   if (tplError) {
-    redirect(`/messages?error=${encodeURIComponent(tplError.message)}`);
+    redirect(`/messages?error=${encodeURIComponent(friendly(tplError))}`);
   }
 
   const { error } = await supabase
@@ -218,7 +219,7 @@ export async function updateMessageSettings(formData: FormData) {
     .eq("id", membership.organization.id);
 
   if (error) {
-    redirect(`/messages?error=${encodeURIComponent(error.message)}`);
+    redirect(`/messages?error=${encodeURIComponent(friendly(error))}`);
   }
 
   revalidatePath("/messages");
