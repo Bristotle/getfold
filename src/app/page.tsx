@@ -11,47 +11,9 @@ import { Proof } from "@/components/marketing/proof";
 import { CongregationBand } from "@/components/marketing/congregation-band";
 import { SectionBg, HeroWash, CtaBand, PhotoBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
-import { TIERS } from "@/lib/pricing";
 import { metaDescription } from "@/lib/seo";
 
-/*
-  What Fold is, for a machine.
-
-  SoftwareApplication is the type a search engine expects for a product like
-  this, and it is generated from the same pricing constant the pricing page
-  renders, so the price it carries cannot drift from the price a church is
-  shown. Offers are in GHS, monthly, for the self serve bands only: the
-  circuit rate is a conversation and is not a price.
-*/
-const APP_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "Fold",
-  url: "https://www.getfold.org",
-  applicationCategory: "BusinessApplication",
-  applicationSubCategory: "Church management software",
-  operatingSystem: "Web",
-  description:
-    "Church management software built in Ghana around how a denomination actually works. Members, Bible classes, attendance and giving, with the statistical return your circuit asks for already filled in.",
-  countriesSupported: "GH",
-  inLanguage: "en-GH",
-  isAccessibleForFree: false,
-  offers: TIERS.filter((t) => t.monthly !== null).map((t) => ({
-    "@type": "Offer",
-    name: t.name,
-    price: t.monthly,
-    priceCurrency: "GHS",
-    description: `${t.memberLimit}. Billed quarterly.`,
-    url: "https://www.getfold.org/pricing",
-    availability: "https://schema.org/InStock",
-  })),
-  publisher: {
-    "@type": "Organization",
-    name: "Manuel Technologies",
-    url: "https://manueltechnologies.com",
-  },
-};
-
+import { APP_SCHEMA } from "@/lib/app-schema";
 /*
   The congregation photograph as the hero background, full rather than the
   blurred wash, with the hero flipped to white type on the same measured

@@ -3,6 +3,25 @@ import "./globals.css";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
 
+/*
+  WebSite with a SearchAction, on every page. The help centre's search is a
+  plain GET at /help/search?q=, so the action described here is something
+  that genuinely works, which is the only reason to declare it.
+*/
+const WEBSITE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Fold",
+  url: SITE,
+  inLanguage: "en-GH",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${SITE}/help/search?q={search_term_string}` },
+    "query-input": "required name=search_term_string",
+  },
+  publisher: { "@type": "Organization", name: "Manuel Technologies", url: "https://manueltechnologies.com" },
+};
+
 export const metadata: Metadata = {
   /*
     metadataBase was missing, which meant Open Graph URLs and canonicals
@@ -80,6 +99,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_SCHEMA) }}
+        />
         {/*
           Ten navigation links sit before the content on every dashboard page.
           Without this a keyboard user tabs through all of them each time.

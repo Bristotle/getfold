@@ -18,6 +18,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { metaDescription } from "@/lib/seo";
+import { APP_SCHEMA } from "@/lib/app-schema";
 
 export const metadata: Metadata = {
   title: "Features, everything Fold does for your church",
@@ -158,6 +159,10 @@ const MODULES = [
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(APP_SCHEMA) }}
+      />
       <SiteHeader />
 
       <main id="main">

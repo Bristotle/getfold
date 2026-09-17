@@ -52,7 +52,7 @@ export function DashboardPreview() {
         then of the hero, and the whole page rendered wider than a phone.
       */}
       <div className="flex min-w-0 gap-1 overflow-hidden border-b border-border px-3">
-        {["Dashboard", "Members", "Groups", "Attendance", "Giving", "Reports"].map(
+        {["Dashboard", "People", "Attendance", "Giving", "Reports", "Team"].map(
           (item, i) => (
             <span
               key={item}

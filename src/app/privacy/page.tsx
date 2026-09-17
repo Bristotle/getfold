@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalLayout, Section } from "@/components/marketing/legal-layout";
 
 export const metadata: Metadata = {
-  title: "Privacy policy, Fold",
+  title: "Privacy policy, how Fold handles church member data",
   description:
     "How Fold handles the personal data churches keep about their members.",
 };

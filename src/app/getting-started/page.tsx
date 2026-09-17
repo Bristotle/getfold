@@ -78,6 +78,28 @@ const TIMELINE = [
 export default function GettingStartedPage() {
   return (
     <div className="min-h-screen">
+      {/*
+        HowTo, because that is what this page is. Built from the same
+        TIMELINE the page renders, so the two cannot disagree.
+      */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            name: "How to set up Fold for your church",
+            description: metadata.description,
+            totalTime: "PT1H",
+            step: TIMELINE.map((t, i) => ({
+              "@type": "HowToStep",
+              position: i + 1,
+              name: t.what,
+              text: t.body,
+            })),
+          }),
+        }}
+      />
       <SiteHeader />
 
       <main id="main">

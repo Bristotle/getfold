@@ -30,6 +30,14 @@ export type Category = {
   slug: string;
   title: string;
   description: string;
+  /*
+    Two or three paragraphs that orient somebody before the list of
+    articles. A category page that is a heading, a sentence and six links
+    is a link list, and a search engine treats it as one. These say what
+    the area is for, what the product does about it, and what to read
+    first.
+  */
+  intro: string[];
   /** Key into the icon map in the help pages. */
   icon: string;
   articles: Article[];
@@ -41,6 +49,11 @@ export const CATEGORIES: Category[] = [
     title: "Getting started",
     description:
       "Create your church, bring in your register, and get your team logged in.",
+    intro: [
+      "Setting up Fold is the work of an evening, and most of that evening is deciding what to bring across. The only thing required is a church name. The register, your classes and last Sunday's head count all make the first week smoother, and none of them stops you starting.",
+      "The articles here take you from creating the account to the end of the first week, in the order that gets a church to a useful Sunday fastest: the account, then installing it on the phone you will actually use, then what to do first once you are in.",
+      "If you cannot log in, that article is last on the list but worth reading first, because the commonest cause is an email confirmation link that went to spam.",
+    ],
     icon: "rocket",
     articles: [
       {
@@ -158,6 +171,11 @@ export const CATEGORIES: Category[] = [
     title: "Members and the register",
     description:
       "Adding people, importing a register you already keep, classes, transfers and visitors.",
+    intro: [
+      "The register is what everything else hangs off. Attendance, giving, the birthday list and the statistical return all come out of it, so it is worth getting right, and the articles here cover getting it in, keeping it current, and getting it back out again.",
+      "Fold reads the spreadsheet you already keep rather than making you retype it, and it uses your denomination's words: a Methodist society has Bible classes and class leaders, a Pentecostal assembly has cells, and the member types are the ones your church uses rather than a list somebody else chose.",
+      "Start with the import if you have a spreadsheet, or with adding a member by hand if you are starting from a book. Transfers and visitors come later, once the register exists to transfer people into.",
+    ],
     icon: "users",
     articles: [
       {
@@ -291,6 +309,10 @@ export const CATEGORIES: Category[] = [
     title: "Attendance",
     description:
       "Recording services, marking who came, and finding members who have drifted away.",
+    intro: [
+      "A head count of men and women per service is enough for the statistical return, and it is what most churches record. Naming who attended is more work and worth more, because it is the only way to notice who has quietly stopped coming before they have gone for good.",
+      "Recording a service is one save for the whole congregation rather than one round trip per person, so it works on a weak signal from the back of the church. The insights page needs a few weeks of named attendance before it can say anything, and it says so rather than guessing.",
+    ],
     icon: "clipboard",
     articles: [
       {
@@ -363,6 +385,11 @@ export const CATEGORIES: Category[] = [
     title: "Giving and funds",
     description:
       "Tithes, offerings, funds, mobile money, and who is allowed to see any of it.",
+    intro: [
+      "Cash is the default on every form, because most giving in a Ghanaian church is cash. Mobile money sits beside it for members who want it, and it is paid into your church's own account rather than passing through ours.",
+      "Giving is visible only to the pastor, an administrator and the finance officer, and that is enforced in the database rather than hidden behind a menu. A class leader cannot see what the congregation gave, which is how most churches want it and few systems deliver it.",
+      "Funds are for money with a purpose, a building fund or a mission fund, and their totals are kept by the database as contributions come in, so nothing is added up by hand.",
+    ],
     icon: "coins",
     articles: [
       {
@@ -462,6 +489,10 @@ export const CATEGORIES: Category[] = [
     title: "Reports and returns",
     description:
       "The statistical return your circuit asks for, and the figures behind it.",
+    intro: [
+      "The statistical return is the reason Fold exists. It is filled in from the attendance, giving and vital records you have already entered, for any period you choose, and printed or saved as a PDF, so the quarter's figures are a page rather than an evening.",
+      "Baptisms, confirmations, marriages and deaths are kept with dates, which is what makes the return's counts a matter of two dates rather than a search through the minister's diary. Attendance averages are worked out over the services you actually held, not over the Sundays on a calendar.",
+    ],
     icon: "reports",
     articles: [
       {
@@ -538,6 +569,10 @@ export const CATEGORIES: Category[] = [
     title: "Your team and access",
     description:
       "The pastor account, what each role can do, and inviting the people who help you.",
+    intro: [
+      "Everyone who helps run the church gets their own login, with a role that decides what they can reach. There is no charge per person on any band, because charging per user pushes a church towards one shared password, which is the opposite of what anybody should want.",
+      "Roles are enforced in the database, not by hiding buttons. A finance officer sees giving and a class leader does not, and that holds even for a request that goes around the screens entirely. The pastor owns the church and is the only one who can hand it to another pastor.",
+    ],
     icon: "shield",
     articles: [
       {
@@ -628,6 +663,10 @@ export const CATEGORIES: Category[] = [
     title: "Account, billing and data",
     description:
       "Your trial, what happens to your records, and your duties under Ghanaian law.",
+    intro: [
+      "Thirty days free, no card, and nothing to cancel if it turns out not to suit your church. After that, billing is quarterly, on the same cycle as the return, by mobile money, card or bank transfer.",
+      "Your church's records are yours. They are kept separate from every other church's at the database, you can export them whenever you like, and if you close the account they are deleted within thirty days. Under Ghana's Data Protection Act your church is the data controller, and these articles say what that means in practice.",
+    ],
     icon: "lock",
     articles: [
       {

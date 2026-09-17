@@ -51,6 +51,21 @@ export default async function HelpArticlePage({
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.getfold.org/" },
+              { "@type": "ListItem", position: 2, name: "Help centre", item: "https://www.getfold.org/help" },
+              { "@type": "ListItem", position: 3, name: c.title, item: `https://www.getfold.org/help/${c.slug}` },
+              { "@type": "ListItem", position: 4, name: a.title },
+            ],
+          }),
+        }}
+      />
       <SiteHeader />
 
       {/*

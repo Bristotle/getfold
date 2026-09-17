@@ -49,6 +49,20 @@ export default async function HelpCategoryPage({
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.getfold.org/" },
+              { "@type": "ListItem", position: 2, name: "Help centre", item: "https://www.getfold.org/help" },
+              { "@type": "ListItem", position: 3, name: c.title },
+            ],
+          }),
+        }}
+      />
       <SiteHeader />
 
       <main id="main">
@@ -83,6 +97,24 @@ export default async function HelpCategoryPage({
             <div className="mt-8">
               <HelpSearch />
             </div>
+          </div>
+        </section>
+
+        {/*
+          What this area is for, before the list. A category page that was a
+          heading, a sentence and six links was a link list, and a search
+          engine treated it as one.
+        */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
+            {c.intro.map((para) => (
+              <p
+                key={para}
+                className="mt-4 text-[17px] leading-relaxed text-foreground/85 first:mt-0"
+              >
+                {para}
+              </p>
+            ))}
           </div>
         </section>
 

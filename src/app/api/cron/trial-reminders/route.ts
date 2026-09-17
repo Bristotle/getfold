@@ -41,6 +41,61 @@ function message(name: string, days: number) {
   return `Fold: ${days} days left on your free trial for ${name}. Nothing will be deleted when it ends. To continue, visit getfold.org/contact`;
 }
 
+/**
+ * The email version, longer than the text because it can be.
+ *
+ * Plain text on purpose. A church office reading this on a phone in a
+ * mail app that has not loaded images should get the whole message.
+ */
+async function sendTrialEmail(
+  to: string,
+  church: string,
+  days: number,
+  endsAt: string
+): Promise<boolean> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return false;
+  const from = process.env.ALERT_FROM ?? "Fold <no-reply@getfold.org>";
+  const ends = new Date(endsAt).toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" });
+
+  const subject =
+    days <= 0
+      ? `Your Fold trial for ${church} has ended`
+      : days === 1
+        ? `One day left on your Fold trial for ${church}`
+        : `${days} days left on your Fold trial for ${church}`;
+
+  const body = [
+    `Hello,`,
+    ``,
+    days <= 0
+      ? `The free trial for ${church} ended on ${ends}. Nothing has been deleted: your register, attendance and giving are all still there and still yours.`
+      : `The free trial for ${church} ends on ${ends}, ${days === 1 ? "tomorrow" : `in ${days} days`}. Nothing will be deleted when it does.`,
+    ``,
+    `To keep going, open Billing in Fold and choose a band. It is billed every three months, by mobile money, card or bank transfer, and the price is held for twelve months from the day you start.`,
+    ``,
+    `  https://www.getfold.org/billing`,
+    ``,
+    `If Fold is not right for your church, you can export your register as a spreadsheet at any time from the Members page, and we will delete everything within thirty days of you asking.`,
+    ``,
+    `If anything about the trial did not work the way you hoped, reply to this email and tell us. We read every one.`,
+    ``,
+    `Fold`,
+    `getfold.org`,
+  ].join("\n");
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to: [to], subject, text: body, reply_to: process.env.ALERT_EMAIL?.split(",")[0]?.trim() }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: Request) {
   // Vercel Cron sends this header; a manual call must present the secret.
   const auth = request.headers.get("authorization");
@@ -61,43 +116,64 @@ export async function GET(request: Request) {
   }
 
   const rows = (data ?? []) as Row[];
-  let sent = 0;
-  let unreachableBySms = 0;
+  let sentBySms = 0;
+  let sentByEmail = 0;
+  let unreachable = 0;
   const failures: string[] = [];
 
   for (const row of rows) {
     const phone = row.pastor_phone ? toE164(row.pastor_phone) : null;
+    const text = message(row.organization_name, row.days_left);
 
-    if (!phone) {
-      // No number on file. Do NOT mark it reminded, so it stays in the
-      // queue and is picked up the moment a phone is added or email
-      // sending is wired up. Silently dropping it would be worse.
-      unreachableBySms++;
-      continue;
+    /*
+      Text first, email second, and both where both exist.
+
+      Sign up collects an email and a password and nothing else, so most
+      pastors have no phone on file until they add one, and for months this
+      job left every one of them queued with a note saying email was not
+      wired up. Now it is. A reminder that reaches nobody is a trial that
+      ends in silence, which is the outcome the job exists to prevent.
+    */
+    let reached = false;
+
+    if (phone) {
+      const result = await deliver(phone, text);
+      if (result.ok) {
+        sentBySms++;
+        reached = true;
+      } else {
+        failures.push(`${row.organization_name} (sms): ${result.error ?? "send failed"}`);
+      }
     }
 
-    const result = await deliver(
-      phone,
-      message(row.organization_name, row.days_left)
-    );
+    if (row.pastor_email) {
+      const ok = await sendTrialEmail(row.pastor_email, row.organization_name, row.days_left, row.ends_at);
+      if (ok) {
+        sentByEmail++;
+        reached = true;
+      } else {
+        failures.push(`${row.organization_name} (email): send failed`);
+      }
+    }
 
-    if (result.ok) {
+    if (reached) {
       await supabase.rpc("mark_trial_reminded", { org_id: row.organization_id });
-      sent++;
-    } else {
-      // Left unmarked on purpose, so tomorrow's run tries again.
-      failures.push(`${row.organization_name}: ${result.error ?? "send failed"}`);
+    } else if (!phone && !row.pastor_email) {
+      // Nothing on file at all. Left in the queue rather than marked, so it
+      // is picked up the moment either is added.
+      unreachable++;
     }
   }
 
   return NextResponse.json({
     due: rows.length,
-    sent,
-    unreachableBySms,
+    sentBySms,
+    sentByEmail,
+    unreachable,
     failures,
     note:
-      unreachableBySms > 0
-        ? "Churches with no phone on file were left in the queue. Email reminders are not wired up yet."
+      unreachable > 0
+        ? "Churches with neither a phone nor an email on file were left in the queue."
         : undefined,
   });
 }
