@@ -68,7 +68,7 @@ const APP_SCHEMA = {
 const HERO_PHOTO = true;
 
 export const metadata: Metadata = {
-  title: "Fold, church software that speaks your denomination's language",
+  title: "Church management software built in Ghana, Fold",
   description:
     metaDescription("Members, Bible classes, attendance and giving in your own words, and the statistical return your circuit asks for already filled in. Built in Ghana, cash first. 30 day free trial, no card."),
 };
