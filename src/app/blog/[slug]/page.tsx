@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { POSTS, getPost, sortedPosts } from "@/lib/posts";
+import { metaTitle, metaDescription } from "@/lib/seo";
 
 /*
   Only the slugs in generateStaticParams exist. Without this, dynamicParams
@@ -30,11 +31,11 @@ export async function generateMetadata({
   const post = getPost(slug);
   if (!post) return { title: "Not found, Fold" };
   return {
-    title: `${post.title}, Fold`,
-    description: post.excerpt,
+    title: metaTitle(post.title),
+    description: metaDescription(post.excerpt),
     openGraph: {
       title: post.title,
-      description: post.excerpt,
+      description: metaDescription(post.excerpt, 200),
       type: "article",
       publishedTime: post.published,
     },
@@ -49,6 +50,7 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) notFound();
+  const faq = post.body.find((b) => b.type === "faq");
 
   // Two others to read next, never this one.
   const more = sortedPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
@@ -70,9 +72,54 @@ export default async function BlogPostPage({
             headline: post.title,
             description: post.excerpt,
             datePublished: post.published,
+            dateModified: post.updated ?? post.published,
             articleSection: post.category,
-            author: { "@type": "Organization", name: "Fold" },
-            publisher: { "@type": "Organization", name: "Fold" },
+            inLanguage: "en-GH",
+            mainEntityOfPage: `https://www.getfold.org/blog/${post.slug}`,
+            image: "https://www.getfold.org/og-default.png",
+            author: { "@type": "Organization", name: "Fold", url: "https://www.getfold.org" },
+            publisher: {
+              "@type": "Organization",
+              name: "Fold",
+              logo: { "@type": "ImageObject", url: "https://www.getfold.org/brand/fold-icon@512.png" },
+            },
+          }),
+        }}
+      />
+
+      {/*
+        FAQPage from the post's own faq block, when it has one. Same array
+        renders the visible questions below, so they cannot disagree.
+      */}
+      {faq && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faq.items.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      {/* Breadcrumbs, so a result can show Blog > Post rather than a bare URL. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.getfold.org/" },
+              { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.getfold.org/blog" },
+              { "@type": "ListItem", position: 3, name: post.title },
+            ],
           }),
         }}
       />
@@ -134,6 +181,54 @@ export default async function BlogPostPage({
                       </li>
                     ))}
                   </ul>
+                );
+              }
+              if (block.type === "h3") {
+                return (
+                  <h3
+                    key={i}
+                    className="mt-2 text-balance text-lg font-bold text-foreground"
+                  >
+                    {block.text}
+                  </h3>
+                );
+              }
+              if (block.type === "steps") {
+                return (
+                  <ol key={i} className="m-0 flex list-none flex-col gap-3 p-0">
+                    {block.items.map((item, n) => (
+                      <li key={item} className="flex gap-3.5">
+                        <span
+                          aria-hidden="true"
+                          className="font-numeric mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-bold text-primary"
+                        >
+                          {n + 1}
+                        </span>
+                        <span className="text-[17px] leading-relaxed text-foreground/85">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                );
+              }
+              if (block.type === "faq") {
+                return (
+                  <section key={i} className="mt-6 border-t border-border pt-8">
+                    <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                      Questions people ask
+                    </h2>
+                    <dl className="m-0 mt-6 flex flex-col gap-6">
+                      {block.items.map((f) => (
+                        <div key={f.q}>
+                          <dt className="text-base font-bold text-foreground">{f.q}</dt>
+                          <dd className="m-0 mt-1.5 text-[16px] leading-relaxed text-muted-foreground">
+                            {f.a}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
                 );
               }
               if (block.type === "quote") {

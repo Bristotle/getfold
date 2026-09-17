@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { CATEGORIES, getCategory, getArticle } from "@/lib/help";
+import { metaTitle, metaDescription } from "@/lib/seo";
 
 /*
   Only the slugs in generateStaticParams exist. Without this, dynamicParams
@@ -30,7 +31,10 @@ export async function generateMetadata({
   const { category, slug } = await params;
   const a = getArticle(category, slug);
   if (!a) return { title: "Not found, Fold" };
-  return { title: `${a.title}, Fold help centre`, description: a.summary };
+  return {
+    title: metaTitle(a.title, "Fold help"),
+    description: metaDescription(a.summary),
+  };
 }
 
 export default async function HelpArticlePage({

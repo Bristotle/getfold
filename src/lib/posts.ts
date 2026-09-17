@@ -14,8 +14,19 @@
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
+  | { type: "h3"; text: string }
   | { type: "list"; items: string[] }
-  | { type: "quote"; text: string };
+  | { type: "steps"; items: string[] }
+  | { type: "quote"; text: string }
+  /*
+    Questions people actually type into a search engine, with the answer in
+    the first sentence. Rendered as a visible FAQ at the end of the post and
+    emitted as FAQPage structured data from the same array, so the two can
+    never drift apart. The wording of the questions comes from real searches
+    and "people also ask" boxes, never from imagination: an invented
+    question matches nothing.
+  */
+  | { type: "faq"; items: { q: string; a: string }[] };
 
 export type Post = {
   slug: string;
@@ -24,14 +35,370 @@ export type Post = {
   date: string;
   /** ISO, for the machine-readable date and for sorting. */
   published: string;
+  /** ISO, when substantively revised. Search engines reward a real date. */
+  updated?: string;
   excerpt: string;
   body: Block[];
 };
 
 export const POSTS: Post[] = [
   {
+    slug: "how-to-prepare-your-statistical-return",
+    title: "How to prepare your church's statistical return, step by step",
+    category: "Running the church",
+    date: "September 2026",
+    published: "2026-09-17",
+    excerpt:
+      "What the quarterly return asks for, where each figure comes from, and the checklist that turns an evening of reconciling three books into an hour. Written for the society secretary who has to produce it.",
+    body: [
+      {
+        type: "p",
+        text: "Every quarter, somebody in your church sits down with the membership book, the class registers, the offering book and a calculator, and produces the return the circuit or district asks for. In most churches that somebody is the secretary, and in most churches it takes an evening. This is what the return is asking for, where each figure actually comes from, and how to make the next one take an hour.",
+      },
+      {
+        type: "p",
+        text: "The exact form differs by denomination. A Methodist society reports to its circuit, a Presbyterian congregation to its district, a Pentecostal assembly to its district office, and the headings on the sheet are not identical. But the numbers underneath are the same five kinds everywhere, and once you know where each one lives, any form is a matter of copying across.",
+      },
+      { type: "h2", text: "The five things every return asks for" },
+      {
+        type: "list",
+        items: [
+          "Membership at the end of the period, usually broken down by class, society or group, and often by men, women and children.",
+          "Attendance across the period, as a total or an average per service, sometimes with the number of services held.",
+          "Vital events: baptisms, confirmations, marriages and deaths, each with a count and often with names.",
+          "Movement: members received, members transferred in, members transferred out, and members who have left or lapsed.",
+          "Income: tithes, offerings and any named funds, for the period, in cedis.",
+        ],
+      },
+      {
+        type: "p",
+        text: "Notice that the first four come from the register and the fifth from the offering book. That split is why the return takes an evening: two sources kept by two people, reconciled by a third.",
+      },
+      { type: "h2", text: "Where each figure comes from" },
+      { type: "h3", text: "Membership by class" },
+      {
+        type: "p",
+        text: "This is the count of active members at the last day of the quarter, not the number of names in the book. The difference matters. A book accumulates names for years; a return wants the people who are members now. If your register does not distinguish active from lapsed, the first job is to mark every name one way or the other, because every quarter after that inherits the work.",
+      },
+      {
+        type: "p",
+        text: "Count by class, then add the classes to get the society total. If the two do not agree, somebody is in two classes or in none, and it is better to find out now than to be asked by the superintendent.",
+      },
+      { type: "h3", text: "Attendance" },
+      {
+        type: "p",
+        text: "Most returns want an average per Sunday, which means you need every Sunday's count and the number of Sundays. A head count of men and women at each service is enough for the return, and it is what most churches record. Counting names is better, because it is what tells you who has stopped coming, but the return does not need it.",
+      },
+      {
+        type: "p",
+        text: "The common mistake is averaging over the calendar rather than over the services actually held. A quarter with a funeral week and a harvest Sunday has an unusual number of services, and dividing by thirteen when you held eleven understates the church.",
+      },
+      { type: "h3", text: "Baptisms, confirmations, marriages, deaths" },
+      {
+        type: "p",
+        text: "These are dated events, so the only question is whether the date falls inside the quarter. Keep them in one place with a date each, and the return is a count of the rows between two dates. Churches that keep them as notes in the minister's diary spend the longest on this section.",
+      },
+      { type: "h3", text: "Transfers in and out" },
+      {
+        type: "p",
+        text: "A transfer is a member leaving one congregation for another within the same denomination, and both ends should record it. The receiving church counts a transfer in, the sending church a transfer out, and the totals across a circuit should balance. They rarely do, because one end forgets, which is why the circuit asks.",
+      },
+      { type: "h3", text: "Income" },
+      {
+        type: "p",
+        text: "Tithes and offerings for the period, from the offering book or the treasurer's ledger. If your church takes mobile money, that money is often not in the offering book at all, because it arrived on a handset rather than in a bowl. Count it. It is the fastest growing part of most churches' income and the easiest to leave out.",
+      },
+      { type: "h2", text: "The evening before" },
+      {
+        type: "steps",
+        items: [
+          "Mark the register: every name is active, lapsed, transferred out or deceased. Do this once properly and it is a five minute job each quarter after.",
+          "Gather the Sunday counts for the quarter and the number of services held. If a Sunday is missing, ask the class leaders rather than guessing.",
+          "List the quarter's baptisms, confirmations, marriages and deaths with dates. Check the minister's diary against your list, not the other way round.",
+          "List transfers in and out. Where you have transferred somebody out, confirm the receiving church has them, or the circuit will find the gap.",
+          "Get the income figures from the treasurer, including mobile money, and agree the total with them before you write it down.",
+          "Fill the form. Add the classes and check the total matches the count of active names. If it does not, stop and find out why.",
+        ],
+      },
+      { type: "h2", text: "Why it takes an evening, and how to make it an hour" },
+      {
+        type: "p",
+        text: "The evening is spent reconciling. The membership book, the class registers and the offering book are three records of the same church, kept by three people, and every quarter somebody makes them agree. None of the arithmetic is hard. What is hard is finding the class leader who has the missing Sunday, or discovering that a member was transferred out in the book but is still being counted in her class.",
+      },
+      {
+        type: "p",
+        text: "The fix is not a better form. It is keeping one record instead of three, so that the moment a member is marked transferred out, she leaves the class count too, and the moment an offering is recorded it is already in the quarter's total. A spreadsheet can do part of this if one person keeps it and everyone else tells that person. Software built for churches does the rest, and produces the return as a page you print rather than a sheet you fill.",
+      },
+      {
+        type: "quote",
+        text: "If your return took more than an hour this quarter, the time went into reconciling records that should have been one record. That is worth fixing once rather than paying for every quarter.",
+      },
+      { type: "h2", text: "Mistakes the circuit will notice" },
+      {
+        type: "list",
+        items: [
+          "Membership that never changes. A society reporting the same 212 members for six quarters has stopped counting.",
+          "A total that does not equal the sum of the classes.",
+          "Transfers out with no matching transfer in anywhere in the circuit.",
+          "Income that excludes mobile money, in a church where half the young people give that way.",
+          "Attendance averaged over thirteen Sundays when eleven services were held.",
+        ],
+      },
+      {
+        type: "faq",
+        items: [
+          {
+            q: "What is a church statistical return?",
+            a: "A periodic report, usually quarterly, that a congregation sends to the level above it, such as a circuit, district or presbytery. It states membership, attendance, baptisms, marriages, deaths, transfers and income for the period, so the denomination can see the state of each church and plan.",
+          },
+          {
+            q: "Who prepares the statistical return in a church?",
+            a: "Usually the society or church secretary, with figures from the class leaders for attendance and from the treasurer for income. The minister or pastor signs it before it goes to the circuit.",
+          },
+          {
+            q: "How often is a statistical return submitted?",
+            a: "Quarterly in most Ghanaian denominations, including the Methodist Church Ghana, with an annual summary at conference or synod time. Some districts also ask for a monthly attendance figure.",
+          },
+          {
+            q: "Does mobile money giving count in the return?",
+            a: "Yes. Tithes and offerings received by MTN MoMo, Telecel Cash or AirtelTigo Money are income for the period exactly as cash is, and should be included in the income figure. They are often left out because they never pass through the offering book.",
+          },
+          {
+            q: "Can software produce the statistical return automatically?",
+            a: "Yes, if the register, attendance and giving are all kept in it. Church management software built for Ghanaian denominations, including Fold, produces the return for any period from records already entered, so the quarter's figures are a page to print rather than an evening to compile.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "church-record-keeping-guide-ghana",
+    title: "Keeping the church register: a practical guide for the church secretary",
+    category: "Running the church",
+    date: "September 2026",
+    published: "2026-09-17",
+    excerpt:
+      "What to record for each member, how to keep a register that survives a change of secretary, what the Data Protection Act asks of a church, and when a book, a spreadsheet or software is the right tool.",
+    body: [
+      {
+        type: "p",
+        text: "The register is the church's memory. Everything else a secretary produces, the return, the birthday list, the count of who has stopped coming, the letter of transfer, comes out of it, and every one of those is only as good as the register underneath. This is a guide to keeping one properly, whether it lives in a book, a spreadsheet or software, written for the person who has just been handed it.",
+      },
+      { type: "h2", text: "What to record for every member" },
+      {
+        type: "p",
+        text: "Less than you think, and more consistently than you think. A register with twelve fields half filled in is worse than one with six fields always filled in, because a blank you cannot trust poisons the fields around it. These six earn their place:",
+      },
+      {
+        type: "list",
+        items: [
+          "Full name, as they would write it, with the family name last. A register that mixes orders cannot be sorted or searched.",
+          "A phone number, the one they actually answer, in full: 024 400 0000, not the last six digits somebody remembers.",
+          "Date of birth, or at least the month and day. This is what makes a birthday list possible, and a birthday text from the church is worth more than it costs.",
+          "Class, fellowship, cell or society, whatever your denomination calls the group they belong to. Membership is counted by group on every return.",
+          "Status: active, lapsed, transferred out or deceased. The single most important field, and the one most registers lack.",
+          "The date they joined, or were received, or were baptised. Membership is often defined by one of these, and a dispute about whether somebody is a member is settled by it.",
+        ],
+      },
+      {
+        type: "p",
+        text: "Address, occupation, marital status and next of kin are useful and optional. Record them if you will keep them current. A wrong address on file is a letter to the wrong house.",
+      },
+      { type: "h2", text: "The status field, and why it matters most" },
+      {
+        type: "p",
+        text: "A book accumulates names for years and never loses one. That is fine as a history and useless as a register, because a return wants the people who are members now. The difference between a book with 400 names and a church with 212 active members is the status field, and without it every quarter's count starts from scratch.",
+      },
+      {
+        type: "p",
+        text: "Mark every name once, properly, and thereafter change a status when something happens: a transfer letter goes out, a funeral is held, a member has not been seen for a year and the class leader confirms it. Never delete a name. A member who lapsed and returns should find her record waiting, with her baptism date still on it.",
+      },
+      { type: "h2", text: "Transfers, in both directions" },
+      {
+        type: "p",
+        text: "When a member moves to another congregation in the same denomination, the sending church issues a letter of transfer and marks the record transferred out; the receiving church marks a transfer in and records where from. Both ends should happen, and the circuit checks that they balance. The most common failure is a member who attends her new church for a year while still being counted at her old one, because nobody wrote the letter.",
+      },
+      { type: "h2", text: "What the Data Protection Act asks of a church" },
+      {
+        type: "p",
+        text: "Under Ghana's Data Protection Act, 2012 (Act 843), a church that keeps a register is a data controller, and the fact of somebody's religious belief is special personal data. That has three practical consequences, none of them onerous.",
+      },
+      {
+        type: "list",
+        items: [
+          "Collect what you need and say why. A member giving you her phone number for the register should not later find it on a fundraising list she never agreed to.",
+          "Keep it where only the right people can reach it. A register on the secretary's home laptop with no password, or a spreadsheet forwarded round a WhatsApp group, is exactly what the Act is about.",
+          "Give it back or delete it when asked. A member who leaves the church can ask what you hold and ask you to remove it, and you should be able to do both.",
+        ],
+      },
+      {
+        type: "p",
+        text: "The Data Protection Commission expects organisations holding personal data to register with it. Whether your church has done so is worth asking at the next council meeting.",
+      },
+      { type: "h2", text: "Book, spreadsheet or software" },
+      {
+        type: "p",
+        text: "Each is right for somebody, and the question is not which is best but which your church will actually keep up.",
+      },
+      { type: "h3", text: "A book" },
+      {
+        type: "p",
+        text: "Cheap, needs no electricity, and everyone understands it. Its weaknesses are that only one person can use it at a time, it cannot be searched or counted without reading every page, and a single fire, flood or theft ends the church's memory. If the register is a book, keep a second copy somewhere else and update it quarterly.",
+      },
+      { type: "h3", text: "A spreadsheet" },
+      {
+        type: "p",
+        text: "Searchable, countable, and free. It works well while one person keeps it and everybody else tells that person. It stops working when two people have two copies, which happens the first time it is emailed, and it offers nothing for attendance or giving beyond what you build yourself. Keep it in Google Sheets rather than on one laptop, and give the pastor access.",
+      },
+      { type: "h3", text: "Church management software" },
+      {
+        type: "p",
+        text: "One record that several people can use at once, that counts itself, and that produces the return, the birthday list and the absence list without anyone compiling them. The cost is a monthly or quarterly subscription and an evening moving the register across. It makes sense once the church has more than one person touching the records, which is almost every church with a class system. Choose one that reads your existing spreadsheet, lets you export it back out, and understands your denomination's structure rather than treating a society as a small group.",
+      },
+      { type: "h2", text: "Moving from a book to something else" },
+      {
+        type: "steps",
+        items: [
+          "Do not type the whole book. Start with the people who came last Sunday, then the Sunday before. Active members first; the rest can follow over a month.",
+          "Decide the six fields before you start and stick to them. Adding a column halfway through means going back over every row.",
+          "Set a status for every name as you go. This is the one chance to do it cleanly.",
+          "Give each class leader their own list to check. They know who has moved away and who has died, and they will find the errors you cannot.",
+          "Keep the book. It is the history, and a baptism date from 1987 is still a baptism date.",
+        ],
+      },
+      {
+        type: "faq",
+        items: [
+          {
+            q: "What information should a church membership register contain?",
+            a: "At minimum: full name, phone number, date of birth, the class or group the member belongs to, their status (active, lapsed, transferred or deceased), and the date they joined or were baptised. Address and next of kin are useful additions if the church will keep them current.",
+          },
+          {
+            q: "How do you keep church records safe?",
+            a: "Keep a second copy somewhere other than the church building, limit who can open the register to the pastor, the secretary and named officers, and never forward the whole register through a messaging group. If it is digital, it needs a password and a backup that is not on the same laptop.",
+          },
+          {
+            q: "Does the Data Protection Act apply to churches in Ghana?",
+            a: "Yes. A church that keeps a register of members is a data controller under the Data Protection Act, 2012 (Act 843), and religious belief is special personal data. The church should collect only what it needs, keep it secure, and be able to show or delete a member's record on request.",
+          },
+          {
+            q: "Should a church use a spreadsheet or software for its members?",
+            a: "A spreadsheet works while one person keeps it. Software makes sense once several people record attendance, giving and members, because it keeps one record everyone can use and produces the return without compiling. Choose software that reads your spreadsheet in and lets you export it out again.",
+          },
+          {
+            q: "How do you record a member transfer between churches?",
+            a: "The sending church issues a letter of transfer and marks the member transferred out with the date and destination. The receiving church records a transfer in with where from. Both should happen, and the totals across a circuit should balance.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "how-to-set-up-mobile-money-giving-for-your-church",
+    title: "How to set up mobile money giving for your church, and what it really costs",
+    category: "Giving",
+    date: "September 2026",
+    published: "2026-09-17",
+    excerpt:
+      "A MoMo number on the projector is where most churches start and where the problems begin. The three ways to take mobile money giving, what each costs, what your members will actually see on their phones, and how the money reaches the church.",
+    body: [
+      {
+        type: "p",
+        text: "Most Ghanaian churches that take mobile money started the same way: a MoMo number on the projector, and a request from the pulpit. It works, in the sense that money arrives. It also means the money arrives on somebody's handset with no record of who sent it or what it was for, and that is where the trouble starts. This is a plain account of the three ways to do it properly, what each costs, and the one thing about MTN that nobody tells you until your first collection.",
+      },
+      { type: "h2", text: "Why the number on the projector is a problem" },
+      {
+        type: "list",
+        items: [
+          "The money lands in a personal wallet, usually the treasurer's or the pastor's. Separating it from their own money is a manual job every week, and a trust problem waiting to happen.",
+          "Nobody knows who gave. A MoMo transfer carries a name and a number, but matching thirty of them to the register on a Sunday evening is work that does not get done, so the giving is recorded as anonymous or not at all.",
+          "It is invisible to the return. Money that never passed through the offering book is money the quarterly return does not know about, and in many churches that is now a large share of what young members give.",
+          "It relies on one person and one phone. When either is unavailable, so is the giving.",
+        ],
+      },
+      { type: "h2", text: "The three ways to do it" },
+      { type: "h3", text: "One: a merchant mobile money account" },
+      {
+        type: "p",
+        text: "MTN, Telecel and AirtelTigo each offer a merchant account, separate from a personal wallet, registered to the church. Members pay to a short code or merchant number, and the money sits in an account the church controls with a statement attached. This fixes the personal wallet problem and gives you a record of every transaction. It does not tell you which member gave, unless they add a reference, and it does not connect to your register.",
+      },
+      {
+        type: "p",
+        text: "Cost: the network's merchant fee, which varies by network and volume. Setting it up needs the church's registration documents and a visit to the network's office.",
+      },
+      { type: "h3", text: "Two: a payment processor" },
+      {
+        type: "p",
+        text: "A processor such as Paystack or Hubtel sits between the member and the church. The member pays through the processor, the processor takes a fee, and the balance settles to an account the church names, which can be a mobile money number or a bank account. Every payment carries a reference, so the church can tell who paid what.",
+      },
+      {
+        type: "p",
+        text: "Cost: Paystack charges 1.95% on mobile money transactions in Ghana, so a GHS 100 tithe reaches the church as GHS 98.05. Setting up needs the church's business registration and, for a licensed processor, some verification. Once that is done, the processor handles the networks, so a member on Telecel and a member on MTN pay the same way.",
+      },
+      { type: "h3", text: "Three: church software with giving built in" },
+      {
+        type: "p",
+        text: "Church management software that includes giving does the processor step for you and connects the payment to the register: the gift is recorded against the member and the fund the moment it succeeds, and it appears in the quarterly return without anybody copying it across. Underneath, it is usually a processor, so the fee is the processor's fee, and the church should ask where the money settles. It should be the church's own account, not the software company's, and the software company should take nothing from what members give.",
+      },
+      {
+        type: "quote",
+        text: "The question to ask any software vendor is not what percentage they take. It is whether the money ever passes through their account at all. If it does, they are holding your church's tithes, and that is a different relationship from selling you software.",
+      },
+      { type: "h2", text: "What your members will actually see" },
+      {
+        type: "p",
+        text: "This is the part nobody explains in advance. When a member pays through a processor on MTN, they do not get a prompt to approve. They get a text message: Enter code 098055 to pay GHS 50.00 to <the merchant name>. Somebody has to type that code back, either the member on a website or the church officer collecting. Until the code goes in, nothing has been paid, and after a few minutes the attempt expires.",
+      },
+      {
+        type: "p",
+        text: "Two things follow. The person collecting needs somewhere to enter the code, and needs to know to ask for it, or the payment sits unfinished and the member believes they have given. And the merchant name on that text is the processor account's registered name, not necessarily your church's. A member asked to pay a company they have never heard of will hesitate, and some will stop. Whoever sets this up for you should tell you what that name will be, and a thank you text from the church itself a few minutes after the payment does a great deal to close the gap.",
+      },
+      { type: "h2", text: "What to tell the congregation" },
+      {
+        type: "steps",
+        items: [
+          "Say it from the pulpit once, properly: which number or method, what the text message will say, and that a thank you will follow from the church.",
+          "Keep cash exactly as it was. Mobile money is for the members who want it, and treating cash as the awkward option loses the people who give most.",
+          "Name what the money is for when you ask for it. A member paying tithe wants it recorded as tithe, and a building fund appeal should land in the building fund.",
+          "Put the same information on the notice board and in the bulletin, because half the congregation was talking during the announcement.",
+          "Read out, or text, a thank you. Money that arrives on a handset and is never acknowledged is money that stops arriving.",
+        ],
+      },
+      { type: "h2", text: "Reconciling it with the books" },
+      {
+        type: "p",
+        text: "Whichever method you use, the treasurer needs the mobile money total in the same place as the cash total, or the return will be wrong. With a merchant account that means downloading the statement monthly and entering the total. With a processor it means the same from the processor's dashboard. With software it means nothing, because the gift was recorded when it succeeded. That difference is the whole argument for the third option, and it is worth more than the fee.",
+      },
+      {
+        type: "faq",
+        items: [
+          {
+            q: "How do churches in Ghana collect tithes by mobile money?",
+            a: "Three ways: a personal or merchant MoMo number members transfer to, a payment processor such as Paystack or Hubtel that settles to the church's account, or church management software with giving built in that records each gift against the member. Most start with a number on the projector and move on when reconciling it becomes a burden.",
+          },
+          {
+            q: "What does Paystack charge for mobile money in Ghana?",
+            a: "1.95% per mobile money transaction in Ghana, so a GHS 100 gift settles as GHS 98.05. There is no monthly fee for a standard account.",
+          },
+          {
+            q: "Does the member get a prompt to approve a mobile money payment?",
+            a: "On MTN in Ghana, usually not. The member receives a text message containing a code, and that code has to be entered to complete the payment. Nothing is paid until it is, and the attempt expires after a few minutes.",
+          },
+          {
+            q: "Can a church use its own MoMo number for offerings?",
+            a: "Yes, and many do, but a personal wallet mixes church money with somebody's own, gives no record of who gave, and is invisible to the offering book. A merchant account registered to the church is the minimum improvement; a processor or church software adds the record of who gave what.",
+          },
+          {
+            q: "Is mobile money giving counted in the church's statistical return?",
+            a: "It should be. It is income for the period exactly as cash is. It is often left out because it never passes through the offering book, which is a reason to use a method that records it automatically.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     slug: "church-management-software-in-ghana",
-    title: "Church management software in Ghana: an honest comparison",
+    title: "Best church management software in Ghana, 2026: an honest comparison",
     category: "Choosing software",
     date: "September 2026",
     published: "2026-09-07",
