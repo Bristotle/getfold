@@ -1,0 +1,82 @@
+# What runs on every push.
+#
+# The 7 September audit named the absence of this the largest engineering
+# risk in the project: every check was a script somebody had to remember to
+# run, and nothing would catch a regression before it reached a church.
+#
+# Two jobs, split by what they need.
+#
+#   build   needs nothing secret. Typechecks and builds, so a broken page
+#           cannot merge. Runs on every push and every pull request.
+#
+#   live    needs the project's secrets and talks to the real Supabase
+#           project and the live site. It attacks the deployment with the
+#           security suite, checks every table has RLS, and checks the spam
+#           scorer still separates pitches from churches. Runs on main only,
+#           after a push, because that is when the deployment has changed.
+#
+# The live job creates one throwaway user at example.com and deletes it,
+# and never writes to a real church. It reads the same secrets the
+# deployment holds, from GitHub's encrypted store, never from the repo.
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: No em or en dashes in copy
+        run: |
+          if grep -rn $'[–—]' src/ CLAUDE.md README.md prisma/ supabase/ 2>/dev/null; then
+            echo "A dash got in. See CLAUDE.md, Writing copy."; exit 1; fi
+      - run: npx tsc --noEmit
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: build-only
+          NEXT_PUBLIC_SITE_URL: https://www.getfold.org
+
+  live:
+    # Only after main has changed, and only if the build job passed.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Write the environment the scripts read
+        run: |
+          cat > .env <<EOF
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DIRECT_URL=${{ secrets.DIRECT_URL }}
+          CRON_SECRET=${{ secrets.CRON_SECRET }}
+          EOF
+      - name: Give Vercel a minute to finish deploying this push
+        run: sleep 90
+      - name: Every table has RLS
+        run: node scripts/rls-guard.mjs
+      - name: Attack the live site
+        run: node scripts/security-test.mjs
+      - name: Spam scorer still separates pitches from churches
+        run: node --experimental-strip-types scripts/spam-check.mjs
+      - name: Public pages fit a phone
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          BASE=https://www.getfold.org node scripts/audit-mobile.mjs
