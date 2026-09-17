@@ -30,8 +30,22 @@ export const metadata: Metadata = {
     siteName: "Fold",
     locale: "en_GH",
     url: SITE,
+    /*
+      A default card for every page. The audit found no page on the site
+      had one, so every link shared on WhatsApp, which is how a church here
+      passes anything on, showed as a bare URL. A page can still set its
+      own; this is what shows when it does not.
+    */
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Fold, church management software built in Ghana",
+      },
+    ],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", images: ["/og-default.png"] },
 
   /*
     Google Search Console verification. Set NEXT_PUBLIC_GOOGLE_VERIFICATION

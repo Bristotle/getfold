@@ -78,16 +78,44 @@ export function PhotoBg({
       ? "linear-gradient(180deg, rgb(26 16 51 / 0.86) 0%, rgb(26 16 51 / 0.72) 45%, rgb(107 47 217 / 0.85) 100%)"
       : "linear-gradient(180deg, rgb(250 249 246 / 0.94) 0%, rgb(250 249 246 / 0.88) 100%)";
 
+  /*
+    A real <img>, not a CSS background.
+
+    The photograph was a background-image, which the browser cannot see
+    until it has parsed the stylesheet, so it started downloading late and
+    the homepage's largest paint landed at 8.8 seconds on a slow phone
+    against 2.1 for the text pages. An <img> is found by the preload scanner
+    in the first pass over the HTML, and fetchPriority tells the browser it
+    is the thing to fetch first.
+
+    Two sizes, because a 390px phone behind an 86% scrim has no use for
+    1280 pixels: 31KB there, 72KB on a desktop, against the 170KB JPEG both
+    used to get. The scrim hides detail, so the quality is set low on
+    purpose and nothing a person can see is lost.
+  */
+  const isOurs = src.startsWith("/");
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${src})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      {isOurs ? (
+        <img
+          src={src.replace(/\.jpg$/, ".webp")}
+          srcSet={`${src.replace(/\.jpg$/, "-720.webp")} 720w, ${src.replace(/\.jpg$/, ".webp")} 1280w`}
+          sizes="100vw"
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${src})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+      )}
       <div className="absolute inset-0" style={{ background: scrim }} />
     </div>
   );
