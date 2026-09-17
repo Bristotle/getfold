@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
 
   title: {
-    default: "Fold, church software that speaks your denomination's language",
+    default: "Fold, church software in your denomination's language",
     template: "%s",
   },
   description:

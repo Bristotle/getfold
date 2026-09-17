@@ -32,7 +32,13 @@ export async function generateMetadata({
     description: m.summary,
     keywords: m.keywords,
     alternates: { canonical: `/features/${m.slug}` },
-    openGraph: { title: `${m.title}, Fold`, description: m.summary },
+    openGraph: {
+      // Next replaces the parent openGraph rather than merging it, so the
+      // default share image has to be restated here or it is lost.
+      images: ["/og-default.png"],
+      title: `${m.title}, Fold`,
+      description: m.summary,
+    },
   };
 }
 

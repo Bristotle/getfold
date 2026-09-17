@@ -14,11 +14,12 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
+import { metaDescription } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About Fold, built around your denomination",
   description:
-    "Fold is church software built in Ghana around how a denomination actually works: societies, circuits, Bible classes and the quarterly return. Cash before card, phones before office computers.",
+    metaDescription("Fold is church software built in Ghana around how a denomination actually works: societies, circuits, Bible classes and the quarterly return. Cash before card, phones before office computers."),
 };
 
 /**

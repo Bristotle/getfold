@@ -17,11 +17,12 @@ import {
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
+import { metaDescription } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Features, everything Fold does for your church",
   description:
-    "Everything Fold does: the register in your denomination's words, attendance, tithes and funds, the statistical return, roles enforced by the database, and messaging. Built in Ghana.",
+    metaDescription("Everything Fold does: the register in your denomination's words, attendance, tithes and funds, the statistical return, roles enforced by the database, and messaging. Built in Ghana."),
 };
 
 /**

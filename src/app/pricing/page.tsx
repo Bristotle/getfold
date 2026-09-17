@@ -22,11 +22,12 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { TIERS, cedis, quarterly, annual, ANNUAL_MONTHS_CHARGED } from "@/lib/pricing";
+import { metaDescription } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Pricing in cedis, Fold church software",
   description:
-    "From GHS 149 a month for a single congregation. Billed quarterly, the same cycle as your statistical return. 30 days free with no card, and the price is held for a year.",
+    metaDescription("From GHS 149 a month for a single congregation. Billed quarterly, the same cycle as your statistical return. 30 days free with no card, and the price is held for a year."),
 };
 
 /**

@@ -173,7 +173,7 @@ export const POSTS: Post[] = [
   },
   {
     slug: "church-record-keeping-guide-ghana",
-    title: "Keeping the church register: a practical guide for the church secretary",
+    title: "Keeping the church register: a guide for the church secretary",
     category: "Running the church",
     date: "September 2026",
     published: "2026-09-17",
@@ -295,7 +295,7 @@ export const POSTS: Post[] = [
   },
   {
     slug: "how-to-set-up-mobile-money-giving-for-your-church",
-    title: "How to set up mobile money giving for your church, and what it really costs",
+    title: "How to set up mobile money giving for your church",
     category: "Giving",
     date: "September 2026",
     published: "2026-09-17",
@@ -398,7 +398,7 @@ export const POSTS: Post[] = [
   },
   {
     slug: "church-management-software-in-ghana",
-    title: "Best church management software in Ghana, 2026: an honest comparison",
+    title: "Best church management software in Ghana (2026)",
     category: "Choosing software",
     date: "September 2026",
     published: "2026-09-07",

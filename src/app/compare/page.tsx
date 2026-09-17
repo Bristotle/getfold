@@ -4,11 +4,12 @@ import { Check, Minus, X } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
+import { metaDescription } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Fold compared with Asoriba, Shepherd and the rest",
   description:
-    "An honest comparison of Fold against Asoriba, Shepherd, ChurchCast, DaChurchMan and the international products, including the cases where you should choose one of them instead.",
+    metaDescription("An honest comparison of Fold against Asoriba, Shepherd, ChurchCast, DaChurchMan and the international products, including the cases where you should choose one of them instead."),
 };
 
 /**

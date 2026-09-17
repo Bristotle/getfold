@@ -57,7 +57,10 @@ export async function generateMetadata({
     title: `${o.title} in Ghana, Fold`,
     description: `${o.summary} ${o.location}`,
     keywords: o.keywords,
-    openGraph: { title: `${o.title}, Fold`, description: o.summary },
+    openGraph: {
+      // Next replaces the parent openGraph rather than merging it, so the
+      // default share image has to be restated here or it is lost.
+      images: ["/og-default.png"], title: `${o.title}, Fold`, description: o.summary },
   };
 }
 

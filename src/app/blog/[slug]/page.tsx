@@ -34,6 +34,9 @@ export async function generateMetadata({
     title: metaTitle(post.title),
     description: metaDescription(post.excerpt),
     openGraph: {
+      // Next replaces the parent openGraph rather than merging it, so the
+      // default share image has to be restated here or it is lost.
+      images: ["/og-default.png"],
       title: post.title,
       description: metaDescription(post.excerpt, 200),
       type: "article",

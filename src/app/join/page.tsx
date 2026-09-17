@@ -5,11 +5,12 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { OPPORTUNITIES } from "@/lib/join";
+import { metaDescription } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Join us, partnerships and roles across Ghana",
   description:
-    "Partner with Fold or work with us. Business, sales and brand partnerships, consulting, internships and engineering roles, open to anyone in Ghana.",
+    metaDescription("Partner with Fold or work with us. Business, sales and brand partnerships, consulting, internships and engineering roles, open to anyone in Ghana."),
 };
 
 export default function JoinPage() {

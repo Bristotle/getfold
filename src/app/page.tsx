@@ -12,6 +12,7 @@ import { CongregationBand } from "@/components/marketing/congregation-band";
 import { SectionBg, HeroWash, CtaBand, PhotoBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
 import { TIERS } from "@/lib/pricing";
+import { metaDescription } from "@/lib/seo";
 
 /*
   What Fold is, for a machine.
@@ -69,7 +70,7 @@ const HERO_PHOTO = true;
 export const metadata: Metadata = {
   title: "Fold, church software that speaks your denomination's language",
   description:
-    "Members, Bible classes, attendance and giving in your own words, and the statistical return your circuit asks for already filled in. Built in Ghana, cash first. 30 day free trial, no card.",
+    metaDescription("Members, Bible classes, attendance and giving in your own words, and the statistical return your circuit asks for already filled in. Built in Ghana, cash first. 30 day free trial, no card."),
 };
 
 const FEATURES = [
