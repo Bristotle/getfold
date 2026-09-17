@@ -29,6 +29,15 @@ export function friendly(
   const message = error?.message ?? "";
   const code = error?.code ?? "";
 
+  /*
+    The read only refusal from the trial lifecycle. The trigger writes a
+    whole sentence a church can act on, prefixed so it can be recognised;
+    the prefix comes off and the sentence is shown as it is.
+  */
+  if (/^READ_ONLY:/.test(message)) {
+    return message.replace(/^READ_ONLY:\s*/, "").replace(/^t/, "T");
+  }
+
   // Postgres codes, which are stable, before message text, which is not.
   if (code === "23505" || /duplicate key|already exists/i.test(message)) {
     if (/phone/i.test(message)) {

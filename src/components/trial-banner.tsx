@@ -22,6 +22,16 @@ export function TrialBanner({
   if (status === "active" || status === "cancelled") return null;
 
   const over = daysLeft <= 0;
+  /*
+    The stages the owner decided. daysLeft counts down to the end of the
+    trial and keeps going past it, so day 61 of the account is -30 and day
+    91 is -60. The banner says which stage you are in and what the next one
+    is, with the date, because a warning that names the date is one people
+    act on.
+  */
+  const readOnly = status === "expired";
+  const daysToReadOnly = daysLeft + 30;
+  const daysToDeletion = daysLeft + 60;
   const urgent = over || daysLeft <= 7;
 
   if (!urgent) {
@@ -74,13 +84,30 @@ export function TrialBanner({
             )}
           </span>
           <span className="text-foreground">
-            {over ? (
+            {readOnly ? (
+              <>
+                <strong className="font-semibold">
+                  Your account is read only.
+                </strong>{" "}
+                Everything is still here and can be exported, but nothing new
+                can be recorded until you choose a plan.{" "}
+                {daysToDeletion > 1
+                  ? `In ${daysToDeletion} days the church and its records are deleted.`
+                  : daysToDeletion === 1
+                    ? "Tomorrow the church and its records are deleted."
+                    : "The church and its records are due for deletion today."}
+              </>
+            ) : over ? (
               <>
                 <strong className="font-semibold">
                   Your free trial has ended.
                 </strong>{" "}
-                Nothing has been deleted and your register is still yours.
-                Talk to us to keep going, or export everything and leave.
+                Nothing has been deleted and you still have full use.{" "}
+                {daysToReadOnly > 1
+                  ? `In ${daysToReadOnly} days the account becomes read only`
+                  : "Tomorrow the account becomes read only"}
+                , and 30 days after that the records are removed. Choose a
+                plan and nothing changes.
               </>
             ) : (
               <>
@@ -95,7 +122,7 @@ export function TrialBanner({
         </p>
         <div className="flex shrink-0 items-center gap-3">
           <Link
-            href="/contact"
+            href="/billing"
             className="inline-flex min-h-9 items-center rounded-lg bg-primary px-3.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
             Continue with Fold
