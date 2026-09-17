@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { Logo } from "@/components/marketing/logo";
 import { Button } from "@/components/ui/button";
+import { MODULES } from "@/lib/modules";
 
 /**
  * The public header.
@@ -15,8 +17,14 @@ import { Button } from "@/components/ui/button";
  * sm and up so the same markup cannot leave a stray open menu behind when
  * a phone is rotated into a tablet width.
  */
+/*
+  Features is a menu now, not a link. Each area of the product has a page
+  of its own, and a pastor who wants to know about giving should land on
+  giving rather than on a page about everything. The list comes from the
+  same data as the pages and the footer, so it cannot name a page that does
+  not exist.
+*/
 const LINKS = [
-  { href: "/features", label: "Features" },
   { href: "/compare", label: "Compare" },
   { href: "/about", label: "About" },
   { href: "/getting-started", label: "Getting started" },
@@ -67,6 +75,50 @@ export function SiteHeader() {
           {/* desktop links */}
           <nav aria-label="Site" className="hidden min-w-0 sm:block">
             <ul className="m-0 flex list-none items-center gap-x-5 p-0">
+              {/*
+                Opens on hover and on keyboard focus, with no JavaScript.
+                group-focus-within keeps it open while any link inside has
+                focus, so a keyboard user can tab through the whole list.
+                The panel sits inside the same element as the trigger, so
+                moving the pointer from one to the other never closes it.
+              */}
+              <li className="group relative">
+                <Link
+                  href="/features"
+                  aria-haspopup="true"
+                  className="inline-flex items-center gap-1 whitespace-nowrap rounded py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  Features
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={2.2}
+                    aria-hidden="true"
+                    className="transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
+                  />
+                </Link>
+                <div className="invisible absolute left-1/2 top-full z-50 w-64 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <ul className="m-0 list-none rounded-xl border border-border bg-surface p-2 shadow-[0_18px_50px_-20px_rgba(26,16,51,0.35)]">
+                    {MODULES.map((m) => (
+                      <li key={m.slug}>
+                        <Link
+                          href={`/features/${m.slug}`}
+                          className="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          {m.title}
+                        </Link>
+                      </li>
+                    ))}
+                    <li className="mt-1 border-t border-border pt-1">
+                      <Link
+                        href="/features"
+                        className="flex min-h-10 items-center rounded-lg px-3 text-sm font-semibold text-primary transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      >
+                        All features
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </li>
               {LINKS.map((l) => (
                 <li key={l.label}>
                   <Link
@@ -115,6 +167,41 @@ export function SiteHeader() {
               className="absolute right-0 top-[calc(100%+0.6rem)] z-50 w-[min(17rem,calc(100vw-2rem))] rounded-xl border border-border bg-surface p-2 shadow-[0_18px_50px_-20px_rgba(26,16,51,0.35)]"
             >
               <ul className="m-0 flex list-none flex-col p-0">
+                <li>
+                  {/* A second disclosure inside the first, for the same
+                      reason the first is one: it works before hydration. */}
+                  <details className="group/features">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg px-3 text-[15px] font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
+                      Features
+                      <ChevronDown
+                        size={16}
+                        strokeWidth={2.2}
+                        aria-hidden="true"
+                        className="transition-transform group-open/features:rotate-180"
+                      />
+                    </summary>
+                    <ul className="m-0 list-none p-0 pb-1 pl-3">
+                      {MODULES.map((m) => (
+                        <li key={m.slug}>
+                          <Link
+                            href={`/features/${m.slug}`}
+                            className="flex min-h-10 items-center rounded-lg px-3 text-[14px] text-muted-foreground transition-colors hover:bg-surface-soft hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          >
+                            {m.title}
+                          </Link>
+                        </li>
+                      ))}
+                      <li>
+                        <Link
+                          href="/features"
+                          className="flex min-h-10 items-center rounded-lg px-3 text-[14px] font-semibold text-primary transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          All features
+                        </Link>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
                 {LINKS.map((l) => (
                   <li key={l.label}>
                     <Link
