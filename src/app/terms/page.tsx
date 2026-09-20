@@ -46,6 +46,14 @@ export default function TermsPage() {
           We will tell you before the trial ends. We will not begin charging
           without your agreement.
         </p>
+        <p>
+          If you do not choose a plan, full use continues for 30 days after
+          the trial, then the account becomes read only for a further 30
+          days so you can still export everything. On day 91 after sign up
+          the church and all its records are deleted. You will be told by
+          text and email at each step, and choosing a plan at any point
+          before then keeps everything.
+        </p>
       </Section>
 
       <Section heading="Your data belongs to your church">

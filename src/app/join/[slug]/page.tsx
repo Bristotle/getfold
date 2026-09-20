@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { metaDescription } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Clock, Check } from "lucide-react";
@@ -55,7 +56,7 @@ export async function generateMetadata({
   if (!o) return { title: "Not found, Fold" };
   return {
     title: `${o.title} in Ghana, Fold`,
-    description: `${o.summary} ${o.location}`,
+    description: metaDescription(`${o.summary} ${o.location}`),
     keywords: o.keywords,
     openGraph: {
       // Next replaces the parent openGraph rather than merging it, so the

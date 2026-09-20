@@ -50,7 +50,7 @@ export type Post = {
 export const POSTS: Post[] = [
   {
     slug: "how-to-prepare-your-statistical-return",
-    title: "How to prepare your church's statistical return, step by step",
+    title: "How to prepare a church statistical return, step by step",
     category: "Running the church",
     date: "September 2026",
     published: "2026-09-17",
@@ -145,7 +145,7 @@ export const POSTS: Post[] = [
       {
         type: "sources",
         items: [
-          { label: "World Methodist Council, Methodist Church Ghana: members, dioceses, circuits and societies", url: "https://worldmethodistcouncil.org/africa/name/ghana-methodist-church/" },
+          { label: "The Methodist Church Ghana, Northern Accra Diocese: the church in figures, dioceses, circuits and societies", url: "https://www.mcgnad.org/" },
           { label: "Bank of Ghana via MyJoyOnline, mobile money transaction values grew 50.8% to GHS 4.54 trillion in 2025", url: "https://www.myjoyonline.com/total-mobile-money-transaction-values-grew-by-50-8-to-gh%C2%A24-54trn-in-2025/" },
         ],
       },
@@ -153,7 +153,7 @@ export const POSTS: Post[] = [
   },
   {
     slug: "church-record-keeping-guide-ghana",
-    title: "Keeping the church register: a guide for the church secretary",
+    title: "Keeping the church register: a guide for church secretaries",
     category: "Running the church",
     date: "September 2026",
     published: "2026-09-17",
@@ -246,7 +246,7 @@ export const POSTS: Post[] = [
         items: [
           { label: "Ghana Statistical Service, 2021 Population and Housing Census, religious affiliation", url: "https://census2021.statsghana.gov.gh/" },
           { label: "Bank of Ghana via MyJoyOnline, active mobile money accounts reached 26.7 million in 2025", url: "https://www.myjoyonline.com/total-mobile-money-transaction-values-grew-by-50-8-to-gh%C2%A24-54trn-in-2025/" },
-          { label: "Data Protection Act, 2012 (Act 843), Data Protection Commission of Ghana", url: "https://www.dataprotection.org.gh/" },
+          { label: "Data Protection Act, 2012 (Act 843), full text as published by the National Communications Authority", url: "https://nca.org.gh/wp-content/uploads/2020/09/Data-Protection-Act-2012.pdf" },
         ],
       },
     ],

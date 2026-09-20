@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
 
@@ -114,6 +115,15 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        {/*
+          Page views, counted without a cookie. Vercel Analytics identifies
+          a visit by a hash of the request that expires the same day, sets
+          nothing in the browser and stores no IP address, which is why the
+          site can count visitors and still set no cookies at all until
+          somebody signs in. The script is served from this origin, so the
+          content security policy needs no new host.
+        */}
+        <Analytics />
       </body>
     </html>
   );

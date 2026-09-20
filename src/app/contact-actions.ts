@@ -13,11 +13,21 @@ import { scoreEnquiry } from "@/lib/spam";
  * policy, so writing here can never become a way to read what others wrote.
  */
 export async function submitEnquiry(formData: FormData) {
+  /*
+    Where to send the visitor afterwards. The form lives on the homepage
+    and on /contact, and somebody who wrote to us from /contact used to be
+    dropped on the homepage with the answer, which reads as the site having
+    lost their place. The source field says which page, so the reply goes
+    back to it. Anything else falls back to the homepage.
+  */
+  const source = String(formData.get("source") ?? "homepage");
+  const back = source === "contact-page" ? "/contact" : "/";
+
   // Honeypot. A real person never sees this field, so anything in it came
   // from something filling every input on the page. Answer cheerfully and
   // store nothing, rather than telling the bot it was caught.
   if (String(formData.get("website") ?? "").trim() !== "") {
-    redirect(`/?sent=1#contact`);
+    redirect(`${back}?sent=1#contact`);
   }
 
   const name = String(formData.get("name") ?? "").trim();
@@ -27,11 +37,11 @@ export async function submitEnquiry(formData: FormData) {
   const message = String(formData.get("message") ?? "").trim();
 
   if (!name) {
-    redirect(`/?error=${encodeURIComponent("Please tell us your name.")}#contact`);
+    redirect(`${back}?error=${encodeURIComponent("Please tell us your name.")}#contact`);
   }
   if (!email || !email.includes("@") || email.length < 3) {
     redirect(
-      `/?error=${encodeURIComponent("Please give an email address we can reply to.")}#contact`
+      `${back}?error=${encodeURIComponent("Please give an email address we can reply to.")}#contact`
     );
   }
 
@@ -55,7 +65,7 @@ export async function submitEnquiry(formData: FormData) {
     phone: phone || null,
     church: church || null,
     message: message || null,
-    source: String(formData.get("source") ?? "homepage"),
+    source,
   };
 
   /*
@@ -76,7 +86,7 @@ export async function submitEnquiry(formData: FormData) {
     phone: phone.slice(0, 40) || null,
     church: church.slice(0, 200) || null,
     message: message.slice(0, 4000) || null,
-    source: "homepage",
+    source: source.slice(0, 40),
     alerted_at: alert.ok ? new Date().toISOString() : null,
     alert_error: verdict.spam
       ? null
@@ -90,11 +100,11 @@ export async function submitEnquiry(formData: FormData) {
 
   if (error) {
     redirect(
-      `/?error=${encodeURIComponent(
+      `${back}?error=${encodeURIComponent(
         "We could not send that just now. Please try again, or email us directly."
       )}#contact`
     );
   }
 
-  redirect(`/?sent=1#contact`);
+  redirect(`${back}?sent=1#contact`);
 }

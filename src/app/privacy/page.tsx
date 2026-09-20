@@ -104,6 +104,25 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
+      <Section heading="Cookies and analytics">
+        <p>
+          The public website sets no cookies. There is no consent banner
+          because there is nothing to consent to: no advertising, no
+          tracking pixels, and no analytics that follow you between sites.
+        </p>
+        <p>
+          We count page views with Vercel Web Analytics, which works without
+          a cookie. Each visit is identified by a hash of the request that
+          expires the same day, no IP address is stored, and what we see is
+          a total, never a person.
+        </p>
+        <p>
+          When you sign in, one cookie keeps you signed in. It is strictly
+          necessary for the account to work and is removed when you sign
+          out.
+        </p>
+      </Section>
+
       <Section heading="How long we keep it">
         <p>
           For as long as your church keeps its account. Records a church
@@ -114,6 +133,13 @@ export default function PrivacyPage() {
         <p>
           When a church closes its account we delete its data within 30 days,
           except where we are required to keep financial records longer.
+        </p>
+        <p>
+          A church that tries Fold and does not choose a plan keeps full use
+          for 60 days from the day it signed up, then read only access for a
+          further 30 days, so its records can still be exported. On day 91
+          the church and everything it recorded are deleted. The pastor is
+          told by text and email before each of those steps.
         </p>
       </Section>
 
