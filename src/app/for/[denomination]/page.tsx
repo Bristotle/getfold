@@ -6,11 +6,21 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { DENOMINATIONS, getDenomination } from "@/lib/denominations";
+import { ROLES, getRole } from "@/lib/roles";
+import { RolePage } from "@/components/marketing/role-page";
+import { metaTitle, metaDescription } from "@/lib/seo";
 
 export const dynamicParams = false;
 
+/*
+  Denominations and roles share this route: /for/methodist-churches and
+  /for/church-secretaries are the same kind of page to the reader.
+*/
 export function generateStaticParams() {
-  return DENOMINATIONS.map((d) => ({ denomination: d.slug }));
+  return [
+    ...DENOMINATIONS.map((d) => ({ denomination: d.slug })),
+    ...ROLES.map((r) => ({ denomination: r.slug })),
+  ];
 }
 
 export async function generateMetadata({
@@ -20,7 +30,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { denomination } = await params;
   const d = getDenomination(denomination);
-  if (!d) return { title: "Not found, Fold" };
+  if (!d) {
+    const r = getRole(denomination);
+    if (!r) return { title: "Not found, Fold" };
+    return {
+      title: metaTitle(r.title),
+      description: metaDescription(r.description),
+      keywords: r.keywords,
+      alternates: { canonical: `https://www.getfold.org/for/${r.slug}` },
+      openGraph: { images: ["/og-default.png"], title: r.title, description: metaDescription(r.description) },
+    };
+  }
   return {
     title: d.title,
     description: d.description,
@@ -39,7 +59,11 @@ export default async function DenominationPage({
 }) {
   const { denomination } = await params;
   const d = getDenomination(denomination);
-  if (!d) notFound();
+  if (!d) {
+    const r = getRole(denomination);
+    if (!r) notFound();
+    return <RolePage r={r} />;
+  }
 
   const others = DENOMINATIONS.filter((x) => x.slug !== d.slug);
 

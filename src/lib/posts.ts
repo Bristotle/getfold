@@ -64,7 +64,7 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "The exact form differs by denomination, but the numbers underneath are the same five kinds everywhere, whether you are a [Methodist society](/for/methodist-churches), a [Presbyterian congregation](/for/presbyterian-churches) or a [Pentecostal assembly](/for/pentecostal-churches). Once you know where each lives, any form is a matter of copying across.",
+        text: "The exact form differs by denomination, but the numbers underneath are the same five kinds everywhere, whether you are a [Methodist society](/for/methodist-churches), a [Presbyterian congregation](/for/presbyterian-churches) or a [Pentecostal assembly](/for/pentecostal-churches). Once you know where each lives, any form is a matter of copying across. If your circuit accepts a plain summary, there is a [free one page return template](/tools/statistical-return-template) to print.",
       },
       { type: "h2", text: "The five things every return asks for" },
       {
@@ -122,7 +122,7 @@ export const POSTS: Post[] = [
       { type: "h2", text: "Why it takes an evening, and how to make it an hour" },
       {
         type: "p",
-        text: "The evening goes on reconciling. The membership book, the class registers and the offering book are three records of one church kept by three people, and every quarter somebody makes them agree. The arithmetic is trivial; the work is finding the class leader with the missing Sunday.",
+        text: "The evening goes on reconciling. The membership book, the class registers and the offering book are three records of one church kept by three people, and every quarter somebody makes them agree. The arithmetic is trivial; the work is finding the [class leader](/glossary/class-leader) with the missing Sunday. A [printable attendance sheet](/tools/attendance-sheet) per class is the cheapest fix; software that adds them up is the second.",
       },
       {
         type: "p",
@@ -194,7 +194,7 @@ export const POSTS: Post[] = [
       { type: "h2", text: "What the Data Protection Act asks of a church" },
       {
         type: "p",
-        text: "Under the Data Protection Act, 2012 (Act 843), a church that keeps a register is a data controller, and religious belief is special personal data. [What that means for a church using Fold](/help/account/data-protection-act) is written up separately; three consequences follow for any church, none onerous:",
+        text: "Under the Data Protection Act, 2012 (Act 843), a church that keeps a register is a [data controller](/glossary/data-controller), and religious belief is special personal data. [What that means for a church using Fold](/help/account/data-protection-act) is written up separately; three consequences follow for any church, none onerous:",
       },
       {
         type: "list",
@@ -284,7 +284,7 @@ export const POSTS: Post[] = [
       { type: "h3", text: "A payment processor" },
       {
         type: "p",
-        text: "A processor such as Paystack or Hubtel sits between the member and the church. The member pays through it, it takes a fee, and the balance settles to an account the church names, which can be a mobile money number or a bank account. Every payment carries a reference, so the church can tell who paid what. Paystack charges 1.95 percent on mobile money in Ghana, so a GHS 100 tithe reaches the church as GHS 98.05. Once the church's registration is verified, the processor handles all three networks, so a member on Telecel and one on MTN pay the same way.",
+        text: "A [payment processor](/glossary/payment-processor) such as Paystack or Hubtel sits between the member and the church. The member pays through it, it takes a fee, and the balance settles to an account the church names, which can be a mobile money number or a bank account. Every payment carries a reference, so the church can tell who paid what. Paystack charges 1.95 percent on mobile money in Ghana, so a GHS 100 tithe reaches the church as GHS 98.05. Once the church's registration is verified, the processor handles all three networks, so a member on Telecel and one on MTN pay the same way.",
       },
       { type: "h3", text: "Church software with giving built in" },
       {
@@ -526,7 +526,7 @@ export const POSTS: Post[] = [
       { type: "h2", text: "If part of it is already typed" },
       {
         type: "p",
-        text: "Many churches have a partial list in Excel from some earlier effort. That is worth more than it looks. Export it as CSV and import it, rather than retyping. Good software reads your column headings rather than making you rename them, and tells you which rows it could not use so you can fix them.",
+        text: "Many churches have a partial list in Excel from some earlier effort. That is worth more than it looks. [Fold reads your own column headings](/works-with/excel). Export it as CSV and import it, rather than retyping. Good software reads your column headings rather than making you rename them, and tells you which rows it could not use so you can fix them.",
       },
       {
         type: "p",

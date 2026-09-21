@@ -4,6 +4,7 @@ import { Logo } from "@/components/marketing/logo";
 import { SupportWidgets } from "@/components/marketing/support-widgets";
 import { OPPORTUNITIES } from "@/lib/join";
 import { DENOMINATIONS } from "@/lib/denominations";
+import { ROLES } from "@/lib/roles";
 import { MODULES } from "@/lib/modules";
 import {
   PaymentMarks,
@@ -17,7 +18,7 @@ import { subscribeNewsletter } from "@/app/newsletter-actions";
  *
  * Two bands. The top one is who we are and how to reach us: the mark, one
  * line, the social accounts, contact details, and the newsletter. The
- * second is the map of the site, five columns, each with a line under its
+ * second is the map of the site, six columns, each with a line under its
  * heading saying what is in it, because a heading alone is a label and a
  * heading with a line is an invitation.
  *
@@ -52,17 +53,34 @@ const COLUMNS = [
   {
     heading: "Your church",
     line: "Built for how your denomination works",
-    links: DENOMINATIONS.map((d) => ({
-      label: d.short,
-      href: `/for/${d.slug}` as const,
-    })),
+    links: [
+      ...DENOMINATIONS.map((d) => ({
+        label: d.short,
+        href: `/for/${d.slug}` as const,
+      })),
+      ...ROLES.map((r) => ({
+        label: `For ${r.who}`,
+        href: `/for/${r.slug}` as const,
+      })),
+    ],
+  },
+  {
+    heading: "Resources",
+    line: "Free to use, whether or not you sign up",
+    links: [
+      { label: "Free tools and templates", href: "/tools" },
+      { label: "Church SMS examples", href: "/examples/church-sms-messages" },
+      { label: "Church statistics, Ghana", href: "/church-statistics-ghana" },
+      { label: "Glossary", href: "/glossary" },
+      { label: "What Fold works with", href: "/works-with" },
+      { label: "Blog", href: "/blog" },
+    ],
   },
   {
     heading: "Quick links",
     line: "About us and the small print",
     links: [
       { label: "About us", href: "/about" },
-      { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
       { label: "Security", href: "/security" },
       { label: "Privacy policy", href: "/privacy" },
@@ -288,7 +306,7 @@ export function SiteFooter() {
           </div>
 
           {/* ---------- the map of the site ---------- */}
-          <div className="mt-14 grid gap-10 border-t border-white/15 pt-12 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-14 grid gap-10 border-t border-white/15 pt-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {COLUMNS.map((col) => (
               <div key={col.heading} className="min-w-0">
                 <h2 className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#c9b3ff]">

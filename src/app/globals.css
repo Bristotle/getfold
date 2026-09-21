@@ -205,3 +205,45 @@ body {
       transparent 60%
     );
 }
+
+/*
+  Printable sheets on /tools. When printed, the page becomes the sheet:
+  the header, footer and explanation go, the sheet loses its card frame,
+  and the paper is A4 with a sensible margin. Screen rendering is
+  untouched.
+*/
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+  .print-sheet {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+  /* Tighter rows on paper than on screen, so each sheet is one A4 page. */
+  .print-sheet td,
+  .print-sheet th {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    font-size: 12px !important;
+  }
+  .print-sheet h3 {
+    margin-top: 10px !important;
+  }
+  .print-sheet .sheet-gap {
+    margin-top: 10px !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}

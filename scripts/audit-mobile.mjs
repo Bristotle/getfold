@@ -2,7 +2,12 @@ import { chromium } from "playwright";
 
 const PAGES = ["/", "/pricing", "/features", "/compare", "/about", "/getting-started",
   "/blog", "/help", "/help/members/import-from-excel", "/contact", "/join", "/join/sales-partner",
-  "/blog/what-mobile-money-costs-a-church"];
+  "/blog/what-mobile-money-costs-a-church",
+  // The programmatic sets: one of each template, plus the pages with tables.
+  "/glossary", "/glossary/class-leader", "/tools", "/tools/statistical-return-template",
+  "/tools/offering-count-sheet", "/tools/giving-fee-calculator", "/for/church-secretaries",
+  "/for/catholic-parishes", "/works-with", "/works-with/mtn-mobile-money",
+  "/compare/churchcare-alternative", "/church-statistics-ghana", "/examples/church-sms-messages"];
 const WIDTHS = [320, 360, 390, 414, 768];
 const BASE = process.env.BASE ?? "http://127.0.0.1:3100";
 

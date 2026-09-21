@@ -29,9 +29,22 @@ const LINKS = [
   { href: "/about", label: "About" },
   { href: "/getting-started", label: "Getting started" },
   { href: "/help", label: "Help" },
-  { href: "/blog", label: "Blog" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
+] as const;
+
+/*
+  Resources is the second menu: the pages that are useful whether or not a
+  church ever signs up. The blog moved in here from the top level so the
+  bar does not grow by one link every time a set of pages ships.
+*/
+const RESOURCES = [
+  { href: "/blog", label: "Blog" },
+  { href: "/tools", label: "Free tools and templates" },
+  { href: "/examples/church-sms-messages", label: "Church SMS examples" },
+  { href: "/church-statistics-ghana", label: "Church statistics, Ghana" },
+  { href: "/glossary", label: "Glossary" },
+  { href: "/works-with", label: "What Fold works with" },
 ] as const;
 
 /**
@@ -120,6 +133,35 @@ export function SiteHeader() {
                   </ul>
                 </div>
               </li>
+              <li className="group/res relative">
+                <Link
+                  href="/tools"
+                  aria-haspopup="true"
+                  className="inline-flex items-center gap-1 whitespace-nowrap rounded py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  Resources
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={2.2}
+                    aria-hidden="true"
+                    className="transition-transform group-hover/res:rotate-180 group-focus-within/res:rotate-180"
+                  />
+                </Link>
+                <div className="invisible absolute left-1/2 top-full z-50 w-64 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover/res:visible group-hover/res:opacity-100 group-focus-within/res:visible group-focus-within/res:opacity-100">
+                  <ul className="m-0 list-none rounded-xl border border-border bg-surface p-2 shadow-[0_18px_50px_-20px_rgba(26,16,51,0.35)]">
+                    {RESOURCES.map((r) => (
+                      <li key={r.href}>
+                        <Link
+                          href={r.href}
+                          className="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          {r.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
               {LINKS.map((l) => (
                 <li key={l.label}>
                   <Link
@@ -200,6 +242,31 @@ export function SiteHeader() {
                           All features
                         </Link>
                       </li>
+                    </ul>
+                  </details>
+                </li>
+                <li>
+                  <details className="group/res">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg px-3 text-[15px] font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
+                      Resources
+                      <ChevronDown
+                        size={16}
+                        strokeWidth={2.2}
+                        aria-hidden="true"
+                        className="transition-transform group-open/res:rotate-180"
+                      />
+                    </summary>
+                    <ul className="m-0 list-none p-0 pb-1 pl-3">
+                      {RESOURCES.map((r) => (
+                        <li key={r.href}>
+                          <Link
+                            href={r.href}
+                            className="flex min-h-10 items-center rounded-lg px-3 text-[14px] text-muted-foreground transition-colors hover:bg-surface-soft hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          >
+                            {r.label}
+                          </Link>
+                        </li>
+                      ))}
                     </ul>
                   </details>
                 </li>

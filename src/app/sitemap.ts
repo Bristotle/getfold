@@ -4,6 +4,12 @@ import { CATEGORIES, ALL_ARTICLES } from "@/lib/help";
 import { OPPORTUNITIES } from "@/lib/join";
 import { DENOMINATIONS } from "@/lib/denominations";
 import { MODULES } from "@/lib/modules";
+import { ROLES } from "@/lib/roles";
+import { TERMS } from "@/lib/glossary";
+import { TOOLS } from "@/lib/tools";
+import { INTEGRATIONS } from "@/lib/integrations";
+import { COMPARISONS } from "@/lib/compare";
+import { STATS_UPDATED } from "@/lib/stats";
 
 /**
  * The public pages only. Everything behind a login is deliberately absent,
@@ -20,6 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     learns to ignore.
   */
   const now = new Date("2026-09-17");
+  // The programmatic sets shipped together on this date.
+  const sets = new Date("2026-09-21");
 
   return [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1 },
@@ -30,6 +38,48 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.9,
+    })),
+    // The same product framed for one person: secretaries, treasurers,
+    // class leaders, pastors, small churches.
+    ...ROLES.map((r) => ({
+      url: `${BASE}/for/${r.slug}`,
+      lastModified: sets,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    // Head to head with a named product. Buying intent, and dated.
+    ...COMPARISONS.map((c) => ({
+      url: `${BASE}/compare/${c.slug}`,
+      lastModified: new Date(c.checked),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    // Free tools, no sign up. The most shared pages on the site.
+    { url: `${BASE}/tools`, lastModified: sets, changeFrequency: "monthly" as const, priority: 0.8 },
+    ...TOOLS.map((t) => ({
+      url: `${BASE}/tools/${t.slug}`,
+      lastModified: sets,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    // "Does it work with MTN": one page per thing a church already uses.
+    { url: `${BASE}/works-with`, lastModified: sets, changeFrequency: "monthly" as const, priority: 0.6 },
+    ...INTEGRATIONS.map((i) => ({
+      url: `${BASE}/works-with/${i.slug}`,
+      lastModified: sets,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    // The statistics page carries its own checked date.
+    { url: `${BASE}/church-statistics-ghana`, lastModified: new Date(STATS_UPDATED), changeFrequency: "monthly" as const, priority: 0.7 },
+    { url: `${BASE}/examples/church-sms-messages`, lastModified: sets, changeFrequency: "monthly" as const, priority: 0.6 },
+    // The glossary: many small pages, each an anchor for the rest.
+    { url: `${BASE}/glossary`, lastModified: sets, changeFrequency: "monthly" as const, priority: 0.6 },
+    ...TERMS.map((t) => ({
+      url: `${BASE}/glossary/${t.slug}`,
+      lastModified: sets,
+      changeFrequency: "yearly" as const,
+      priority: 0.4,
     })),
     {
       // A price is among the highest intent searches there is.

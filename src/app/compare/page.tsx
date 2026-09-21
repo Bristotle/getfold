@@ -63,8 +63,8 @@ const ROWS: { feature: string; note?: string; cells: Cell[] }[] = [
   },
   {
     feature: "Multi branch or multi campus",
-    note: "Fold: one level, a circuit over its societies, no roll-up yet",
-    cells: ["partial", "no", "yes", "yes", "no"],
+    note: "Fold: any depth, headquarters over regions over districts, figures roll up, oversight read only",
+    cells: ["yes", "no", "yes", "yes", "no"],
   },
   {
     feature: "Payroll, HR and assets",
@@ -89,11 +89,11 @@ const ROWS: { feature: string; note?: string; cells: Cell[] }[] = [
   },
   {
     feature: "Price published on the site",
-    cells: ["no", "yes", "no", "partial", "yes"],
+    cells: ["yes", "yes", "no", "partial", "yes"],
   },
   {
     feature: "Free tier or trial",
-    cells: ["30 days, full", "Free to 50", "Not stated", "Not stated", "30 days"],
+    cells: ["30 days, full", "Free to 50", "Free to 50", "Not stated", "30 days"],
   },
 ];
 
