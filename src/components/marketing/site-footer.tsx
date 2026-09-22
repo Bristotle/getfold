@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Mail, MapPin, Clock, ChevronRight } from "lucide-react";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Logo } from "@/components/marketing/logo";
 import { SupportWidgets } from "@/components/marketing/support-widgets";
 import { OPPORTUNITIES } from "@/lib/join";
@@ -123,20 +123,13 @@ const SOCIAL = [
   },
 ] as const;
 
-const linkClass =
-  "group inline-flex items-center gap-1.5 rounded text-sm font-medium text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60";
-
-/** The small arrow beside each link. Nudges on hover, and only then. */
-function Arrow() {
-  return (
-    <ChevronRight
-      size={13}
-      strokeWidth={2.4}
-      aria-hidden="true"
-      className="shrink-0 text-[#c9b3ff] transition-transform group-hover:translate-x-0.5"
-    />
-  );
-}
+/*
+  One class, defined in globals.css, rather than 191 characters of utility
+  repeated fifty times a page on two hundred pages. The arrow beside each
+  link is drawn there too, as a rotated border on ::before, so there is no
+  icon element in the markup at all.
+*/
+const linkClass = "footer-link";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -319,8 +312,7 @@ export function SiteFooter() {
                   {col.links.map((l) => (
                     <li key={l.label}>
                       <Link href={l.href} className={linkClass}>
-                        <Arrow />
-                        <span>{l.label}</span>
+                        {l.label}
                       </Link>
                     </li>
                   ))}

@@ -100,7 +100,7 @@ export function SiteHeader() {
                 <Link
                   href="/features"
                   aria-haspopup="true"
-                  className="inline-flex items-center gap-1 whitespace-nowrap rounded py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  className="nav-link inline-flex items-center gap-1"
                 >
                   Features
                   <ChevronDown
@@ -116,7 +116,7 @@ export function SiteHeader() {
                       <li key={m.slug}>
                         <Link
                           href={`/features/${m.slug}`}
-                          className="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          className="menu-item"
                         >
                           {m.title}
                         </Link>
@@ -137,7 +137,7 @@ export function SiteHeader() {
                 <Link
                   href="/tools"
                   aria-haspopup="true"
-                  className="inline-flex items-center gap-1 whitespace-nowrap rounded py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  className="nav-link inline-flex items-center gap-1"
                 >
                   Resources
                   <ChevronDown
@@ -153,7 +153,7 @@ export function SiteHeader() {
                       <li key={r.href}>
                         <Link
                           href={r.href}
-                          className="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          className="menu-item"
                         >
                           {r.label}
                         </Link>
@@ -166,7 +166,7 @@ export function SiteHeader() {
                 <li key={l.label}>
                   <Link
                     href={l.href}
-                    className="whitespace-nowrap rounded py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    className="nav-link"
                   >
                     {l.label}
                   </Link>
@@ -228,7 +228,7 @@ export function SiteHeader() {
                         <li key={m.slug}>
                           <Link
                             href={`/features/${m.slug}`}
-                            className="flex min-h-10 items-center rounded-lg px-3 text-[14px] text-muted-foreground transition-colors hover:bg-surface-soft hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                            className="menu-item menu-item-sub"
                           >
                             {m.title}
                           </Link>
@@ -261,7 +261,7 @@ export function SiteHeader() {
                         <li key={r.href}>
                           <Link
                             href={r.href}
-                            className="flex min-h-10 items-center rounded-lg px-3 text-[14px] text-muted-foreground transition-colors hover:bg-surface-soft hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                            className="menu-item menu-item-sub"
                           >
                             {r.label}
                           </Link>
@@ -274,7 +274,7 @@ export function SiteHeader() {
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="flex min-h-11 items-center rounded-lg px-3 text-[15px] font-medium text-foreground transition-colors hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      className="menu-item min-h-11 text-[15px]"
                     >
                       {l.label}
                     </Link>
