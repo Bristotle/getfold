@@ -1,11 +1,6 @@
 import { type ReactNode } from "react";
 import { SectionBg } from "@/components/marketing/section-bg";
-import {
-  Smartphone,
-  ClipboardCheck,
-  HandCoins,
-  TrendingDown,
-} from "lucide-react";
+import { Shot } from "./product-shots";
 
 /**
  * The homepage sections beyond the hero.
@@ -123,22 +118,18 @@ function Eyebrow({ children }: { children: ReactNode }) {
  */
 const ON_PHONE = [
   {
-    Icon: Smartphone,
     title: "Install it like an app",
     body: "Add it to your home screen from the browser. No app store, no download, no update to chase.",
   },
   {
-    Icon: ClipboardCheck,
     title: "Record the service from the back row",
     body: "Search a name, tap who came, save once. A whole congregation is one save, so it works on a weak signal.",
   },
   {
-    Icon: HandCoins,
     title: "Take mobile money on the spot",
     body: "MTN MoMo, Telecel Cash or AirtelTigo. Nothing counts as given until they approve it.",
   },
   {
-    Icon: TrendingDown,
     title: "See who has stopped coming",
     body: "The members who used to be here every week and quietly are not, ranked and ready to call.",
   },
@@ -147,38 +138,31 @@ const ON_PHONE = [
 export function OnYourPhone() {
   return (
     <section className="border-y border-border bg-surface">
-      <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-6 sm:py-20">
-        <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Your church office, in your pocket.
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          The register does not live on a computer in the vestry any more.
-          It lives on the phone you already carry.
-        </p>
-
-        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-          {ON_PHONE.map(({ Icon, title, body }) => (
-            <div key={title} className="flex flex-col items-center text-center">
-              <span
-                aria-hidden="true"
-                className="grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"
-              >
-                <Icon size={30} strokeWidth={1.6} />
-              </span>
-              <h3 className="mt-5 text-balance text-base font-bold leading-snug text-foreground">
-                {title}
-              </h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
-                {body}
-              </p>
-            </div>
-          ))}
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_340px] lg:gap-16">
+          <div className="min-w-0">
+            <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Your church office, in your pocket.
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              The register does not live on a computer in the vestry any more.
+              It lives on the phone you already carry.
+            </p>
+            <dl className="mt-10 grid gap-x-10 gap-y-7 sm:grid-cols-2">
+              {ON_PHONE.map(({ title, body }) => (
+                <div key={title} className="min-w-0 border-t border-border pt-4">
+                  <dt className="text-balance text-base font-bold leading-snug text-foreground">{title}</dt>
+                  <dd className="m-0 mt-2 text-sm leading-relaxed text-muted-foreground">{body}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-10 max-w-xl text-sm text-muted-foreground">
+              Nothing asks a member to install or sign in to anything. Your staff
+              record what happens; the congregation never has to do a thing.
+            </p>
+          </div>
+          <Shot id="phone" />
         </div>
-
-        <p className="mx-auto mt-14 max-w-xl border-t border-border pt-6 text-sm text-muted-foreground">
-          Nothing asks a member to install or sign in to anything. Your staff
-          record what happens; the congregation never has to do a thing.
-        </p>
       </div>
     </section>
   );

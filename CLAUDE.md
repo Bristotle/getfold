@@ -62,6 +62,22 @@ how the copy is written:
   must describe what the product actually does; where something is not
   built, say so rather than describing a screen that does not exist.
 
+## Product screenshots are taken, not drawn
+
+`public/screens/*.webp` are real pages of the product, captured by
+`scripts/demo-screens.mjs` from a fictitious Methodist society it seeds,
+signs into with a browser, and deletes. When a page changes, run the
+script again; nobody edits or mocks up a screenshot, because a picture of
+a screen the product does not have is a lie the sales call has to unwind.
+
+```bash
+npm run build && npx next start -p 3100 &
+node scripts/demo-screens.mjs
+```
+
+The captions and alt text live in `src/components/marketing/product-shots.tsx`
+and say the society is a demonstration.
+
 ## Section backgrounds
 
 Marketing sections use `<SectionBg variant="..." />` from

@@ -80,7 +80,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ slu
             </nav>
             <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Fold and {c.them}</p>
             <h1 className="mt-2 text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">{c.title}</h1>
-            <p className="mt-5 border-l-4 border-primary pl-4 text-[17px] leading-relaxed text-foreground">{c.verdict}</p>
+            <p className="mt-5 font-serif text-[20px] leading-snug text-foreground">{c.verdict}</p>
             <p className="mt-4 text-sm text-muted-foreground">
               What is said about {c.them} here was read from its own public material on {checkedOn(c.checked)}. Where that material does not say, this page says so.
             </p>

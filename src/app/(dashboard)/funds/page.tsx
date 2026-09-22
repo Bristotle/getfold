@@ -22,6 +22,8 @@ const inputClass =
 const cedis = new Intl.NumberFormat("en-GH", {
   style: "currency",
   currency: "GHS",
+  // "GHS 250.50", as the site writes money everywhere, not the cedi sign.
+  currencyDisplay: "code",
   maximumFractionDigits: 0,
 });
 

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  Check,
   Info,
   Banknote,
   Cake,
@@ -234,11 +233,9 @@ export default function PricingPage() {
                       <li key={h} className="flex gap-2.5">
                         <span
                           aria-hidden="true"
-                          className="mt-0.5 shrink-0"
-                          style={{ color: "var(--accent-text)" }}
-                        >
-                          <Check size={15} strokeWidth={2.6} />
-                        </span>
+                          className="mt-[0.75em] h-px w-3.5 shrink-0"
+                          style={{ background: "var(--accent-text)" }}
+                        />
                         <span className="text-sm leading-relaxed text-foreground/85">
                           {h}
                         </span>
@@ -336,9 +333,7 @@ export default function PricingPage() {
                 "Export everything, any day",
               ].map((f) => (
                 <li key={f} className="flex gap-2.5">
-                  <span aria-hidden="true" className="mt-0.5 shrink-0 text-primary">
-                    <Check size={15} strokeWidth={2.6} />
-                  </span>
+                  <span aria-hidden="true" className="mt-[0.75em] h-px w-3.5 shrink-0 bg-primary" />
                   <span className="text-[15px] leading-relaxed text-foreground/85">
                     {f}
                   </span>

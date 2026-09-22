@@ -50,11 +50,14 @@ export type Module = {
   keywords: string[];
   /** Blog posts on the same subject, by slug, for the further reading list. */
   reading?: string[];
+  /** A real screenshot from src/components/marketing/product-shots.tsx. */
+  shot?: "dashboard" | "members" | "giving" | "reports" | "insights" | "phone";
 };
 
 export const MODULES: Module[] = [
   {
     slug: "digital-giving",
+    shot: "giving",
     accent: "teal",
     title: "Digital Giving",
     summary:
@@ -114,6 +117,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "financial-management",
+    shot: "reports",
     accent: "amber",
     title: "Financial Management",
     summary:
@@ -169,6 +173,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "member-management",
+    shot: "members",
     accent: "purple",
     title: "Member Management",
     summary:
@@ -225,6 +230,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "leadership-management",
+    shot: "dashboard",
     accent: "pink",
     title: "Leadership Management",
     summary:
@@ -278,6 +284,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "branch-management",
+    shot: "dashboard",
     accent: "teal",
     title: "Branch Management",
     summary:
@@ -332,6 +339,7 @@ export const MODULES: Module[] = [
 
   {
     slug: "group-management",
+    shot: "members",
     accent: "amber",
     title: "Group and Cell Management",
     summary:

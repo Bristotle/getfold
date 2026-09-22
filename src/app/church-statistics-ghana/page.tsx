@@ -91,7 +91,7 @@ export default function StatsPage() {
           {STAT_SECTIONS.map((s) => (
             <div key={s.slug} id={s.slug} className="mt-14 scroll-mt-24 first:mt-0">
               <h2 className="text-balance font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{s.title}</h2>
-              <p className="mt-3 border-l-4 border-primary pl-4 text-[17px] leading-relaxed text-foreground">{s.intro}</p>
+              <p className="mt-3 font-serif text-[20px] leading-snug text-foreground">{s.intro}</p>
               <dl className="mt-6 divide-y divide-border rounded-2xl border border-border bg-surface">
                 {s.stats.map((x) => (
                   <div key={x.label} className="grid min-w-0 gap-1 px-5 py-4 sm:grid-cols-[1fr_auto] sm:gap-6">

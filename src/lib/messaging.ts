@@ -65,6 +65,8 @@ export const cedis = (n: number) =>
   new Intl.NumberFormat("en-GH", {
     style: "currency",
     currency: "GHS",
+    // "GHS 250.50", as the site writes money everywhere, not the cedi sign.
+    currencyDisplay: "code",
     minimumFractionDigits: 2,
   }).format(n);
 

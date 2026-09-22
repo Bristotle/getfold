@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { SectionBg } from "./section-bg";
@@ -96,9 +96,7 @@ export function RolePage({ r }: { r: Role }) {
             <ul className="m-0 mt-8 flex list-none flex-col gap-6 p-0">
               {r.does.map((d) => (
                 <li key={d.title} className="flex gap-4">
-                  <span aria-hidden="true" className="mt-1 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-                    <Check size={13} strokeWidth={3} />
-                  </span>
+                  <span aria-hidden="true" className="mt-[0.75em] h-px w-3.5 shrink-0 bg-primary" />
                   <div className="min-w-0">
                     <h3 className="text-lg font-bold text-foreground">{d.title}</h3>
                     <p className="mt-1.5 text-[16px] leading-relaxed text-foreground/85">{d.text}</p>

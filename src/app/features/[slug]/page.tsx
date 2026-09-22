@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Check, Info } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
+import { Shot } from "@/components/marketing/product-shots";
 import { MODULES, moduleBySlug, ACCENT } from "@/lib/modules";
 import { getPost } from "@/lib/posts";
 
@@ -107,6 +108,15 @@ export default async function ModulePage({
           </div>
         </section>
 
+        {/* ---------- the page itself ---------- */}
+        {m.shot && (
+          <section className="border-b border-border bg-surface">
+            <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
+              <Shot id={m.shot} />
+            </div>
+          </section>
+        )}
+
         {/* ---------- the argument ---------- */}
         <section className="relative isolate overflow-hidden">
           <SectionBg variant="dots" />
@@ -126,12 +136,7 @@ export default async function ModulePage({
             <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
               {m.does.map((d) => (
                 <li key={d} className="flex gap-3">
-                  <span
-                    aria-hidden="true"
-                    className={`mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full ${a.soft} ${a.text}`}
-                  >
-                    <Check size={12} strokeWidth={3} />
-                  </span>
+                  <span aria-hidden="true" className="mt-[0.75em] h-px w-3.5 shrink-0 bg-primary" />
                   <span className="text-[16px] leading-relaxed text-foreground/85">
                     {d}
                   </span>

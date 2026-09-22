@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { metaDescription } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MapPin, Clock, Check } from "lucide-react";
+import { ArrowLeft, MapPin, Clock } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SectionBg } from "@/components/marketing/section-bg";
@@ -17,12 +17,7 @@ function Points({ title, items }: { title: string; items: string[] }) {
       <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
         {items.map((i) => (
           <li key={i} className="flex gap-3">
-            <span
-              aria-hidden="true"
-              className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/10 text-primary"
-            >
-              <Check size={12} strokeWidth={3} />
-            </span>
+            <span aria-hidden="true" className="mt-[0.75em] h-px w-3.5 shrink-0 bg-primary" />
             <span className="text-[16px] leading-relaxed text-foreground/85">
               {i}
             </span>

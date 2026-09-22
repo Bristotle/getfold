@@ -109,7 +109,7 @@ export default async function TermPage({
             <h1 className="mt-2 text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               {t.term}
             </h1>
-            <p className="mt-5 border-l-4 border-primary pl-4 text-[19px] leading-relaxed text-foreground">
+            <p className="mt-5 font-serif text-[22px] leading-snug text-foreground">
               {t.definition}
             </p>
           </header>

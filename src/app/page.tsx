@@ -8,6 +8,7 @@ import { OnYourPhone, Modules, Faq } from "@/components/marketing/sections";
 import { GettingStarted } from "@/components/marketing/getting-started";
 import { WhyTrust } from "@/components/marketing/why-trust";
 import { Proof } from "@/components/marketing/proof";
+import { ProductShots } from "@/components/marketing/product-shots";
 import { CongregationBand } from "@/components/marketing/congregation-band";
 import { SectionBg, HeroWash, CtaBand, PhotoBg } from "@/components/marketing/section-bg";
 import { Contact } from "@/components/marketing/contact";
@@ -196,6 +197,7 @@ export default function LandingPage() {
       </section>
 
       <Proof />
+      <ProductShots />
 
       <WhyTrust />
 

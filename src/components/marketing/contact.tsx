@@ -1,4 +1,3 @@
-import { Check } from "lucide-react";
 import { submitEnquiry } from "@/app/contact-actions";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { SectionBg } from "@/components/marketing/section-bg";
@@ -58,12 +57,7 @@ export function Contact() {
           <ul className="m-0 mt-8 flex list-none flex-col gap-3.5 p-0">
             {PROMISES.map((p) => (
               <li key={p} className="flex items-start gap-3">
-                <span
-                  aria-hidden="true"
-                  className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary-foreground/20"
-                >
-                  <Check size={13} strokeWidth={2.5} />
-                </span>
+                <span aria-hidden="true" className="mt-[0.75em] h-px w-3.5 shrink-0 bg-primary-foreground/70" />
                 <span className="text-[15px] leading-relaxed text-primary-foreground/90">
                   {p}
                 </span>
