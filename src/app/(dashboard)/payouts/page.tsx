@@ -124,6 +124,13 @@ export default async function PayoutsPage({
               ? `, set ${new Date(org.settlement_updated_at).toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" })}`
               : ""}
           </p>
+          <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground">
+            Paystack settles here on the next working day, less its 1.95%
+            fee. Sunday&rsquo;s giving arrives on Monday; a gift on Friday
+            evening arrives on Monday too. Each gift is counted in Fold the
+            moment it succeeds, so the figures here will be ahead of the
+            account by one working day.
+          </p>
         </Card>
       )}
 

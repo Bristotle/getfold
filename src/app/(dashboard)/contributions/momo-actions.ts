@@ -429,11 +429,32 @@ export async function refreshPayment(formData: FormData) {
     nameOfMember(payment.members) ??
     `${networkName(payment.provider)} ${payment.phone}`;
 
+  /*
+    And when the church will actually see the money. A tester paid an
+    offering, checked the church's wallet the same evening, saw the
+    deduction on his side and no deposit on the church's, and concluded it
+    was lost. Paystack settles the next working day, so the confirmation
+    has to say so, or every Sunday's giving looks missing on Sunday night.
+  */
+  const settlement = await settlementLabel(supabase, membership.organization.id);
   redirect(
     `/contributions?message=${encodeURIComponent(
-      `GHS ${result.amountCedis.toFixed(2)} received from ${payer} and recorded as a ${payment.type}. It is already counted, do not enter it again.`
+      `GHS ${result.amountCedis.toFixed(2)} received from ${payer} and recorded as a ${payment.type}. It is already counted, do not enter it again. Paystack pays it to ${settlement} on the next working day, so it will not show in that account today.`
     )}`
   );
+}
+
+/** "MTN ending 2348", or "your settlement account" if none is recorded. */
+async function settlementLabel(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  orgId: string
+): Promise<string> {
+  const { data } = await supabase
+    .from("organizations")
+    .select("settlement_label")
+    .eq("id", orgId)
+    .maybeSingle<{ settlement_label: string | null }>();
+  return data?.settlement_label ?? "your settlement account";
 }
 
 /** "mtn" as a Ghanaian reads it, for a ledger note or a confirmation. */

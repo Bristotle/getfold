@@ -218,6 +218,12 @@ export default async function ContributionsPage({
                 and enter it below. Nothing is counted as given until the
                 payment goes through.
               </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                The money leaves the member&rsquo;s wallet at once and reaches
+                the church&rsquo;s account on the next working day, when
+                Paystack settles. A gift taken on Sunday shows in your account
+                on Monday, not Sunday night.
+              </p>
 
               {thanksOff && (
                 <p className="mt-3 rounded-lg bg-surface-soft px-3 py-2 text-xs leading-relaxed text-muted-foreground">

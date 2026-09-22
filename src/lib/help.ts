@@ -457,6 +457,10 @@ export const CATEGORIES: Category[] = [
             ],
           },
           {
+            type: "p",
+            text: "The money leaves the member's wallet at once and reaches the church's account on the next working day, when Paystack settles. A tithe paid on Sunday shows in the church's MoMo or bank account on Monday; one paid on Friday evening shows on Monday too. Fold counts the gift the moment it succeeds, so the giving page runs a working day ahead of the account. If the account looks short on Sunday night, that is why, and it is not lost.",
+          },
+          {
             type: "note",
             text: "Check the fee before you rely on it for small offerings. Processors charge roughly 1.95 per cent, but some apply a minimum of about 30 pesewas per transaction, which on a GHS 5 offering is six per cent.",
           },
