@@ -315,6 +315,24 @@ export function Nav({ role }: { role: string }) {
                   </Link>
                 </li>
               ))}
+              {/* Everybody has their own details, whatever their role, and
+                  on a phone the header link to them is hidden. */}
+              <li>
+                <Link
+                  href="/profile"
+                  onClick={() => setMoreOpen(false)}
+                  aria-current={pathname === "/profile" ? "page" : undefined}
+                  className={cn(
+                    "flex min-h-12 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    pathname === "/profile"
+                      ? "bg-primary/10 text-primary"
+                      : "text-foreground hover:bg-surface-soft"
+                  )}
+                >
+                  <Icon name="people" />
+                  Your details
+                </Link>
+              </li>
             </ul>
           </div>
         </>

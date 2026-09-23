@@ -31,6 +31,7 @@ export default function robots(): MetadataRoute.Robots {
         "/insights",
         "/messages",
         "/onboarding",
+        "/profile",
         "/records",
         "/reports",
         "/team",

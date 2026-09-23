@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMembership } from "@/lib/org";
 import { signOut } from "@/app/(auth)/login/actions";
@@ -11,7 +12,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { email, membership } = await getMembership();
+  const { userId, email, membership } = await getMembership();
 
   if (!email) redirect("/login");
 
@@ -21,11 +22,22 @@ export default async function DashboardLayout({
 
   const { organization, role } = membership;
 
-  // trial_status is SECURITY INVOKER, so RLS scopes it to this church.
   const supabase = await createClient();
-  const { data: trial } = await supabase.rpc("trial_status", {
-    org_id: organization.id,
-  });
+
+  /*
+    trial_status is SECURITY INVOKER, so RLS scopes it to this church. The
+    profile read beside it is the person's own name for the header, which
+    falls back to the address they sign in with until they set one.
+  */
+  const [{ data: trial }, { data: me }] = await Promise.all([
+    supabase.rpc("trial_status", { org_id: organization.id }),
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", userId ?? "")
+      .maybeSingle<{ full_name: string | null }>(),
+  ]);
+  const fullName = me?.full_name ?? null;
   const t = (trial?.[0] ?? null) as
     | { status: string; days_left: number }
     | null;
@@ -48,9 +60,15 @@ export default async function DashboardLayout({
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-4">
-            <span className="hidden text-xs text-muted-foreground sm:inline">
-              {email}
-            </span>
+            {/* The signed in person, and the way to their own details.
+                It used to be the email address as plain text, which told
+                somebody their address and offered them nothing. */}
+            <Link
+              href="/profile"
+              className="hidden max-w-[16rem] truncate rounded text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:inline"
+            >
+              {fullName ?? email}
+            </Link>
             <form action={signOut}>
               <button className="text-sm font-medium text-muted-foreground hover:text-foreground">
                 Sign out
