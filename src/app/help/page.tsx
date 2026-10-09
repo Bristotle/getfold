@@ -67,7 +67,6 @@ export default function HelpPage() {
 
             {/* ---------- categories ---------- */}
             <section className="relative isolate overflow-hidden bg-surface">
-              <SectionBg variant="grid" />
               <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
                 <h2 className="sr-only">Categories</h2>
                 <ul className="m-0 grid list-none gap-5 p-0 sm:grid-cols-2 lg:grid-cols-3">
@@ -102,7 +101,6 @@ export default function HelpPage() {
 
             {/* ---------- popular ---------- */}
             <section className="relative isolate overflow-hidden border-y border-border">
-              <SectionBg variant="dots" />
               <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
                 <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   Asked most often

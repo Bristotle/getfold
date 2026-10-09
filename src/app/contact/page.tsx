@@ -81,7 +81,6 @@ export default function ContactPage() {
 
         {/* ---------- how to reach us ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
               <div>

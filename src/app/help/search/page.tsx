@@ -51,7 +51,6 @@ export default async function HelpSearchPage({
 
         {/* ---------- search results ---------- */}
           <section className="relative isolate overflow-hidden bg-surface">
-            <SectionBg variant="dots" />
             <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
               <h2 className="text-xl font-bold text-foreground">
                 {results.length === 0

@@ -137,7 +137,6 @@ export default function AboutPage() {
 
         {/* ---------- our story ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16">
               <div>
@@ -193,7 +192,6 @@ export default function AboutPage() {
 
         {/* ---------- values ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-2xl text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -234,7 +232,6 @@ export default function AboutPage() {
 
         {/* ---------- safeguards ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               How your records are protected

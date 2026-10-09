@@ -186,7 +186,6 @@ export default function FeaturesPage() {
         </section>
 
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <ul className="m-0 grid list-none gap-6 p-0 lg:grid-cols-2">
               {MODULES.map(({ Icon, name, body, points }, i) => (

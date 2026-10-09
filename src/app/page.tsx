@@ -207,7 +207,6 @@ export default function LandingPage() {
       {/* Sits on the page ground: the sections either side of it are on
           surface, and three raised bands in a row read as one long block. */}
       <section className="relative isolate overflow-hidden border-y border-border">
-        <SectionBg variant="dots" />
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -245,7 +244,6 @@ export default function LandingPage() {
 
       {/* ---------- the differentiator ---------- */}
       <section className="relative isolate overflow-hidden">
-        <SectionBg variant="orbs" />
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16">
           <div>

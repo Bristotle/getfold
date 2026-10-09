@@ -182,7 +182,6 @@ export default function ComparePage() {
 
         {/* ---------- the table ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
             <div className="overflow-x-auto rounded-2xl border border-border bg-background">
               <table className="w-full min-w-[46rem] border-collapse text-sm">
@@ -254,7 +253,6 @@ export default function ComparePage() {
 
         {/* ---------- the honest part ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Read this part

@@ -154,7 +154,6 @@ export default function PricingPage() {
 
         {/* ---------- tiers ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
             <ul className="m-0 grid list-none gap-5 p-0 lg:grid-cols-2 xl:grid-cols-4">
               {TIERS.map((t) => (
@@ -309,7 +308,6 @@ export default function PricingPage() {
 
         {/* ---------- what every band includes ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               Every band gets the whole product
@@ -345,7 +343,6 @@ export default function PricingPage() {
 
         {/* ---------- the four that sell it ---------- */}
         <section className="relative isolate overflow-hidden border-b border-border bg-surface">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-2xl text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -382,7 +379,6 @@ export default function PricingPage() {
 
         {/* ---------- faq ---------- */}
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               What churches ask about the price

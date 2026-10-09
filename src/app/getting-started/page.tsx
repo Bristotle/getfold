@@ -135,7 +135,6 @@ export default function GettingStartedPage() {
 
         {/* ---------- what to have ready ---------- */}
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -182,7 +181,6 @@ export default function GettingStartedPage() {
 
         {/* ---------- the first month ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               What to expect

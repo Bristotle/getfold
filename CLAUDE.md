@@ -81,9 +81,11 @@ and say the society is a demonstration.
 ## Section backgrounds
 
 Marketing sections use `<SectionBg variant="..." />` from
-`src/components/marketing/section-bg.tsx`. Five variants: `aurora` for a
-page hero, `dots` and `grid` for texture, `orbs` for depth without a
-pattern, `mesh` for the purple bands where light has to come from white.
+`src/components/marketing/section-bg.tsx`. Two variants: `aurora` for a
+page hero, `mesh` for the purple bands where light has to come from white.
+Every other section is plain. Dots, a grid and orbs used to sit behind
+forty ordinary sections and made the site read as a template, so they were
+removed; do not bring back a pattern to "liven up" a section.
 
 Every call to action band uses `<CtaBand>` from the same file rather than
 composing a section by hand. It is the homepage's "Bring your church into
@@ -96,8 +98,7 @@ Three rules keep them safe:
 - The parent section needs `relative isolate overflow-hidden`. The layer is
   absolutely positioned and `-z-10`, so it contributes nothing to layout and
   cannot widen the document.
-- Use them in a rhythm. Two neighbouring sections never share a variant, and
-  some sections stay plain so the eye has somewhere to rest.
+- Use them only on a page hero or a call to action band.
 - Keep them faint. The strongest is 12% of the brand purple, because text
   contrast is measured against the underlying token and a background that
   moves it breaks WCAG AA. Pure CSS only, no images, no JavaScript.

@@ -44,7 +44,6 @@ export default function JoinPage() {
         </section>
 
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-16">
             {groups.map((g) => {
               const items = OPPORTUNITIES.filter((o) => o.kind === g.kind);

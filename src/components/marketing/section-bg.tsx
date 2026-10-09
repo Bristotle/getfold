@@ -1,29 +1,22 @@
 /**
- * A decorative background layer for a marketing section.
+ * A background layer for a marketing section.
  *
- * Three rules make this safe to scatter across the site:
+ * Two variants, used in two places only: `aurora` behind a page hero, and
+ * `mesh` on the purple call to action bands. Everything else stays plain.
+ * There used to be dots, a grid and orbs as well, scattered across forty
+ * sections, and together they made the site read as a template.
  *
  * 1. It is absolutely positioned and inset, so it contributes nothing to
  *    layout and cannot widen the document. The parent section needs
  *    `relative isolate overflow-hidden`.
  * 2. It is aria-hidden and pointer-events-none, so it is invisible to a
  *    screen reader and cannot swallow a click.
- * 3. Every variant is faint enough that the text contrast measured against
+ * 3. Both variants are faint enough that the text contrast measured against
  *    the underlying token still holds.
- *
- * Variants are used in a rhythm rather than everywhere: two neighbouring
- * sections never share one, and plain sections are left plain so the eye
- * gets somewhere to rest.
  */
 const VARIANTS = {
-  /** Fine dot lattice fading from the top. Quiet texture. */
-  dots: "bg-dots",
-  /** Larger line grid. Reads as structure rather than texture. */
-  grid: "bg-grid",
-  /** Spotlight plus dots. The signature opening for every page hero. */
+  /** A soft purple spotlight from above. The opening of every page. */
   aurora: "bg-aurora",
-  /** Soft brand orbs left and right. Depth with no pattern. */
-  orbs: "bg-orbs",
   /** White light on a purple band, where the brand colour is the ground. */
   mesh: "bg-mesh",
 } as const;

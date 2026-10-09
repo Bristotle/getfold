@@ -119,7 +119,6 @@ export default async function ModulePage({
 
         {/* ---------- the argument ---------- */}
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             {m.intro.map((p) => (
               <p
@@ -148,7 +147,6 @@ export default async function ModulePage({
 
         {/* ---------- what is different ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground">
               What is different about ours
@@ -199,7 +197,6 @@ export default async function ModulePage({
 
         {/* ---------- questions ---------- */}
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground">
               Questions churches ask

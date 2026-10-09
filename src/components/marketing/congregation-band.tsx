@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { SectionBg } from "@/components/marketing/section-bg";
 
 /**
  * A photograph of a real congregation, with the church named underneath.
@@ -30,7 +29,6 @@ export function CongregationBand() {
 
   return (
     <section className="relative isolate overflow-hidden border-y border-border bg-surface">
-      <SectionBg variant="orbs" />
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-14">
           <figure className="m-0">

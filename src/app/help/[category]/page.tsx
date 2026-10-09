@@ -120,7 +120,6 @@ export default async function HelpCategoryPage({
 
         {/* ---------- articles ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               {c.articles.length}{" "}
@@ -156,7 +155,6 @@ export default async function HelpCategoryPage({
 
         {/* ---------- other categories ---------- */}
         <section className="relative isolate overflow-hidden border-t border-border">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Other categories

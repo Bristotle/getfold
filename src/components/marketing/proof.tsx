@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Quote } from "lucide-react";
-import { SectionBg } from "@/components/marketing/section-bg";
 
 /**
  * Social proof.
@@ -38,7 +37,6 @@ export function Proof() {
 
   return (
     <section className="relative isolate overflow-hidden border-y border-border bg-surface">
-      <SectionBg variant="orbs" />
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         {CHURCHES.length > 0 && (
           <div className="text-center">

@@ -65,7 +65,6 @@ export default function BlogPage() {
 
         {/* ---------- posts ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <ul className="m-0 flex list-none flex-col gap-5 p-0">
               {sortedPosts.map((post) => (

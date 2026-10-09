@@ -59,7 +59,6 @@ export default function SecurityPage() {
         </section>
 
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
               The boundary is in the database, not in the screens
@@ -97,7 +96,6 @@ export default function SecurityPage() {
         </section>
 
         <section className="relative isolate overflow-hidden border-y border-border bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
               We attack it after every change
@@ -125,7 +123,6 @@ export default function SecurityPage() {
         </section>
 
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
               The rest, briefly

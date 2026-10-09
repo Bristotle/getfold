@@ -112,7 +112,6 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         </section>
 
         <section className="print-hide relative isolate overflow-hidden border-t border-border bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
             <h2 className="text-balance font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">How to use it</h2>
             <ol className="m-0 mt-6 flex list-none flex-col gap-4 p-0">

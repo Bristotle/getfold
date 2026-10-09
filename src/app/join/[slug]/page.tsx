@@ -169,7 +169,6 @@ export default async function JoinDetailPage({
 
         {others.length > 0 && (
           <section className="relative isolate overflow-hidden border-t border-border bg-surface">
-            <SectionBg variant="dots" />
             <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
               <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 Other ways to work with us

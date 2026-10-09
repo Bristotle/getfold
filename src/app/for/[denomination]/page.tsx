@@ -146,7 +146,6 @@ export default async function DenominationPage({
 
         {/* ---------- the structure ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
@@ -215,7 +214,6 @@ export default async function DenominationPage({
 
         {/* ---------- the return ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary">
               <FileBarChart size={22} strokeWidth={1.7} />
@@ -245,7 +243,6 @@ export default async function DenominationPage({
 
         {/* ---------- who sees what ---------- */}
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary">
               <ShieldCheck size={22} strokeWidth={1.7} />
@@ -264,7 +261,6 @@ export default async function DenominationPage({
 
         {/* ---------- other denominations ---------- */}
         <section className="relative isolate overflow-hidden border-t border-border bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Other denominations

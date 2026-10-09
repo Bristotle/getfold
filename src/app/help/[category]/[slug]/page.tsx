@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Info } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
-import { SectionBg } from "@/components/marketing/section-bg";
 import { CATEGORIES, getCategory, getArticle } from "@/lib/help";
 import { metaTitle, metaDescription } from "@/lib/seo";
 
@@ -227,7 +226,6 @@ export default async function HelpArticlePage({
         {/* ---------- read next ---------- */}
         {more.length > 0 && (
           <section className="relative isolate overflow-hidden border-t border-border bg-surface">
-            <SectionBg variant="dots" />
             <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
               <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 Also in {c.title.toLowerCase()}

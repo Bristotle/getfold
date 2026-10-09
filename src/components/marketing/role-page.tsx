@@ -67,7 +67,6 @@ export function RolePage({ r }: { r: Role }) {
 
         {/* ---------- the job now ---------- */}
         <section className="relative isolate overflow-hidden bg-surface">
-          <SectionBg variant="grid" />
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
@@ -88,7 +87,6 @@ export function RolePage({ r }: { r: Role }) {
 
         {/* ---------- what changes ---------- */}
         <section className="relative isolate overflow-hidden border-y border-border">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               What changes with Fold
@@ -116,7 +114,6 @@ export function RolePage({ r }: { r: Role }) {
 
         {/* ---------- questions ---------- */}
         <section className="relative isolate overflow-hidden">
-          <SectionBg variant="orbs" />
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
             <h2 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               Questions {r.who} ask
@@ -147,7 +144,6 @@ export function RolePage({ r }: { r: Role }) {
 
         {/* ---------- other roles ---------- */}
         <section className="relative isolate overflow-hidden border-t border-border bg-surface">
-          <SectionBg variant="dots" />
           <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Fold for other people in the church
