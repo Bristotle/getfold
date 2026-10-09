@@ -35,12 +35,16 @@ const ENTITY_LABEL: Record<string, string> = {
   attendance_records: "Attendance",
   vital_records: "Vital records",
   organization_members: "Team",
+  organizations: "Your church",
 };
 
 const ACTION_TONE: Record<string, string> = {
   created: "bg-success/15 text-success-text",
   updated: "bg-primary/10 text-primary",
   deleted: "bg-danger/10 text-danger-text",
+  // Fold support opening the church's records. Shown, never hidden, so a
+  // church always knows when somebody outside it has looked.
+  viewed: "bg-surface-soft text-foreground",
 };
 
 const when = new Intl.DateTimeFormat("en-GB", {

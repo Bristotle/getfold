@@ -157,6 +157,28 @@ export async function loadTree(): Promise<{
     });
   }
 
+  /*
+    Only churches the user belongs to and the branches beneath them.
+
+    RLS on organizations also admits a church Fold support has opened
+    through start_platform_view(), and that church must not appear in the
+    founder's own switcher as though it were one of theirs. Oversight only
+    ever reaches below a membership, so for everybody else this keeps
+    exactly what RLS returned.
+  */
+  const reachable = (id: string | null | undefined): boolean => {
+    for (let n = id ? nodes.get(id) : undefined, hops = 0; n && hops < 20; hops++) {
+      if (n.role !== null) return true;
+      n = n.organization.parent_organization_id
+        ? nodes.get(n.organization.parent_organization_id)
+        : undefined;
+    }
+    return false;
+  };
+  for (const id of [...nodes.keys()]) {
+    if (!reachable(id)) nodes.delete(id);
+  }
+
   const roots: TreeNode[] = [];
   for (const n of nodes.values()) {
     const parent = n.organization.parent_organization_id
