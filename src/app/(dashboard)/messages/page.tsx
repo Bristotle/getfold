@@ -12,6 +12,7 @@ import { sendQueued } from "./actions";
 type Row = {
   id: string;
   type: string;
+  channel: string;
   recipient: string;
   body: string;
   status: string;
@@ -25,7 +26,12 @@ const TYPE_LABELS: Record<string, string> = {
   welcome: "Welcome",
   contribution_receipt: "Giving receipt",
   absence_followup: "We miss you",
+  birthday: "Birthday",
+  meeting_reminder: "Meeting reminder",
 };
+
+const kind = (r: Row) =>
+  `${TYPE_LABELS[r.type] ?? r.type}${r.channel === "whatsapp" ? " (WhatsApp)" : ""}`;
 
 const STATUS_STYLES: Record<string, string> = {
   sent: "bg-success/10 text-success-text",
@@ -67,7 +73,7 @@ export default async function MessagesPage({
   const { data, error: loadError } = await supabase
     .from("notifications")
     .select(
-      "id, type, recipient, body, status, error, sent_at, created_at, members ( full_name )"
+      "id, type, channel, recipient, body, status, error, sent_at, created_at, members ( full_name )"
     )
     .order("created_at", { ascending: false })
     .limit(100);
@@ -213,7 +219,7 @@ export default async function MessagesPage({
                   key={r.id}
                   title={one(r.members)?.full_name ?? r.recipient}
                   meta={metaLine(
-                    TYPE_LABELS[r.type] ?? r.type,
+                    kind(r),
                     dateFmt.format(new Date(r.created_at)),
                     r.error ?? undefined
                   )}
@@ -253,7 +259,7 @@ export default async function MessagesPage({
                       </span>
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
-                      {TYPE_LABELS[r.type] ?? r.type}
+                      {kind(r)}
                     </td>
                     <td className="max-w-md px-5 py-3 text-muted-foreground">
                       {r.body}

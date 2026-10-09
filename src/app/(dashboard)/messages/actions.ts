@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
 import { queueMessage } from "@/lib/notify";
-import { templates, deliver, providerStatus } from "@/lib/messaging";
+import { templates, providerStatus } from "@/lib/messaging";
+import { dispatch, QUEUED_COLUMNS, type QueuedNotification } from "@/lib/dispatch";
 import { friendly } from "@/lib/errors";
 
 /**
@@ -117,32 +118,18 @@ export async function sendQueued() {
 
   const { data: pending } = await supabase
     .from("notifications")
-    .select("id, recipient, body")
-    .in("status", ["queued", "no_provider", "failed"])
+    .select(QUEUED_COLUMNS)
+    // A failed WhatsApp message is never retried here: a text already
+    // went in its place, and retrying would send the member both.
+    .or("status.in.(queued,no_provider),and(status.eq.failed,channel.eq.sms)")
     .limit(100);
 
   let sent = 0;
   let failed = 0;
 
-  for (const n of (pending ?? []) as {
-    id: string;
-    recipient: string;
-    body: string;
-  }[]) {
-    const result = await deliver(
-      n.recipient,
-      n.body,
-      senderId
-    );
-    await supabase
-      .from("notifications")
-      .update(
-        result.ok
-          ? { status: "sent", sent_at: new Date().toISOString(), error: null }
-          : { status: "failed", error: result.error ?? "Unknown error" }
-      )
-      .eq("id", n.id);
-    if (result.ok) sent++;
+  for (const n of (pending ?? []) as QueuedNotification[]) {
+    const outcome = await dispatch(supabase, n, senderId);
+    if (outcome === "sent") sent++;
     else failed++;
   }
 

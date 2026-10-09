@@ -52,6 +52,7 @@ const GROUPS = [
     primary: true,
     items: [
       { href: "/attendance", label: "Services", cap: "attendance.write" },
+      { href: "/meetings", label: "Meeting reminders", cap: "people.write" },
       { href: "/insights", label: "Insights", cap: "people.write" },
     ],
   },

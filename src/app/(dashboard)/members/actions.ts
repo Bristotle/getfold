@@ -50,6 +50,7 @@ export async function createMember(formData: FormData) {
     email: clean(formData, "email"),
     address: clean(formData, "address"),
     member_type: clean(formData, "memberType"),
+    whatsapp_opt_in: formData.get("whatsappOptIn") === "on",
   });
 
   if (error) {
@@ -162,6 +163,7 @@ export async function updateMember(formData: FormData) {
       address: clean(formData, "address"),
       member_type: clean(formData, "memberType"),
       member_group_id: groupId || null,
+      whatsapp_opt_in: formData.get("whatsappOptIn") === "on",
     })
     .eq("id", id)
     .eq("organization_id", membership.organization.id);
@@ -268,6 +270,7 @@ export async function importMembers(formData: FormData) {
     member_group_id: r.group
       ? (groupByName.get(r.group.toLowerCase().trim()) ?? null)
       : null,
+    whatsapp_opt_in: r.whatsapp_opt_in,
   }));
 
   // Inserted in batches so one large file does not exceed the request limit,

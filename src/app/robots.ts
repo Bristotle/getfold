@@ -29,6 +29,7 @@ export default function robots(): MetadataRoute.Robots {
         "/funds",
         "/groups",
         "/insights",
+        "/meetings",
         "/messages",
         "/onboarding",
         "/profile",

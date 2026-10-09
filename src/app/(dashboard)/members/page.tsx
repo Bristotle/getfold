@@ -202,6 +202,20 @@ export default async function MembersPage({
               </span>
               <input name="address" className={inputClass} />
             </label>
+            <label className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-surface-soft p-3">
+              <input
+                type="checkbox"
+                name="whatsappOptIn"
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+              />
+              <span className="text-xs leading-relaxed text-foreground/85">
+                <span className="font-semibold">Agreed to WhatsApp messages</span>
+                <span className="mt-0.5 block text-muted-foreground">
+                  Meeting reminders go to them on WhatsApp. Leave it unticked
+                  unless they said yes, and they get a text instead.
+                </span>
+              </span>
+            </label>
             <div className="flex items-end">
               {welcomeOn && (
                 <label className="mb-3 flex cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-surface-soft p-3">
@@ -238,7 +252,8 @@ export default async function MembersPage({
             CSV and upload it here. The first row should be column names. We
             look for Name, Gender, Date of Birth, Phone, Email, Address,
             Member Type and Group, and we are not fussy about how they are
-            spelled.
+            spelled. A WhatsApp column saying Yes records that the member
+            agreed to meeting reminders on WhatsApp.
           </p>
           <form
             action={importMembers}

@@ -129,7 +129,7 @@ check("members table survived injection attempts", stillThere.error === null);
 const BASE = process.env.BASE ?? "https://www.getfold.org";
 
 console.log("=== 5. Routes that must not answer a stranger ===");
-const guarded = ["/dashboard","/members","/contributions","/billing","/payouts","/messages","/funds","/insights","/settings","/admin/enquiries","/branches","/activity","/profile"];
+const guarded = ["/dashboard","/members","/contributions","/billing","/payouts","/messages","/meetings","/funds","/insights","/settings","/admin/enquiries","/admin/churches","/branches","/activity","/profile"];
 for (const r of guarded) {
   const res = await fetch(BASE+r, { redirect:"manual" });
   const ok = res.status === 307 || res.status === 302 || res.status === 404;
@@ -150,6 +150,15 @@ const none = await fetch(`${BASE}/api/paystack/webhook`, { method:"POST", header
 check("webhook refuses an unsigned payload", none.status >= 400, String(none.status));
 const bad = await fetch(`${BASE}/api/paystack/webhook`, { method:"POST", headers:{"Content-Type":"application/json","x-paystack-signature":"0".repeat(128)}, body });
 check("webhook refuses a forged signature", bad.status >= 400, String(bad.status));
+
+console.log("\n=== 7b. WhatsApp webhook signature ===");
+const waBody = JSON.stringify({ entry:[{ changes:[{ value:{ messages:[{ from:"233244000000", type:"text", text:{ body:"STOP" } }] } }] }] });
+const waNone = await fetch(`${BASE}/api/whatsapp/webhook`, { method:"POST", headers:{"Content-Type":"application/json"}, body: waBody });
+check("whatsapp webhook refuses an unsigned payload", waNone.status >= 400, String(waNone.status));
+const waBad = await fetch(`${BASE}/api/whatsapp/webhook`, { method:"POST", headers:{"Content-Type":"application/json","x-hub-signature-256":"sha256="+"0".repeat(64)}, body: waBody });
+check("whatsapp webhook refuses a forged signature", waBad.status >= 400, String(waBad.status));
+const waVerify = await fetch(`${BASE}/api/whatsapp/webhook?hub.mode=subscribe&hub.verify_token=guess&hub.challenge=pwned`);
+check("whatsapp webhook refuses a wrong verify token", waVerify.status === 403 || waVerify.status === 404, String(waVerify.status));
 
 console.log("\n=== 8. Security headers and exposure ===");
 const home = await fetch(BASE);

@@ -59,6 +59,7 @@ const ALIASES: Record<string, string[]> = {
     "status of member",
   ],
   group: ["group", "class", "bible class", "fellowship", "group name"],
+  whatsapp_opt_in: ["whatsapp", "on whatsapp", "whatsapp ok", "agreed to whatsapp"],
 };
 
 const normalise = (h: string) =>
@@ -73,6 +74,8 @@ export type ParsedMember = {
   address: string | null;
   member_type: string | null;
   group: string | null;
+  /** Only an explicit yes counts as agreement. A blank is a no. */
+  whatsapp_opt_in: boolean;
 };
 
 export type ParseResult = {
@@ -159,6 +162,9 @@ export function parseMembersCsv(text: string): ParseResult {
       address: get("address") || null,
       member_type: get("member_type") || null,
       group: get("group") || null,
+      whatsapp_opt_in: ["yes", "y", "true", "1", "agreed"].includes(
+        get("whatsapp_opt_in").toLowerCase()
+      ),
     });
   }
 

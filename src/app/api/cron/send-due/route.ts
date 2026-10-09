@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { deliver } from "@/lib/messaging";
+import { dispatch, QUEUED_COLUMNS, type QueuedNotification } from "@/lib/dispatch";
+import { queueDueMeetingReminders } from "@/lib/meetings";
 
 /**
  * Sends the messages that are now due.
@@ -15,13 +16,26 @@ import { deliver } from "@/lib/messaging";
  * point. The daily job still flushes anything this misses, so a message is
  * never lost, only late.
  *
+ * It also queues meeting reminders as they fall due, just before sending, so
+ * a reminder goes out in the run that queued it rather than five minutes
+ * into a thirty minute warning.
+ *
  * Service role, because there is no user session behind a cron, and because
  * it has to see every church's queue rather than one church's.
  */
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
-/** A cap, so one bad batch cannot run the function out of time. */
-const BATCH = 60;
+/**
+ * A cap, so one bad batch cannot run the function out of time. Large
+ * enough for a whole congregation's reminders in one run: at sixty, a
+ * society of two hundred would have heard about its prayer meeting over
+ * twenty minutes.
+ */
+const BATCH = 400;
+
+/** Messages in flight at once. Enough to clear a batch in seconds. */
+const PARALLEL = 8;
 
 export async function GET(request: Request) {
   const auth = request.headers.get("authorization");
@@ -38,9 +52,11 @@ export async function GET(request: Request) {
 
   const supabase = createClient(url, key, { auth: { persistSession: false } });
 
+  const reminders = await queueDueMeetingReminders(supabase);
+
   const { data: due, error } = await supabase
     .from("notifications")
-    .select("id, recipient, body, organization_id")
+    .select(QUEUED_COLUMNS)
     .in("status", ["queued", "no_provider"])
     .lte("send_after", new Date().toISOString())
     .order("send_after", { ascending: true })
@@ -68,25 +84,25 @@ export async function GET(request: Request) {
   let sent = 0;
   let failed = 0;
 
-  for (const n of due ?? []) {
-    const result = await deliver(
-      n.recipient,
-      n.body,
-      senders.get(n.organization_id) ?? null
-    );
+  const queue = [...((due ?? []) as QueuedNotification[])];
+  await Promise.all(
+    Array.from({ length: PARALLEL }, async () => {
+      for (let n = queue.shift(); n; n = queue.shift()) {
+        const outcome = await dispatch(
+          supabase,
+          n,
+          senders.get(n.organization_id) ?? null
+        );
+        if (outcome === "sent") sent++;
+        else failed++;
+      }
+    })
+  );
 
-    await supabase
-      .from("notifications")
-      .update(
-        result.ok
-          ? { status: "sent", sent_at: new Date().toISOString(), error: null }
-          : { status: "failed", error: result.error ?? "Unknown error" }
-      )
-      .eq("id", n.id);
-
-    if (result.ok) sent++;
-    else failed++;
-  }
-
-  return NextResponse.json({ due: due?.length ?? 0, sent, failed });
+  return NextResponse.json({
+    reminders,
+    due: due?.length ?? 0,
+    sent,
+    failed,
+  });
 }

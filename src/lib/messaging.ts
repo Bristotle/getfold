@@ -95,7 +95,162 @@ export const templates = {
 
   absenceFollowUp: (churchName: string, memberName: string) =>
     `Hello ${memberName}, we have missed you at ${churchName} recently and wanted to check that all is well. You are welcome any time.`,
+
+  // No name, to stay inside one segment: the link alone is forty characters.
+  meetingReminder: (r: MeetingReminder) =>
+    `${r.church}: ${r.title} starts in ${r.minutes} minutes. Join here: ${r.url}`,
 };
+
+// ---------------------------------------------------------------------------
+// WhatsApp
+// ---------------------------------------------------------------------------
+
+/**
+ * What a meeting reminder is filled in with. Stored on the notification as
+ * `params`, so a WhatsApp message that fails can be resent as a text, and
+ * so a reminder that sat in the queue past the start is never sent late.
+ */
+export type MeetingReminder = {
+  name: string;
+  title: string;
+  church: string;
+  minutes: number;
+  url: string;
+  /** ISO time the meeting starts. Nothing is sent after it. */
+  startsAt: string;
+};
+
+/**
+ * Every church's reminders go out from one Fold number on the WhatsApp
+ * Business Platform, called directly on Meta's Cloud API.
+ *
+ * A business may only start a WhatsApp conversation with a template Meta
+ * has approved, so the wording is not ours to vary per church. It lives in
+ * Meta's WhatsApp Manager under WHATSAPP_TEMPLATE_MEETING, and
+ * `meetingReminderWhatsAppText` below must say exactly what that template
+ * says, because it is what the Messages page shows the church was sent.
+ */
+export function whatsappStatus(): { configured: boolean; missing: string[] } {
+  const missing = ["WHATSAPP_ACCESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID"].filter(
+    (k) => !process.env[k]
+  );
+  return { configured: missing.length === 0, missing };
+}
+
+/**
+ * The approved template, word for word, with {{1}} to {{5}} filled in.
+ *
+ * Meta rejects a template that begins or ends on a variable, which is one
+ * reason the STOP line is last. The other is that it is the member's way
+ * out, and WhatsApp expects every business to offer one.
+ */
+export const WHATSAPP_MEETING_TEMPLATE =
+  "Hello {{1}}, {{2}} at {{3}} starts in {{4}} minutes.\n\nJoin here: {{5}}\n\nReply STOP to stop these reminders.";
+
+function meetingReminderValues(r: MeetingReminder): string[] {
+  return [
+    r.name.split(/\s+/)[0] || "friend",
+    r.title,
+    r.church,
+    String(r.minutes),
+    r.url,
+  ].map(
+    // Meta refuses a parameter containing a newline, a tab or more than
+    // four spaces in a row, and fails the whole message for it.
+    (v) => v.replace(/[\n\t]+/g, " ").replace(/ {2,}/g, " ").trim()
+  );
+}
+
+export function meetingReminderWhatsAppText(r: MeetingReminder): string {
+  const values = meetingReminderValues(r);
+  return WHATSAPP_MEETING_TEMPLATE.replace(
+    /\{\{(\d)\}\}/g,
+    (_, i: string) => values[Number(i) - 1] ?? ""
+  );
+}
+
+function graphUrl(path: string) {
+  const version = process.env.WHATSAPP_API_VERSION || "v23.0";
+  return `https://graph.facebook.com/${version}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/${path}`;
+}
+
+async function postWhatsApp(
+  payload: Record<string, unknown>
+): Promise<{ ok: boolean; error?: string; messageId?: string }> {
+  const status = whatsappStatus();
+  if (!status.configured) {
+    return {
+      ok: false,
+      error: `WhatsApp is not connected (missing ${status.missing.join(", ")})`,
+    };
+  }
+
+  try {
+    const res = await fetch(graphUrl("messages"), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messaging_product: "whatsapp", ...payload }),
+    });
+    const json = (await res.json().catch(() => null)) as {
+      messages?: { id?: string }[];
+      error?: { message?: string; code?: number };
+    } | null;
+
+    if (!res.ok) {
+      const e = json?.error;
+      return {
+        ok: false,
+        error: `WhatsApp: ${e?.message ?? `HTTP ${res.status}`}${e?.code ? ` (${e.code})` : ""}`,
+      };
+    }
+    return { ok: true, messageId: json?.messages?.[0]?.id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/**
+ * Sends a meeting reminder by WhatsApp.
+ *
+ * "ok" means Meta accepted it, not that it arrived. A number that is not
+ * on WhatsApp is accepted here and fails a few seconds later, which the
+ * webhook at /api/whatsapp/webhook hears about and answers with a text.
+ */
+export function deliverWhatsAppReminder(to: string, r: MeetingReminder) {
+  return postWhatsApp({
+    // Meta wants the number without the plus.
+    to: to.replace(/^\+/, ""),
+    type: "template",
+    template: {
+      name: process.env.WHATSAPP_TEMPLATE_MEETING || "meeting_reminder",
+      language: { code: process.env.WHATSAPP_TEMPLATE_LANGUAGE || "en" },
+      components: [
+        {
+          type: "body",
+          parameters: meetingReminderValues(r).map((text) => ({
+            type: "text",
+            text,
+          })),
+        },
+      ],
+    },
+  });
+}
+
+/**
+ * A plain reply. Only allowed within 24 hours of the member writing to us,
+ * which is exactly when it is used: confirming a STOP.
+ */
+export function replyOnWhatsApp(to: string, body: string) {
+  return postWhatsApp({
+    to: to.replace(/^\+/, ""),
+    type: "text",
+    text: { body },
+  });
+}
 
 /**
  * Hands one message to the configured provider.

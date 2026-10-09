@@ -43,7 +43,7 @@ export default async function MemberDetailPage({
   const { data: member } = await supabase
     .from("members")
     .select(
-      "id, full_name, gender, date_of_birth, phone, email, address, member_type, status, joined_at, member_group_id"
+      "id, full_name, gender, date_of_birth, phone, email, address, member_type, status, joined_at, member_group_id, whatsapp_opt_in"
     )
     .eq("id", id)
     .maybeSingle();
@@ -228,6 +228,21 @@ export default async function MemberDetailPage({
               defaultValue={member.address ?? ""}
               className={inputClass}
             />
+          </label>
+          <label className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-surface-soft p-3">
+            <input
+              type="checkbox"
+              name="whatsappOptIn"
+              defaultChecked={Boolean(member.whatsapp_opt_in)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+            />
+            <span className="text-xs leading-relaxed text-foreground/85">
+              <span className="font-semibold">Agreed to WhatsApp messages</span>
+              <span className="mt-0.5 block text-muted-foreground">
+                Meeting reminders go to them on WhatsApp. Leave it unticked
+                unless they said yes, and they get a text instead.
+              </span>
+            </span>
           </label>
           <div className="flex items-end sm:col-span-2 lg:col-span-3">
             <SubmitButton>Save changes</SubmitButton>

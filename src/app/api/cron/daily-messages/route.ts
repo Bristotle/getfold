@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { deliver, toE164, renderTemplate, DEFAULT_TEMPLATES } from "@/lib/messaging";
+import { toE164, renderTemplate, DEFAULT_TEMPLATES } from "@/lib/messaging";
+import { dispatch, QUEUED_COLUMNS, type QueuedNotification } from "@/lib/dispatch";
 
 /**
  * The daily message run.
@@ -93,7 +94,7 @@ export async function GET(request: Request) {
   if (orgIds.length > 0) {
     const { data: pending } = await supabase
       .from("notifications")
-      .select("id, recipient, body, organization_id")
+      .select(QUEUED_COLUMNS)
       .in("organization_id", orgIds)
       .in("status", ["queued", "no_provider"])
       // Never send a message before its time. A thank you is deliberately
@@ -104,28 +105,15 @@ export async function GET(request: Request) {
       // entire SMS balance in a single run.
       .limit(200);
 
-    for (const n of (pending ?? []) as {
-      id: string;
-      recipient: string;
-      body: string;
-      organization_id: string;
-    }[]) {
+    for (const n of (pending ?? []) as QueuedNotification[]) {
       // Sent under the church's own name, not the platform's. A member who
       // does not recognise the sender treats the message as spam.
-      const result = await deliver(
-        n.recipient,
-        n.body,
+      const outcome = await dispatch(
+        supabase,
+        n,
         senderByOrg.get(n.organization_id) ?? null
       );
-      await supabase
-        .from("notifications")
-        .update(
-          result.ok
-            ? { status: "sent", sent_at: new Date().toISOString(), error: null }
-            : { status: "failed", error: result.error ?? "Unknown error" }
-        )
-        .eq("id", n.id);
-      if (result.ok) sent++;
+      if (outcome === "sent") sent++;
       else failed++;
     }
   }
