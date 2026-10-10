@@ -109,7 +109,21 @@ export async function signUp(formData: FormData) {
     redirect(`/signup?error=${encodeURIComponent(readable(error.message))}`);
   }
 
-  await logAuthEvent(email, "signup_ok");
+  /*
+    An address that already has an account does not come back as an error.
+    With "Confirm email" on, Supabase answers as though the signup worked,
+    sends nothing, keeps the old password, and marks it only by returning a
+    user with no identities. We used to reply "Check your email to confirm
+    your account", so somebody who had forgotten they had an account waited
+    for an email that never came, then could not log in with the password
+    they had just chosen. That happened to the founder.
+
+    The answer below is the same for a new address and an existing one, so
+    it still tells nobody which addresses have accounts, and it tells both
+    people what to do next.
+  */
+  const existing = (data.user?.identities?.length ?? 1) === 0;
+  await logAuthEvent(email, existing ? "signup_existing" : "signup_ok");
 
   // Whether a session exists here depends on a project setting: with
   // "Confirm email" ON (the Supabase default) signUp returns no session
@@ -120,7 +134,9 @@ export async function signUp(formData: FormData) {
   }
 
   redirect(
-    "/login?message=Check your email to confirm your account, then log in."
+    `/login?message=${encodeURIComponent(
+      "Check your email. If this address is new, there is a link to confirm your account. If you already have an account, log in below, or choose Forgot your password."
+    )}`
   );
 }
 

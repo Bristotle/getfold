@@ -40,6 +40,8 @@ export type AuthEvent =
   | "login_ok"
   | "login_failed"
   | "signup_ok"
+  /** Signed up with an address that already had an account. Nothing was created. */
+  | "signup_existing"
   | "signup_failed"
   | "reset_requested"
   | "password_changed"
