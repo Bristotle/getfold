@@ -9,10 +9,9 @@ export const metadata = { title: "Set a new password, Fold" };
 /**
  * Reached from the link in the reset email.
  *
- * Supabase signs the visitor in with a short-lived recovery session before
- * this page renders, which is why there is no token to handle here. If that
- * session is missing or expired the action refuses and sends them back to
- * request a fresh link.
+ * /auth/callback exchanges the code in the link for a short lived recovery
+ * session and then sends the visitor here. If that session is missing or
+ * expired the action refuses and sends them back to request a fresh link.
  */
 export default async function ResetPasswordPage({
   searchParams,

@@ -89,7 +89,12 @@ export async function signUp(formData: FormData) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName } },
+    options: {
+      data: { full_name: fullName },
+      // The confirmation link signs them straight in and on to setting up
+      // their church, rather than landing on the home page signed out.
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org"}/auth/callback?next=/onboarding`,
+    },
   });
 
   if (error) {
@@ -193,7 +198,10 @@ export async function requestPasswordReset(formData: FormData) {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
 
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/reset-password`,
+    // Through the callback, which turns the code in the link into the
+    // recovery session the reset page needs. Must be listed under Redirect
+    // URLs in Supabase, or Supabase falls back to the Site URL instead.
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
   });
 
   await logAuthEvent(email, "reset_requested");

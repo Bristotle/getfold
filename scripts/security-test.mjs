@@ -151,6 +151,12 @@ check("webhook refuses an unsigned payload", none.status >= 400, String(none.sta
 const bad = await fetch(`${BASE}/api/paystack/webhook`, { method:"POST", headers:{"Content-Type":"application/json","x-paystack-signature":"0".repeat(128)}, body });
 check("webhook refuses a forged signature", bad.status >= 400, String(bad.status));
 
+for (const next of ["https://evil.example/x", "//evil.example/x"]) {
+  const r = await fetch(`${BASE}/auth/callback?code=bogus&next=${encodeURIComponent(next)}`, { redirect: "manual" });
+  const to = r.headers.get("location") ?? "";
+  check(`auth callback does not redirect off site (${next})`, !to.includes("evil.example"), to.slice(0, 60));
+}
+
 console.log("\n=== 7b. WhatsApp webhook signature ===");
 const waBody = JSON.stringify({ entry:[{ changes:[{ value:{ messages:[{ from:"233244000000", type:"text", text:{ body:"STOP" } }] } }] }] });
 const waNone = await fetch(`${BASE}/api/whatsapp/webhook`, { method:"POST", headers:{"Content-Type":"application/json"}, body: waBody });
