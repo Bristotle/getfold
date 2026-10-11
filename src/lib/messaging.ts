@@ -96,9 +96,10 @@ export const templates = {
   absenceFollowUp: (churchName: string, memberName: string) =>
     `Hello ${memberName}, we have missed you at ${churchName} recently and wanted to check that all is well. You are welcome any time.`,
 
-  // No name, to stay inside one segment: the link alone is forty characters.
+  // The church's own words where it wrote some, and the link always last,
+  // on its own line, so it is the thing a thumb lands on.
   meetingReminder: (r: MeetingReminder) =>
-    `${r.church}: ${r.title} starts in ${r.minutes} minutes. Join here: ${r.url}`,
+    `${reminderMessage(r)}\n\nJoin here: ${r.url}`,
 };
 
 // ---------------------------------------------------------------------------
@@ -118,7 +119,58 @@ export type MeetingReminder = {
   url: string;
   /** ISO time the meeting starts. Nothing is sent after it. */
   startsAt: string;
+  /**
+   * The church's reminder, already filled in, without the link. Absent on
+   * reminders queued before churches could write their own.
+   */
+  message?: string;
 };
+
+/** Fold's wording, until a church writes its own. */
+export const DEFAULT_MEETING_MESSAGE =
+  "{church}: {meeting} starts in {minutes} minutes.";
+
+/** What a church may put in its reminder, and what each becomes. */
+export const MEETING_PLACEHOLDERS = {
+  name: "the member's first name",
+  church: "your church's name",
+  meeting: "the meeting's name",
+  minutes: "how many minutes until it starts",
+} as const;
+
+/**
+ * Fills a church's reminder in.
+ *
+ * A placeholder we do not recognise is removed rather than sent, because
+ * "{nmae}" arriving on a member's phone is worse than a clipped sentence.
+ * {link} is removed too: the link is always added underneath, and a church
+ * that also wrote it into the text would send it twice.
+ */
+export function renderMeetingMessage(
+  template: string | null | undefined,
+  v: { name: string; church: string; meeting: string; minutes: number }
+): string {
+  return (template?.trim() || DEFAULT_MEETING_MESSAGE)
+    .replace(/\{name\}/gi, v.name.split(/\s+/)[0] || "friend")
+    .replace(/\{church\}/gi, v.church)
+    .replace(/\{meeting\}/gi, v.meeting)
+    .replace(/\{minutes\}/gi, String(v.minutes))
+    .replace(/\{[^}]*\}/g, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+
+function reminderMessage(r: MeetingReminder) {
+  return (
+    r.message ??
+    renderMeetingMessage(null, {
+      name: r.name,
+      church: r.church,
+      meeting: r.title,
+      minutes: r.minutes,
+    })
+  );
+}
 
 /**
  * Every church's reminders go out from one Fold number on the WhatsApp
@@ -145,14 +197,13 @@ export function whatsappStatus(): { configured: boolean; missing: string[] } {
  * out, and WhatsApp expects every business to offer one.
  */
 export const WHATSAPP_MEETING_TEMPLATE =
-  "Hello {{1}}, {{2}} at {{3}} starts in {{4}} minutes.\n\nJoin here: {{5}}\n\nReply STOP to stop these reminders.";
+  "Hello {{1}}, a reminder from {{2}}:\n\n{{3}}\n\nJoin here: {{4}}\n\nReply STOP to stop these reminders.";
 
 function meetingReminderValues(r: MeetingReminder): string[] {
   return [
     r.name.split(/\s+/)[0] || "friend",
-    r.title,
     r.church,
-    String(r.minutes),
+    reminderMessage(r),
     r.url,
   ].map(
     // Meta refuses a parameter containing a newline, a tab or more than

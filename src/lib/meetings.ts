@@ -7,6 +7,7 @@ import {
   whatsappStatus,
   templates,
   meetingReminderWhatsAppText,
+  renderMeetingMessage,
   type MeetingReminder,
 } from "@/lib/messaging";
 
@@ -50,13 +51,27 @@ export function describeSchedule(weekdays: number[], startsAt: string) {
  */
 export function whatsappShareUrl(
   church: string,
-  title: string,
-  weekdays: number[],
-  startsAt: string,
-  joinUrl: string
+  meeting: {
+    title: string;
+    weekdays: number[];
+    starts_at: string;
+    join_url: string;
+    remind_minutes: number;
+    message: string | null;
+  }
 ) {
-  const when = describeSchedule(weekdays, startsAt).replace(/^.* at /, "");
-  const text = `${church}: ${title} starts at ${when}.\n\nJoin here: ${joinUrl}`;
+  // The church's own words when it wrote some, exactly as its members get
+  // them by text. Otherwise the start time, which suits a post made at any
+  // hour better than "starts in 30 minutes" does.
+  const body = meeting.message
+    ? renderMeetingMessage(meeting.message, {
+        name: "brethren",
+        church,
+        meeting: meeting.title,
+        minutes: meeting.remind_minutes,
+      })
+    : `${church}: ${meeting.title} starts at ${describeSchedule(meeting.weekdays, meeting.starts_at).replace(/^.* at /, "")}.`;
+  const text = `${body}\n\nJoin here: ${meeting.join_url}`;
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
@@ -94,9 +109,9 @@ export async function queueDueMeetingReminders(
   for (const d of data as Due[]) {
     const { data: previous } = await supabase
       .from("meetings")
-      .select("last_reminded_for")
+      .select("last_reminded_for, message")
       .eq("id", d.meeting_id)
-      .maybeSingle<{ last_reminded_for: string | null }>();
+      .maybeSingle<{ last_reminded_for: string | null; message: string | null }>();
 
     const { data: claimed } = await supabase
       .from("meetings")
@@ -120,6 +135,19 @@ export async function queueDueMeetingReminders(
       common, and four identical reminders on one phone is how a church
       gets its number blocked.
     */
+    /*
+      The number the church chose, not the exact minutes left. The job runs
+      every five minutes, so a 30 minute reminder actually goes out with 25
+      to 30 left, and "starts in 27 minutes" reads like a machine. Only a
+      meeting added at the last moment, well inside its reminder time, says
+      how long is really left.
+    */
+    const left = Math.max(
+      1,
+      Math.round((new Date(d.occurs_at).getTime() - Date.now()) / 60_000)
+    );
+    const minutes = left >= d.remind_minutes - 5 ? d.remind_minutes : left;
+
     const seen = new Set<string>();
     const rows = [];
     for (const m of (members ?? []) as {
@@ -136,12 +164,15 @@ export async function queueDueMeetingReminders(
         name: m.full_name,
         title: d.title,
         church: d.organization_name,
-        minutes: Math.max(
-          1,
-          Math.round((new Date(d.occurs_at).getTime() - Date.now()) / 60_000)
-        ),
+        minutes,
         url: d.join_url,
         startsAt: d.occurs_at,
+        message: renderMeetingMessage(previous?.message, {
+          name: m.full_name,
+          church: d.organization_name,
+          meeting: d.title,
+          minutes,
+        }),
       };
 
       // WhatsApp only for somebody who agreed to it. Everyone else, and

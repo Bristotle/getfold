@@ -6,7 +6,13 @@ import { Card, CardLabel, CardStat } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { providerStatus, whatsappStatus } from "@/lib/messaging";
+import {
+  providerStatus,
+  whatsappStatus,
+  renderMeetingMessage,
+  smsSegments,
+  templates,
+} from "@/lib/messaging";
 import { WEEKDAYS, describeSchedule, whatsappShareUrl } from "@/lib/meetings";
 import {
   createMeeting,
@@ -22,6 +28,7 @@ type Meeting = {
   starts_at: string;
   join_url: string;
   remind_minutes: number;
+  message: string | null;
   enabled: boolean;
   last_reminded_for: string | null;
 };
@@ -96,6 +103,29 @@ function MeetingFields({ meeting }: { meeting?: Meeting }) {
           className={`${inputClass} font-numeric`}
         />
       </label>
+      <label className="flex flex-col gap-1.5 sm:col-span-2 lg:col-span-4">
+        <span className="text-xs font-medium text-foreground">
+          Your message{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
+        </span>
+        <textarea
+          name="message"
+          rows={3}
+          maxLength={480}
+          defaultValue={meeting?.message ?? ""}
+          placeholder="Hello brethren in Christ, this is a simple reminder to join our prayer session in the next {minutes} minutes. Join and be blessed, and invite a brother or sister too. Amen."
+          className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+        />
+        <span className="text-xs text-muted-foreground">
+          The link to join is added underneath automatically. You can use{" "}
+          <code className="font-numeric">{"{name}"}</code>,{" "}
+          <code className="font-numeric">{"{church}"}</code>,{" "}
+          <code className="font-numeric">{"{meeting}"}</code> and{" "}
+          <code className="font-numeric">{"{minutes}"}</code>. Leave it empty
+          for: &ldquo;{"{church}"}: {"{meeting}"} starts in {"{minutes}"}{" "}
+          minutes.&rdquo;
+        </span>
+      </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-xs font-medium text-foreground">Remind</span>
         <select
@@ -133,7 +163,7 @@ export default async function MeetingsPage({
     supabase
       .from("meetings")
       .select(
-        "id, title, weekdays, starts_at, join_url, remind_minutes, enabled, last_reminded_for"
+        "id, title, weekdays, starts_at, join_url, remind_minutes, message, enabled, last_reminded_for"
       )
       .order("created_at"),
     supabase
@@ -298,14 +328,43 @@ export default async function MeetingsPage({
                 >
                   {m.join_url}
                 </a>
+                {(() => {
+                  /*
+                    The text exactly as a member gets it, for a member
+                    called Ama, so the church sees its placeholders filled
+                    in. And what it costs: every 160 characters is one more
+                    text per member per meeting.
+                  */
+                  const sms = templates.meetingReminder({
+                    name: "Ama Mensah",
+                    title: m.title,
+                    church: membership.organization.name,
+                    minutes: m.remind_minutes,
+                    url: m.join_url,
+                    startsAt: "",
+                    message: renderMeetingMessage(m.message, {
+                      name: "Ama Mensah",
+                      church: membership.organization.name,
+                      meeting: m.title,
+                      minutes: m.remind_minutes,
+                    }),
+                  });
+                  const parts = smsSegments(sms);
+                  return (
+                    <div className="mt-3 rounded-lg bg-surface-soft p-3">
+                      <p className="whitespace-pre-line break-words text-sm text-foreground">
+                        {sms}
+                      </p>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        What members get by text.{" "}
+                        <span className="font-numeric">{parts}</span> text
+                        {parts === 1 ? "" : "s"} per member each time.
+                      </p>
+                    </div>
+                  );
+                })()}
                 <a
-                  href={whatsappShareUrl(
-                    membership.organization.name,
-                    m.title,
-                    m.weekdays,
-                    m.starts_at,
-                    m.join_url
-                  )}
+                  href={whatsappShareUrl(membership.organization.name, m)}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-3 inline-flex h-9 items-center rounded-lg border border-border px-3 text-sm font-semibold text-foreground hover:bg-surface-soft"

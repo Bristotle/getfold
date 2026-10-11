@@ -47,12 +47,22 @@ function readForm(formData: FormData) {
   const minutes = Number(formData.get("remindMinutes"));
   const remindMinutes = REMIND_CHOICES.includes(minutes) ? minutes : 30;
 
+  // Blank means Fold's wording, stored as null so a better default later
+  // still reaches every church that never wrote its own.
+  const message = String(formData.get("message") ?? "").trim() || null;
+  if (message && message.length > 480) {
+    fail(
+      `Keep the message under 480 characters. Yours is ${message.length}. Every 160 characters is another text for each member.`
+    );
+  }
+
   return {
     title,
     weekdays: [...new Set(weekdays)].sort(),
     starts_at: startsAt,
     join_url: joinUrl,
     remind_minutes: remindMinutes,
+    message,
   };
 }
 
