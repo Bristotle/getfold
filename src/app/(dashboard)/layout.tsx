@@ -29,13 +29,16 @@ export default async function DashboardLayout({
     profile read beside it is the person's own name for the header, which
     falls back to the address they sign in with until they set one.
   */
-  const [{ data: trial }, { data: me }] = await Promise.all([
+  const [{ data: trial }, { data: me }, { data: platformViewer }] = await Promise.all([
     supabase.rpc("trial_status", { org_id: organization.id }),
     supabase
       .from("profiles")
       .select("full_name")
       .eq("id", userId ?? "")
       .maybeSingle<{ full_name: string | null }>(),
+    // Fold staff only. The answer comes from app_admins in the database,
+    // so the link appears for exactly the people the console admits.
+    supabase.rpc("is_platform_viewer"),
   ]);
   const fullName = me?.full_name ?? null;
   const t = (trial?.[0] ?? null) as
@@ -60,6 +63,14 @@ export default async function DashboardLayout({
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-4">
+            {platformViewer === true && (
+              <Link
+                href="/admin/churches"
+                className="rounded bg-primary/10 px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/15"
+              >
+                Fold admin
+              </Link>
+            )}
             {/* The signed in person, and the way to their own details.
                 It used to be the email address as plain text, which told
                 somebody their address and offered them nothing. */}

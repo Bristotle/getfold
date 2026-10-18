@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/marketing/logo";
-import { STATUS_LABEL, type DirectoryRow } from "@/lib/platform";
+import { STATUS_LABEL, ago, type DirectoryRow } from "@/lib/platform";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Churches, Fold", robots: { index: false, follow: false } };
@@ -63,6 +63,18 @@ export default async function ChurchesPage({
         log as &ldquo;Fold support&rdquo;.
       </p>
 
+      <p className="mt-3 text-sm text-foreground">
+        <span className="font-numeric">{rows.length}</span> churches ·{" "}
+        <span className="font-numeric">
+          {rows.filter((r) => r.changes_this_week > 0).length}
+        </span>{" "}
+        active this week ·{" "}
+        <span className="font-numeric">
+          {rows.reduce((n, r) => n + Number(r.member_count), 0)}
+        </span>{" "}
+        members in all
+      </p>
+
       {message && (
         <p className="mt-4 rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
           {message}
@@ -82,6 +94,12 @@ export default async function ChurchesPage({
                   <span className="block truncate text-xs text-muted-foreground">
                     {r.pastor_email ?? "No pastor"} · joined{" "}
                     {day.format(new Date(r.created_at))}
+                  </span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    Last change {ago(r.last_active_at)} ·{" "}
+                    <span className="font-numeric">{r.changes_this_week}</span> this week ·
+                    signed in {ago(r.last_sign_in_at)} ·{" "}
+                    <span className="font-numeric">{r.team_count}</span> on the team
                   </span>
                 </span>
                 <span className="flex items-center gap-3 text-xs">
