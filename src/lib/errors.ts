@@ -38,6 +38,16 @@ export function friendly(
     return message.replace(/^READ_ONLY:\s*/, "").replace(/^t/, "T");
   }
 
+  /*
+    Our own functions raise invalid_parameter_value (22023) and
+    no_data_found (P0002) with a sentence written for the person reading
+    it, such as "Type the church's name exactly as it appears". Replacing
+    those with "That did not save" told a pastor nothing about what to fix.
+  */
+  if ((code === "22023" || code === "P0002") && message) {
+    return message;
+  }
+
   // Postgres codes, which are stable, before message text, which is not.
   if (code === "23505" || /duplicate key|already exists/i.test(message)) {
     if (/phone/i.test(message)) {
