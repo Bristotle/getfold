@@ -307,3 +307,128 @@ export async function importMembers(formData: FormData) {
 
   redirect(`/members?message=${encodeURIComponent(notes.join(" "))}`);
 }
+
+/** Ids ticked on the Members page, checked for shape and capped. */
+function selectedIds(formData: FormData): string[] {
+  return [
+    ...new Set(
+      formData
+        .getAll("ids")
+        .map(String)
+        .filter((id) => /^[0-9a-f-]{36}$/i.test(id))
+    ),
+  ].slice(0, 500);
+}
+
+/**
+ * Archives or restores every ticked member at once, so a bad import of four
+ * hundred rows is one click rather than four hundred.
+ */
+export async function bulkSetStatus(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  if (!can(membership.role, "people.write")) {
+    redirect(`/members?error=${encodeURIComponent("You do not have permission to change members.")}`);
+  }
+
+  const ids = selectedIds(formData);
+  const restore = formData.get("intent") === "restore";
+  const back = restore ? "/members?show=archived" : "/members";
+  if (ids.length === 0) {
+    redirect(`${back}${restore ? "&" : "?"}error=${encodeURIComponent("Tick at least one member first.")}`);
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("members")
+    .update(
+      restore
+        ? { status: "active", archived_at: null }
+        : { status: "archived", archived_at: new Date().toISOString() }
+    )
+    .in("id", ids)
+    .eq("organization_id", membership.organization.id);
+
+  if (error) {
+    redirect(`${back}${restore ? "&" : "?"}error=${encodeURIComponent(friendly(error))}`);
+  }
+
+  revalidatePath("/members");
+  revalidatePath("/dashboard");
+  redirect(
+    `${back}${restore ? "&" : "?"}message=${encodeURIComponent(
+      `${ids.length} member${ids.length === 1 ? "" : "s"} ${restore ? "restored" : "archived"}.`
+    )}`
+  );
+}
+
+/**
+ * Deletes ticked members for good.
+ *
+ * Only from the Archived list, so deleting is always the second of two
+ * deliberate steps, and only for leadership (people.delete, mirrored by the
+ * "admins delete" RLS policy). The word DELETE has to be typed, because a
+ * click cannot be undone and there is no recycle bin.
+ *
+ * Their giving is kept, unattributed, so the church's totals and its
+ * statistical return do not change. Their attendance ticks go with them.
+ * Their messages and transfer records are removed too: those hold the
+ * person's name and phone number, and a member who asked to be removed
+ * should be removed.
+ */
+export async function deleteMembers(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  const back = "/members?show=archived";
+  if (!can(membership.role, "people.delete")) {
+    redirect(`${back}&error=${encodeURIComponent("Only the pastor or an administrator can delete members.")}`);
+  }
+
+  const ids = selectedIds(formData);
+  if (ids.length === 0) {
+    redirect(`${back}&error=${encodeURIComponent("Tick at least one member first.")}`);
+  }
+  if (String(formData.get("confirm") ?? "").trim().toUpperCase() !== "DELETE") {
+    redirect(`${back}&error=${encodeURIComponent("Type DELETE in the box to confirm. Deleted members cannot be brought back.")}`);
+  }
+
+  const supabase = await createClient();
+  const org = membership.organization.id;
+
+  // Archived members only, checked here rather than trusted from the form.
+  const { data: archived } = await supabase
+    .from("members")
+    .select("id")
+    .in("id", ids)
+    .eq("organization_id", org)
+    .eq("status", "archived");
+  const doomed = (archived ?? []).map((m) => m.id as string);
+  if (doomed.length === 0) {
+    redirect(`${back}&error=${encodeURIComponent("Only archived members can be deleted. Archive them first.")}`);
+  }
+
+  // Transfer records refuse to let a member go, so they go first.
+  for (const table of ["notifications", "member_transfers"] as const) {
+    const { error } = await supabase
+      .from(table)
+      .delete()
+      .in("member_id", doomed)
+      .eq("organization_id", org);
+    if (error) redirect(`${back}&error=${encodeURIComponent(friendly(error))}`);
+  }
+
+  const { error } = await supabase
+    .from("members")
+    .delete()
+    .in("id", doomed)
+    .eq("organization_id", org);
+  if (error) redirect(`${back}&error=${encodeURIComponent(friendly(error))}`);
+
+  revalidatePath("/members");
+  revalidatePath("/dashboard");
+  redirect(
+    `${back}&message=${encodeURIComponent(
+      `${doomed.length} member${doomed.length === 1 ? "" : "s"} deleted. Their giving is still counted, without a name.`
+    )}`
+  );
+}

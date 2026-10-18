@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { createMember, archiveMember, restoreMember, importMembers } from "./actions";
+import { createMember, archiveMember, restoreMember, importMembers, bulkSetStatus, deleteMembers } from "./actions";
 
 type MemberRow = {
   id: string;
@@ -44,6 +44,7 @@ export default async function MembersPage({
   if (!membership) redirect("/onboarding");
 
   const canWrite = can(membership.role, "people.write");
+  const canDelete = can(membership.role, "people.delete");
 
   const showArchived = show === "archived";
 
@@ -282,6 +283,68 @@ export default async function MembersPage({
         </Card>
       )}
 
+      {canWrite && members.length > 0 && (
+        /*
+          One form for every tick on the page. The checkboxes sit inside the
+          list and point here with form="bulk-members", because the rows
+          already hold their own Archive forms and forms cannot nest.
+        */
+        <form
+          id="bulk-members"
+          action={showArchived ? undefined : bulkSetStatus}
+          className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface-soft px-3 py-2 text-sm"
+        >
+          <span className="text-xs text-muted-foreground">
+            Tick members, then:
+          </span>
+          {showArchived ? (
+            <>
+              <input type="hidden" name="intent" value="restore" />
+              <SubmitButton
+                formAction={bulkSetStatus}
+                variant="secondary"
+                size="xs"
+                pendingLabel="Restoring…"
+              >
+                Restore selected
+              </SubmitButton>
+              {canDelete && (
+                <span className="flex flex-wrap items-center gap-2 sm:ml-auto">
+                  <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    Type DELETE
+                    <input
+                      name="confirm"
+                      autoComplete="off"
+                      className="h-9 w-24 rounded-lg border border-border bg-surface px-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-danger/40"
+                    />
+                  </label>
+                  <SubmitButton
+                    formAction={deleteMembers}
+                    variant="destructive"
+                    size="xs"
+                    pendingLabel="Deleting…"
+                  >
+                    Delete selected for good
+                  </SubmitButton>
+                </span>
+              )}
+            </>
+          ) : (
+            <SubmitButton variant="secondary" size="xs" pendingLabel="Archiving…">
+              Archive selected
+            </SubmitButton>
+          )}
+        </form>
+      )}
+
+      {showArchived && canDelete && members.length > 0 && (
+        <p className="-mt-4 text-xs text-muted-foreground">
+          Deleting removes a member, their attendance ticks and the messages
+          sent to them, and cannot be undone. Their giving stays in your
+          totals without a name. To keep their history, leave them archived.
+        </p>
+      )}
+
       <Card className="p-0">
         {members.length === 0 ? (
           <p className="p-5 text-sm text-muted-foreground">
@@ -300,7 +363,17 @@ export default async function MembersPage({
                   key={m.id}
                   className="flex items-start justify-between gap-3 border-b border-border px-4 py-3 last:border-0"
                 >
-                  <div className="min-w-0">
+                  {canWrite && (
+                    <input
+                        type="checkbox"
+                        name="ids"
+                        value={m.id}
+                        form="bulk-members"
+                        aria-label={`Select ${m.full_name}`}
+                        className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+                      />
+                  )}
+                  <div className="min-w-0 flex-1">
                     <Link
                       href={`/members/${m.id}`}
                       className="block truncate font-medium text-foreground hover:text-primary hover:underline"
@@ -337,6 +410,11 @@ export default async function MembersPage({
 
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
+                  {canWrite && (
+                    <th scope="col" className="w-10 py-3 pl-5">
+                      <span className="sr-only">Select</span>
+                    </th>
+                  )}
                   <th scope="col" className="px-5 py-3 font-semibold">Name</th>
                   <th scope="col" className="px-5 py-3 font-semibold">Type</th>
                   <th scope="col" className="px-5 py-3 font-semibold">Group</th>
@@ -351,6 +429,18 @@ export default async function MembersPage({
                     key={m.id}
                     className="border-b border-border last:border-0"
                   >
+                    {canWrite && (
+                      <td className="py-3 pl-5">
+                        <input
+                          type="checkbox"
+                          name="ids"
+                          value={m.id}
+                          form="bulk-members"
+                          aria-label={`Select ${m.full_name}`}
+                          className="h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+                        />
+                      </td>
+                    )}
                     <td className="px-5 py-3 font-medium text-foreground">
                       <Link
                         href={`/members/${m.id}`}

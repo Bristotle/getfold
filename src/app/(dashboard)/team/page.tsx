@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,7 @@ import {
   inviteMember,
   revokeInvitation,
   changeRole,
-  removeMember,
-} from "./actions";
+  removeMember, resetChurch } from "./actions";
 
 type MemberRow = {
   id: string;
@@ -316,6 +316,48 @@ export default async function TeamPage({
           refuses the change otherwise, so you cannot lock yourself out.
         </p>
       </Card>
+
+      {can(membership.role, "org.transfer") && (
+        <Card className="border-danger/30">
+          <h2 className="text-sm font-bold text-foreground">Start again</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Clears every member, class, visitor, service, gift, fund, message
+            and meeting reminder, so you can begin with a clean register. It
+            cannot be undone.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Kept: your church, its settings, your team and their roles, your
+            invoices, and records of giving paid online. The activity log
+            notes that you cleared it.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Want a copy first?{" "}
+            <Link href="/members/export" prefetch={false} className="font-medium text-primary underline">
+              Export your members
+            </Link>{" "}
+            before you clear them.
+          </p>
+          <form action={resetChurch} className="mt-4 flex flex-wrap items-end gap-3">
+            <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <span className="text-xs font-medium text-foreground">
+                Type <span className="font-semibold">{membership.organization.name}</span> to confirm
+              </span>
+              <input
+                name="confirmName"
+                required
+                autoComplete="off"
+                className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-danger/40"
+              />
+            </label>
+            <SubmitButton variant="destructive" pendingLabel="Clearing…">
+              Clear everything and start again
+            </SubmitButton>
+          </form>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Only the pastor sees this.
+          </p>
+        </Card>
+      )}
     </div>
   );
 }

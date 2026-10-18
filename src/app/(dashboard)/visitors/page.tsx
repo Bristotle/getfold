@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { DataList, DataRow, TableWrap, metaLine } from "@/components/ui/data-list";
@@ -5,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can } from "@/lib/permissions";
-import { createVisitor, convertVisitor } from "./actions";
+import { createVisitor, convertVisitor, deleteVisitor } from "./actions";
 
 type VisitorRow = {
   id: string;
@@ -26,16 +27,55 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
+/*
+  Removing asks once, in place: the row turns into "Remove this visitor?"
+  with Yes and Cancel. A link rather than a dialog, so it works with no
+  JavaScript on a weak connection, and so one stray tap cannot delete.
+*/
+function RemoveLink({ id }: { id: string }) {
+  return (
+    <Link
+      href={`/visitors?remove=${id}`}
+      scroll={false}
+      className="inline-flex h-9 items-center rounded-lg px-2 text-xs font-medium text-danger-text hover:bg-danger/10"
+    >
+      Remove
+    </Link>
+  );
+}
+
+function RemoveConfirm({ id, name }: { id: string; name: string }) {
+  return (
+    <span className="inline-flex flex-wrap items-center justify-end gap-1 text-xs">
+      <span className="text-foreground">Remove {name}?</span>
+      <form action={deleteVisitor}>
+        <input type="hidden" name="id" value={id} />
+        <SubmitButton variant="destructive" size="xs" pendingLabel="Removing…">
+          Yes, remove
+        </SubmitButton>
+      </form>
+      <Link
+        href="/visitors"
+        scroll={false}
+        className="inline-flex h-9 items-center rounded-lg px-2 font-medium text-muted-foreground hover:bg-surface-soft"
+      >
+        Cancel
+      </Link>
+    </span>
+  );
+}
+
 export default async function VisitorsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; remove?: string }>;
 }) {
-  const { error, message } = await searchParams;
+  const { error, message, remove } = await searchParams;
   const { membership } = await getMembership();
   if (!membership) redirect("/onboarding");
 
   const canWrite = can(membership.role, "people.write");
+  const canDelete = can(membership.role, "people.delete");
 
   const supabase = await createClient();
   const { data, error: loadError } = await supabase
@@ -157,17 +197,24 @@ export default async function VisitorsPage({
                     v.how_heard
                   )}
                   action={
-                    v.converted_member_id ? (
-                      <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success-text">
-                        Member
-                      </span>
+                    canDelete && remove === v.id ? (
+                      <RemoveConfirm id={v.id} name={v.full_name} />
                     ) : (
-                      <form action={convertVisitor}>
-                        <input type="hidden" name="id" value={v.id} />
-                        <SubmitButton variant="quiet" size="xs" pendingLabel="…">
-                          Convert
-                        </SubmitButton>
-                      </form>
+                      <span className="flex items-center gap-1">
+                        {v.converted_member_id ? (
+                          <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success-text">
+                            Member
+                          </span>
+                        ) : (
+                          <form action={convertVisitor}>
+                            <input type="hidden" name="id" value={v.id} />
+                            <SubmitButton variant="quiet" size="xs" pendingLabel="…">
+                              Convert
+                            </SubmitButton>
+                          </form>
+                        )}
+                        {canDelete && <RemoveLink id={v.id} />}
+                      </span>
                     )
                   }
                 />
@@ -201,17 +248,24 @@ export default async function VisitorsPage({
                       {v.how_heard ?? "-"}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      {v.converted_member_id ? (
-                        <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success-text">
-                          Member
-                        </span>
+                      {canDelete && remove === v.id ? (
+                        <RemoveConfirm id={v.id} name={v.full_name} />
                       ) : (
-                        <form action={convertVisitor}>
-                          <input type="hidden" name="id" value={v.id} />
-                          <SubmitButton variant="quiet" size="xs" pendingLabel="Converting…">
-                            Convert to member
-                          </SubmitButton>
-                        </form>
+                        <span className="inline-flex items-center justify-end gap-1">
+                          {v.converted_member_id ? (
+                            <span className="rounded bg-success/10 px-2 py-1 text-xs font-semibold text-success-text">
+                              Member
+                            </span>
+                          ) : (
+                            <form action={convertVisitor}>
+                              <input type="hidden" name="id" value={v.id} />
+                              <SubmitButton variant="quiet" size="xs" pendingLabel="Converting…">
+                                Convert to member
+                              </SubmitButton>
+                            </form>
+                          )}
+                          {canDelete && <RemoveLink id={v.id} />}
+                        </span>
                       )}
                     </td>
                   </tr>

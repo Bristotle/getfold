@@ -167,3 +167,32 @@ export async function acceptInvitations() {
 
   redirect("/dashboard");
 }
+
+/**
+ * Clears every record the church typed in, to start again.
+ *
+ * All of the deciding happens in reset_church() in the database: that only
+ * the pastor may, that the church's name was typed exactly, and what is
+ * kept. This only asks, and says what happened.
+ */
+export async function resetChurch(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  if (!can(membership.role, "org.transfer")) {
+    redirect(`/team?error=${encodeURIComponent("Only the pastor can clear the church's records.")}`);
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reset_church", {
+    org_id: membership.organization.id,
+    confirm_name: String(formData.get("confirmName") ?? ""),
+  });
+  if (error) redirect(`/team?error=${encodeURIComponent(friendly(error))}`);
+
+  revalidatePath("/", "layout");
+  redirect(
+    `/team?message=${encodeURIComponent(
+      "Everything was cleared. Your team, invoices and online payment records were kept."
+    )}`
+  );
+}

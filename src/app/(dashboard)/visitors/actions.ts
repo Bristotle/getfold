@@ -122,3 +122,38 @@ export async function convertVisitor(formData: FormData) {
     )}`
   );
 }
+
+/**
+ * Removes a visitor entry for good.
+ *
+ * Asked for by a church that recorded two visitors by mistake and had no
+ * way to take them off the page. Leadership only, matching the "admins
+ * delete" RLS policy on visitors. A visitor who became a member keeps their
+ * member record: only the note of their first visit goes.
+ */
+export async function deleteVisitor(formData: FormData) {
+  const { membership } = await getMembership();
+  if (!membership) redirect("/onboarding");
+  if (!can(membership.role, "people.delete")) {
+    redirect(
+      `/visitors?error=${encodeURIComponent("Only the pastor or an administrator can remove visitors.")}`
+    );
+  }
+
+  const id = String(formData.get("id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/visitors");
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("visitors")
+    .delete()
+    .eq("id", id)
+    .eq("organization_id", membership.organization.id)
+    .select("full_name");
+
+  if (error) redirect(`/visitors?error=${encodeURIComponent(friendly(error))}`);
+  if (!data?.length) redirect("/visitors?error=That visitor was already removed.");
+
+  revalidatePath("/visitors");
+  redirect(`/visitors?message=${encodeURIComponent(`${data[0].full_name} removed.`)}`);
+}
