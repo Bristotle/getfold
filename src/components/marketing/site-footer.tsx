@@ -12,6 +12,7 @@ import {
 } from "@/components/marketing/payment-marks";
 import { Lock } from "lucide-react";
 import { subscribeNewsletter } from "@/app/newsletter-actions";
+import { SUPPORT_PHONE } from "@/lib/contact";
 
 /**
  * The public footer.
@@ -221,8 +222,8 @@ export function SiteFooter() {
                   <Phone size={16} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0 text-[#c9b3ff]" />
                   <span>
                     <span className="block text-xs text-white/60">Phone</span>
-                    <a href="tel:+233247902348" className="font-numeric font-medium text-white/85 hover:text-white">
-                      +233 24 790 2348
+                    <a href={`tel:${SUPPORT_PHONE.tel}`} className="font-numeric font-medium text-white/85 hover:text-white">
+                      {SUPPORT_PHONE.display}
                     </a>
                   </span>
                 </li>

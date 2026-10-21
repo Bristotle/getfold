@@ -7,6 +7,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { submitEnquiry } from "@/app/contact-actions";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { QueryBanner } from "@/components/marketing/query-banner";
+import { SUPPORT_PHONE } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact Fold, church software support in Ghana",
@@ -22,7 +23,7 @@ export default function ContactPage() {
   // Neither is invented. A number that does not ring, or an address that
   // bounces, is worse than no number at all on a page asking a church to
   // trust you. Set the env vars and these appear.
-  const phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
+  const phone = SUPPORT_PHONE.display;
   const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
   const hours = process.env.NEXT_PUBLIC_CONTACT_HOURS;
 
@@ -31,7 +32,7 @@ export default function ContactPage() {
       Icon: Phone,
       label: "Call or text",
       value: phone,
-      href: `tel:${phone.replace(/\s/g, "")}`,
+      href: `tel:${SUPPORT_PHONE.tel}`,
       note: "A person answers, not a menu.",
     },
     email && {

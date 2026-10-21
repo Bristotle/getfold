@@ -2,6 +2,7 @@ import { submitEnquiry } from "@/app/contact-actions";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { QueryBanner } from "@/components/marketing/query-banner";
+import { SUPPORT_PHONE } from "@/lib/contact";
 
 /**
  * The enquiry section.
@@ -10,9 +11,8 @@ import { QueryBanner } from "@/components/marketing/query-banner";
  * paragraph of it, with the form on a white card because a form on a tinted
  * ground is harder to read and harder to trust.
  *
- * Every promise on the left is one we can actually keep. There is no phone
- * number because inventing one would be worse than omitting it: set
- * NEXT_PUBLIC_CONTACT_PHONE and the call box appears.
+ * Every promise on the left is one we can actually keep. The number in the
+ * call box is Fold's business line, from src/lib/contact.ts.
  */
 const PROMISES = [
   "A real person reads every message, not a bot",
@@ -25,7 +25,7 @@ const fieldClass =
   "h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40";
 
 export function Contact() {
-  const phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
+  const phone = SUPPORT_PHONE.display;
 
   return (
     <section
@@ -71,7 +71,7 @@ export function Contact() {
                 Would rather talk?
               </p>
               <a
-                href={`tel:${phone.replace(/\s/g, "")}`}
+                href={`tel:${SUPPORT_PHONE.tel}`}
                 className="mt-1 block rounded font-numeric text-2xl font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60"
               >
                 {phone}

@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
 import { SectionBg, CtaBand } from "@/components/marketing/section-bg";
 import { metaDescription } from "@/lib/seo";
+import { SUPPORT_PHONE } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "About Fold, built around your denomination",
@@ -101,6 +102,14 @@ export default function AboutPage() {
             description:
               "Church management software built in Ghana for Ghanaian churches, covering the membership register, attendance, tithes and offerings, and denominational statistical returns.",
             areaServed: { "@type": "Country", name: "Ghana" },
+            telephone: SUPPORT_PHONE.tel,
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: SUPPORT_PHONE.tel,
+              contactType: "customer support",
+              areaServed: "GH",
+              availableLanguage: ["English"],
+            },
             parentOrganization: {
               "@type": "Organization",
               name: "Manuel Technologies",
