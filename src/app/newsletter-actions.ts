@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { sourceFrom } from "@/lib/attribution";
 
 /**
  * A newsletter sign up from the footer.
@@ -31,6 +32,7 @@ export async function subscribeNewsletter(formData: FormData) {
   const { error } = await supabase.from("newsletter_subscribers").insert({
     email,
     source: String(formData.get("source") ?? "footer").slice(0, 60),
+    ...sourceFrom(formData),
   });
 
   /*

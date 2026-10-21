@@ -17,7 +17,50 @@ export type Block =
   | { type: "h3"; text: string }
   | { type: "list"; items: string[] }
   | { type: "steps"; items: string[] }
-  | { type: "quote"; text: string }
+  /*
+    A pull quote. With `by`, it is somebody's real words, given with their
+    permission, and the attribution is shown. Never invent one: a quote
+    from a pastor who did not say it is a fabricated record.
+  */
+  | { type: "quote"; text: string; by?: string; role?: string }
+  /*
+    A table, for anything a reader compares across rows: costs, features,
+    what each record holds. Assistants lift tables almost verbatim, so a
+    figure belongs in one when it is the answer.
+  */
+  | {
+      type: "table";
+      caption: string;
+      head: string[];
+      rows: string[][];
+      /** Where the figures came from, or what they assume. */
+      note?: string;
+    }
+  /*
+    A real screenshot of the product from public/screens, captured by
+    scripts/demo-screens.mjs from a demonstration society. Never a mock up.
+  */
+  | {
+      type: "image";
+      src: string;
+      alt: string;
+      caption: string;
+      width: number;
+      height: number;
+    }
+  /*
+    A horizontal bar chart, drawn in plain HTML so it works without
+    JavaScript and reads to a screen reader as the table it is. Only for
+    figures that have a source in this post or in src/lib/stats.ts.
+  */
+  | {
+      type: "chart";
+      title: string;
+      /** Shown after each value, for example "%" or " societies". */
+      unit?: string;
+      rows: { label: string; value: number }[];
+      source?: string;
+    }
   /*
     Questions people actually type into a search engine, with the answer in
     the first sentence. Rendered as a visible FAQ at the end of the post and
@@ -44,8 +87,30 @@ export type Post = {
   /** ISO, when substantively revised. Search engines reward a real date. */
   updated?: string;
   excerpt: string;
+  /*
+    The question in the title, answered in two or three sentences. Shown
+    first, above everything, in a box headed "In short", and given to
+    search engines as the article's abstract. It is the part an assistant
+    quotes, so it has to stand alone: no "as we will see", no pitch.
+  */
+  answer: string;
+  /** Who wrote it. Defaults to the founder. */
+  author?: keyof typeof AUTHORS;
   body: Block[];
 };
+
+/*
+  Named people, because an article signed by a company is an article
+  nobody stands behind. Only facts that are true and checkable go in a bio.
+*/
+export const AUTHORS = {
+  founder: {
+    name: "Emmanuel Akyeam",
+    role: "Founder of Fold",
+    bio: "Emmanuel builds Fold, church management software made in Ghana by Manuel Technologies, and works directly with the churches that use it on their registers, giving and statistical returns.",
+    url: "/about",
+  },
+} as const;
 
 export const POSTS: Post[] = [
   {
@@ -54,9 +119,11 @@ export const POSTS: Post[] = [
     category: "Running the church",
     date: "September 2026",
     published: "2026-09-17",
-    updated: "2026-09-17",
+    updated: "2026-10-21",
     excerpt:
       "What the quarterly return asks for, where each figure comes from, and the checklist that turns an evening of reconciling three books into an hour. Written for the society secretary who has to produce it.",
+    answer:
+      "A church statistical return reports five things for the quarter: membership by class, average attendance per service, baptisms, confirmations, marriages and deaths, transfers in and out, and income including mobile money. The first four come from the register and the fifth from the offering book, so the work is agreeing those records, not the arithmetic. Count only active members, average attendance over the services actually held, and agree the income total, mobile money included, with the treasurer before writing it down.",
     body: [
       {
         type: "p",
@@ -80,6 +147,18 @@ export const POSTS: Post[] = [
       {
         type: "p",
         text: "The first four come from the register; the fifth from the offering book. That split is why the return takes an evening: two sources, kept by two people, reconciled by a third.",
+      },
+      {
+        type: "table",
+        caption: "Where each figure on the return comes from",
+        head: ["Figure", "Where it comes from", "Who usually holds it", "The common mistake"],
+        rows: [
+          ["Membership by class", "The register, active names only", "Society secretary", "Counting every name in the book rather than active members"],
+          ["Attendance", "Every Sunday's count and the number of services held", "Class leaders", "Averaging over the calendar rather than services held"],
+          ["Baptisms, confirmations, marriages, deaths", "Dated entries, checked against the minister's diary", "Secretary and minister", "Events kept only as notes in the diary"],
+          ["Transfers in and out", "The register, marked at both churches", "Secretary", "One end forgets to record it"],
+          ["Income", "The offering book or the treasurer's ledger", "Treasurer", "Mobile money left out because it never touched the bowl"],
+        ],
       },
       { type: "h2", text: "Where each figure comes from" },
       { type: "h3", text: "Membership by class" },
@@ -129,6 +208,14 @@ export const POSTS: Post[] = [
         text: "The fix is one record rather than three, so that marking a member transferred out removes her from the class count at the same moment, and recording an offering puts it in the quarter's total at the same moment. A spreadsheet does part of this if one person keeps it. Software built for churches does the rest and [produces the return as a page to print](/help/reports/statistical-return).",
       },
       {
+        type: "image",
+        src: "/screens/reports.webp",
+        alt: "The statistical return in Fold for a chosen period: membership by sex, attendance averaged per service, vital records and outreach, with a print or save as PDF button.",
+        caption: "The statistical return, for any period, produced from what was recorded. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
+      },
+      {
         type: "quote",
         text: "If your return took more than an hour this quarter, the time went into reconciling records that should have been one record. That is worth fixing once rather than paying for every quarter.",
       },
@@ -157,13 +244,27 @@ export const POSTS: Post[] = [
     category: "Running the church",
     date: "September 2026",
     published: "2026-09-17",
-    updated: "2026-09-17",
+    updated: "2026-10-21",
     excerpt:
       "What to record for each member, how to keep a register that survives a change of secretary, what the Data Protection Act asks of a church, and when a book, a spreadsheet or software is the right tool.",
+    answer:
+      "A church register needs six fields filled in for every member: full name, a phone number they answer, date of birth, class or group, status (active, lapsed, transferred out or deceased) and the date they joined or were baptised. Status matters most, because the return counts members now, not every name ever written down, so change a status when something happens and never delete a name. Under Ghana's Data Protection Act, 2012 (Act 843) a church keeping a register is a data controller, so collect only what you need, keep it where only the right people can reach it, and be able to show or delete a member's record on request.",
     body: [
       {
         type: "p",
         text: "Ghana's 2021 census counted 71.3 percent of the country as Christian, roughly 22 million people, and nearly every one of them is on a register somewhere: a book in a vestry, a spreadsheet on a secretary's laptop, or a system somebody set up and left. The register is the church's memory. The return, the birthday list, the count of who has stopped coming and the letter of transfer all come out of it, and every one of those is only as good as the register underneath. This is how to keep one properly, written for the person who has just been handed it.",
+      },
+      {
+        type: "chart",
+        title: "Christians in Ghana by tradition, as a share of the whole population (2021 census)",
+        unit: "%",
+        rows: [
+          { label: "Pentecostal or charismatic", value: 31.6 },
+          { label: "Other Protestant, including Methodist, Presbyterian and Anglican", value: 17.4 },
+          { label: "Other Christian", value: 12.3 },
+          { label: "Catholic", value: 10.0 },
+        ],
+        source: "Ghana Statistical Service, 2021 Population and Housing Census, General Report Volume 3C. Together these make the 71.3 percent who are Christian.",
       },
       { type: "h2", text: "Six fields, always filled in" },
       {
@@ -179,6 +280,19 @@ export const POSTS: Post[] = [
           "Class, fellowship, cell or society, in [your denomination's own word](/help/members/member-types-and-classes). Membership is counted by group on every return.",
           "Status: active, lapsed, transferred out or deceased. The most important field, and the one most registers lack.",
           "The date they joined, were received or were baptised. Membership is usually defined by one of these, and a dispute is settled by it.",
+        ],
+      },
+      {
+        type: "table",
+        caption: "The six fields and what each one makes possible",
+        head: ["Field", "Write it as", "What it makes possible"],
+        rows: [
+          ["Full name", "As they would write it, family name last", "A register that sorts and searches"],
+          ["Phone number", "In full, 024 400 0000", "Reaching the member, and mobile money giving"],
+          ["Date of birth", "At least month and day", "A birthday text from the church"],
+          ["Class or group", "In your denomination's own word", "Membership by group on every return"],
+          ["Status", "Active, lapsed, transferred out or deceased", "A count of members now, not of every name"],
+          ["Date joined or baptised", "A full date", "Settling who is a member"],
         ],
       },
       { type: "h2", text: "Why status matters most" },
@@ -221,6 +335,26 @@ export const POSTS: Post[] = [
         type: "p",
         text: "Software gives several people one record, counts itself, and produces the return and the birthday list without anyone compiling them, for a quarterly subscription and an evening moving the register across. Choose one that [reads your spreadsheet in](/help/members/import-from-excel), [lets you export it out](/help/members/export-your-members), and understands your denomination rather than treating a society as a small group.",
       },
+      {
+        type: "table",
+        caption: "Book, spreadsheet or software for the church register",
+        head: ["", "Book", "Spreadsheet", "Software"],
+        rows: [
+          ["Cost", "Cheap", "Free", "A quarterly subscription"],
+          ["Who can use it", "One person at a time", "One person, until it is emailed and two copies exist", "Several people, one record"],
+          ["Counting for the return", "Read every page", "Searchable and countable", "Counts itself and produces the return"],
+          ["Main risk", "One fire ends the church's memory", "Two copies that disagree", "Choosing one you cannot export from"],
+          ["Do this", "Keep a second copy elsewhere, updated quarterly", "Keep it in Google Sheets and give the pastor access", "Choose one that imports your spreadsheet and exports it back"],
+        ],
+      },
+      {
+        type: "image",
+        src: "/screens/members.webp",
+        alt: "The members register in Fold, each member with their class, membership category and phone number, searchable.",
+        caption: "A register in software, with each member's class and category in the church's own words. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
+      },
       { type: "h2", text: "Moving from a book" },
       {
         type: "steps",
@@ -245,6 +379,7 @@ export const POSTS: Post[] = [
         type: "sources",
         items: [
           { label: "Ghana Statistical Service, 2021 Population and Housing Census, religious affiliation", url: "https://census2021.statsghana.gov.gh/" },
+          { label: "Ghana Statistical Service, 2021 Population and Housing Census, General Report Volume 3C, Christian traditions as a share of the population, via Wikipedia", url: "https://en.wikipedia.org/wiki/Religion_in_Ghana" },
           { label: "Bank of Ghana via MyJoyOnline, active mobile money accounts reached 26.7 million in 2025", url: "https://www.myjoyonline.com/total-mobile-money-transaction-values-grew-by-50-8-to-gh%C2%A24-54trn-in-2025/" },
           { label: "Data Protection Act, 2012 (Act 843), full text as published by the National Communications Authority", url: "https://nca.org.gh/wp-content/uploads/2020/09/Data-Protection-Act-2012.pdf" },
         ],
@@ -257,9 +392,11 @@ export const POSTS: Post[] = [
     category: "Giving",
     date: "September 2026",
     published: "2026-09-17",
-    updated: "2026-09-17",
+    updated: "2026-10-21",
     excerpt:
       "A MoMo number on the projector is where most churches start and where the problems begin. The three ways to take mobile money giving, what each costs, what your members will actually see on their phones, and how the money reaches the church.",
+    answer:
+      "A church in Ghana can take mobile money giving in three proper ways: a merchant account registered to the church with MTN, Telecel or AirtelTigo, a payment processor such as Paystack or Hubtel that settles to the church's own mobile money or bank account, or church software with giving built in that records each gift against the member. A MoMo number on the projector works but puts church money in a personal wallet with no record of who gave. Paystack charges 1.95 percent on mobile money in Ghana, so a GHS 100 tithe reaches the church as GHS 98.05, and on MTN the member must type back a code sent by text before anything is paid.",
     body: [
       {
         type: "p",
@@ -291,6 +428,19 @@ export const POSTS: Post[] = [
         type: "p",
         text: "[Church management software that includes giving](/features/digital-giving) does the processor step for you and connects each payment to the register: the gift is recorded against the member and the fund the moment it succeeds, and appears in the quarterly return without anybody copying it across. Underneath it is usually a processor, so the fee is the processor's fee. The question to ask any vendor is not what percentage they take but whether the money ever passes through their account at all. If it does, they are holding your church's tithes, which is a different relationship from selling you software.",
       },
+      {
+        type: "table",
+        caption: "Four ways a church takes mobile money, compared",
+        head: ["", "Number on the projector", "Merchant account", "Payment processor", "Church software with giving"],
+        rows: [
+          ["Where the money lands", "A personal wallet", "An account the church controls", "The church's mobile money or bank account", "The church's account, through a processor"],
+          ["Who gave is known", "Only by matching transfers by hand", "Only if the member adds a reference", "Yes, every payment carries a reference", "Yes, recorded against the member and fund"],
+          ["Connects to the register", "No", "No", "No", "Yes"],
+          ["In the quarterly return", "Often missing", "After a monthly statement is copied in", "After its dashboard total is copied in", "Already, from the moment the gift succeeds"],
+          ["Cost", "-", "-", "Paystack: 1.95 percent on mobile money", "The processor's fee underneath"],
+        ],
+        note: "Paystack's 1.95 percent is its published Ghana rate for mobile money, with no monthly fee on a standard account.",
+      },
       { type: "h2", text: "What your members will actually see" },
       {
         type: "p",
@@ -317,6 +467,14 @@ export const POSTS: Post[] = [
         text: "Whichever method you use, the treasurer needs the mobile money total beside the cash total or the return is wrong. With a merchant account that means downloading a statement monthly. With a processor it means the same from its dashboard. With software it means nothing, because the gift was recorded when it succeeded. That difference is the whole argument for the third option, and it is worth more than the fee. [What mobile money actually costs a church](/blog/what-mobile-money-costs-a-church) goes through the fees line by line.",
       },
       {
+        type: "image",
+        src: "/screens/giving.webp",
+        alt: "The giving page in Fold: tithes and offerings by member, cash and mobile money side by side, each with its date and reference.",
+        caption: "Cash counted on Sunday and mobile money through the week, in one ledger. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
+      },
+      {
         type: "faq",
         items: [
           { q: "How do churches in Ghana collect tithes by mobile money?", a: "Three ways: a personal or merchant MoMo number members transfer to, a payment processor such as Paystack or Hubtel that settles to the church's account, or church software with giving built in that records each gift against the member. Most start with a number on the projector and move on when reconciling it becomes a burden." },
@@ -341,8 +499,11 @@ export const POSTS: Post[] = [
     category: "Choosing software",
     date: "September 2026",
     published: "2026-09-07",
+    updated: "2026-10-21",
     excerpt:
       "Every guide to this is written by one of the vendors, including this one. So here is the version that names what each product is genuinely good at, including the ones that beat us.",
+    answer:
+      "The best church management software in Ghana depends on the job: Shepherd for WhatsApp check-in and a published cedi price, Asoriba for a branded member app and several branches, ChurchCast for a branded app with sermons, DaChurchMan or Msoft for payroll, HR and accounting, and Fold for denominational structure and the statistical return. Judge any of them on four things before features: whether cash is treated as normal, whether it fits how your church is organised, whether it works on a phone on a weak signal, and whether you can pay in cedis without a card. Then ask how you would get your data out again.",
     body: [
       {
         type: "p",
@@ -418,16 +579,44 @@ export const POSTS: Post[] = [
       },
       {
         type: "p",
-        text: "What we do not have, plainly: no WhatsApp integration, no member facing app, and no payroll or accounting. Branches exist, a circuit can oversee its societies and each keeps its own register, but figures do not yet roll up into one view and the tree is one level deep, so a national headquarters with regions above districts above assemblies is not served yet. If any of those is the reason you are looking, one of the products above is a better answer than ours, and we would rather tell you now than after you have moved four hundred members across.",
+        text: "What we do not have, plainly: no member facing app, no payroll or accounting, and no automatic WhatsApp messages yet. Meeting reminders go to members by text, with a button that posts the same reminder into a WhatsApp group. Branches go to any depth, headquarters over regions over districts over assemblies, and leaders above see the figures of every church beneath them, read only, while each church keeps its own register. If anything we lack is the reason you are looking, one of the products above is a better answer than ours, and we would rather tell you now than after you have moved four hundred members across.",
       },
       {
         type: "quote",
         text: "If your church files a return to a circuit, a presbytery, a diocese or a district, you are the church nobody else in this list is building for.",
       },
+      { type: "h2", text: "Side by side" },
+      {
+        type: "p",
+        text: "The same comparison in one place, using only what is said above. Prices and fees change, so check each with the vendor.",
+      },
+      {
+        type: "table",
+        caption: "Church management software used in Ghana, compared",
+        head: ["Product", "Best for", "Published price", "What it does not do"],
+        rows: [
+          ["Shepherd", "WhatsApp check-in, mobile money, youth tracking by Ghana's education stages", "From GHS 99, free up to 50 members", "Denominational structure: no circuit, society, Bible class or quarterly return"],
+          ["Asoriba", "A branded member app and several branches; running since 2016 with over a thousand churches", "Not on the homepage", "-"],
+          ["ChurchCast", "Custom branded apps with sermons, devotionals and a feed; multi campus", "Giving fees published: mobile money 1.7 percent, cards 2.15 percent", "-"],
+          ["DaChurchMan", "Running the office as a business: payroll, HR, assets, accounting; thirteen modules", "Not published", "-"],
+          ["Msoft", "The same breadth, seventeen modules, across Ghana, Nigeria and Kenya", "Not published", "-"],
+          ["Planning Center, Breeze, ChurchTrac, Tithe.ly", "Mature products; Breeze is easy to teach, ChurchTrac puts every feature on every tier", "ChurchTrac from USD 29 a month", "Assume card giving, dollar billing, a steady connection and one independent congregation"],
+          ["Fold", "Societies, circuits, Bible classes, class leaders and the statistical return; cash first", "In cedis on the pricing page; 30 days free, no card", "No WhatsApp integration, no member facing app, no payroll or accounting"],
+        ],
+        note: "As described in this article. A dash means the article does not say.",
+      },
+      {
+        type: "image",
+        src: "/screens/reports.webp",
+        alt: "The statistical return in Fold for a chosen period: membership by sex, attendance averaged per service, vital records and outreach, with a print or save as PDF button.",
+        caption: "The statistical return in Fold, produced for any period from what was recorded. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
+      },
       { type: "h2", text: "How to actually decide" },
       {
         type: "p",
-        text: "Do not decide on a feature table, including ours. Take the thing that costs your church the most time this quarter, whether that is the return, the register, chasing giving, or knowing who has stopped coming, and ask each vendor to show you that one job end to end. Then ask how you would get your data out. The answers to those two questions will separate the field faster than any list.",
+        text: "Do not decide on a feature table, including this one or ours. Take the thing that costs your church the most time this quarter, whether that is the return, the register, chasing giving, or knowing who has stopped coming, and ask each vendor to show you that one job end to end. Then ask how you would get your data out. The answers to those two questions will separate the field faster than any list.",
       },
     ],
   },
@@ -437,8 +626,11 @@ export const POSTS: Post[] = [
     category: "Church admin",
     date: "September 2026",
     published: "2026-09-05",
+    updated: "2026-10-21",
     excerpt:
       "Most societies rebuild the same return every quarter from a notebook, a cash book and someone's memory. Here is why it takes so long, and what has to change for it to take minutes instead.",
+    answer:
+      "To produce a statistical return without a spreadsheet, record each fact once, at the moment it happens, in one place that can be counted later: attendance on the Sunday, giving when it is counted, a baptism the week it happens. The return then becomes a question about a period rather than an evening of reconciling the register, the Sunday counts, the minister's notes and the cash book. Make sure average attendance is calculated against services actually held, not the number of Sundays in the period.",
     body: [
       {
         type: "p",
@@ -475,10 +667,29 @@ export const POSTS: Post[] = [
         type: "p",
         text: "The change that actually matters is recording each fact once, at the moment it happens, in a form that can be counted later. Attendance recorded on the Sunday. Giving recorded when it is counted. A baptism recorded the week it happens rather than remembered in October.",
       },
+      {
+        type: "table",
+        caption: "Each figure on the return, before and after",
+        head: ["Figure", "Where it lives now", "Recorded once, when"],
+        rows: [
+          ["Membership", "A register that may not show who has left", "Somebody joins, transfers out or leaves"],
+          ["Attendance", "A column of Sunday counts, averaged by hand", "On the Sunday"],
+          ["Baptisms and confirmations", "Often only the minister's own notes", "The week it happens"],
+          ["Income", "The cash book, split by tithe, offering and project", "When it is counted"],
+        ],
+      },
       { type: "h2", text: "What that looks like in practice" },
       {
         type: "p",
         text: "If the register, the attendance and the giving all live in the same place, the return stops being a task and becomes a question you ask: what were the figures between January and September? Membership by class, the average across the services you actually held, baptisms and confirmations in the period, and income split by type.",
+      },
+      {
+        type: "image",
+        src: "/screens/reports.webp",
+        alt: "The statistical return in Fold for a chosen period: membership by sex, attendance averaged per service, vital records and outreach, with a print or save as PDF button.",
+        caption: "A statistical return asked for a chosen period and produced from what was recorded. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
       },
       {
         type: "p",
@@ -501,8 +712,11 @@ export const POSTS: Post[] = [
     category: "Church admin",
     date: "September 2026",
     published: "2026-09-04",
+    updated: "2026-10-21",
     excerpt:
       "Churches lose their records to floods, fires, and the one person who knew where everything was. Moving the register is less work than it looks, and there is a right order to do it in.",
+    answer:
+      "Do not move a church register by typing the whole book first. Start with the people who come every week, set up your classes and their leaders, record this Sunday's service, and add the rest of the book gradually as people come up. If part of it is already in Excel, import it rather than retyping, format phone numbers as text so 0244 keeps its zero, write dates as 1990-04-03, and keep writing in the book for a month until the computer has proved itself.",
     body: [
       {
         type: "p",
@@ -532,6 +746,23 @@ export const POSTS: Post[] = [
         type: "p",
         text: "Two things to watch when exporting from Excel. Phone numbers lose their leading zero unless the column is formatted as text, so 0244 becomes 244. And dates written as 03/04/1990 are ambiguous, that is March in some systems and April in others. Where a date matters, write it as 1990-04-03, which cannot be misread.",
       },
+      {
+        type: "table",
+        caption: "Two things that go wrong exporting a register from Excel",
+        head: ["Column", "What goes wrong", "The fix"],
+        rows: [
+          ["Phone numbers", "The leading zero is dropped, so 0244 becomes 244", "Format the column as text before exporting"],
+          ["Dates", "03/04/1990 is March in some systems and April in others", "Write it as 1990-04-03"],
+        ],
+      },
+      {
+        type: "image",
+        src: "/screens/members.webp",
+        alt: "The members register in Fold, each member with their class, membership category and phone number, searchable.",
+        caption: "A register once it is on a computer, each member with their class, category and phone number. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
+      },
       { type: "h2", text: "Decide what you actually need to record" },
       {
         type: "p",
@@ -554,8 +785,11 @@ export const POSTS: Post[] = [
     category: "Giving",
     date: "September 2026",
     published: "2026-09-03",
+    updated: "2026-10-21",
     excerpt:
       "The headline rate is not the number that matters. For churches collecting many small offerings, the minimum fee per transaction can cost more than the percentage.",
+    answer:
+      "Receiving mobile money costs a church in Ghana around 1.95 percent per gift through the major processors, so a GHS 500 tithe costs about ten cedis. The number to check is any minimum fee per transaction: a 30 pesewa minimum turns a GHS 5 offering into a 6 percent charge, three times the headline rate. Model fees on the amounts your congregation actually gives, and check settlement time, onboarding documents and whether all three networks are accepted.",
     body: [
       {
         type: "p",
@@ -580,6 +814,28 @@ export const POSTS: Post[] = [
         text: "This matters more for churches than for most businesses, because a congregation gives in many small amounts rather than a few large ones. Two hundred members giving GHS 10 each is a very different fee bill from two members giving GHS 1,000.",
       },
       {
+        type: "table",
+        caption: "The fee on one gift, with and without a minimum",
+        head: ["Gift", "At 1.95 percent, no minimum", "At 1.95 percent with a 30 pesewa minimum", "Effective rate with the minimum"],
+        rows: [
+          ["GHS 5", "About GHS 0.10", "GHS 0.30", "6 percent"],
+          ["GHS 10", "About GHS 0.20", "GHS 0.30", "3 percent"],
+          ["GHS 100", "GHS 1.95", "GHS 1.95", "1.95 percent"],
+          ["GHS 500", "GHS 9.75", "GHS 9.75", "1.95 percent"],
+        ],
+        note: "Arithmetic on the rates in this article. Paystack publishes 1.95 percent on mobile money in Ghana with no minimum per transaction; the 30 pesewa minimum is the kind some processors apply.",
+      },
+      {
+        type: "table",
+        caption: "GHS 2,000 given two ways",
+        head: ["How it was given", "Fee at 1.95 percent, no minimum", "Fee with a 30 pesewa minimum"],
+        rows: [
+          ["200 members giving GHS 10 each", "GHS 39.00", "GHS 60.00"],
+          ["2 members giving GHS 1,000 each", "GHS 39.00", "GHS 39.00"],
+        ],
+        note: "Arithmetic on the rates in this article. The same total costs more than half as much again when it arrives in small gifts under a minimum fee.",
+      },
+      {
         type: "quote",
         text: "Model your fees on the amounts your congregation actually gives, not on the headline rate.",
       },
@@ -602,6 +858,20 @@ export const POSTS: Post[] = [
         type: "p",
         text: "A church that makes mobile money the main path will exclude the members who do not use it, and in most congregations that is still a large number of people, often the oldest and most faithful. Cash should stay the default and mobile money should sit beside it.",
       },
+      {
+        type: "image",
+        src: "/screens/giving.webp",
+        alt: "The giving page in Fold: tithes and offerings by member, cash and mobile money side by side, each with its date and reference.",
+        caption: "Cash counted on Sunday and mobile money through the week, in one ledger. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
+      },
+      {
+        type: "sources",
+        items: [
+          { label: "Paystack, transaction pricing for Ghana, 1.95 percent on mobile money", url: "https://paystack.com/gh/pricing" },
+        ],
+      },
     ],
   },
   {
@@ -610,8 +880,11 @@ export const POSTS: Post[] = [
     category: "Pastoral care",
     date: "September 2026",
     published: "2026-09-02",
+    updated: "2026-10-21",
     excerpt:
       "People rarely leave a church by announcing it. They come less, then not at all, and by the time anyone notices it has been four months. Head counts cannot see it. Here is what can.",
+    answer:
+      "To notice when a member has quietly stopped coming, record who attended each service by name, not just a head count, and compare each member against their own pattern rather than the congregation's average. Someone who came almost every week for six months and has missed the last six weeks is worth a phone call; someone who has always come twice a year is not drifting. Judge attendance against the services actually held, and expect a few weeks of recording before any pattern appears.",
     body: [
       {
         type: "p",
@@ -642,6 +915,24 @@ export const POSTS: Post[] = [
       {
         type: "quote",
         text: "Compare each member against their own history, not against the congregation's average.",
+      },
+      {
+        type: "table",
+        caption: "A change against a person's own pattern, not a low level",
+        head: ["Member", "Their pattern", "Recently", "Worth a phone call?"],
+        rows: [
+          ["Always comes twice a year", "Twice a year", "Twice a year", "No, nothing has changed"],
+          ["Came almost every week for six months", "Weekly", "Not seen for six weeks", "Yes"],
+          ["Missed the two Sundays the church did not meet", "Weekly", "Present at every service held", "No, judge against services held"],
+        ],
+      },
+      {
+        type: "image",
+        src: "/screens/insights.webp",
+        alt: "The insights page in Fold listing members who have drifted from their own attendance pattern.",
+        caption: "Who has quietly stopped coming, compared with their own pattern. Shown for a demonstration society with invented members.",
+        width: 2560,
+        height: 1600,
       },
       { type: "h2", text: "Measure against services actually held" },
       {

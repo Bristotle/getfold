@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { Button } from "@/components/ui/button";
-import { POSTS, getPost, sortedPosts } from "@/lib/posts";
+import { POSTS, getPost, sortedPosts, AUTHORS } from "@/lib/posts";
 import { metaTitle, metaDescription } from "@/lib/seo";
 import { RichText, plainText } from "@/components/marketing/rich-text";
 
@@ -54,6 +55,7 @@ export default async function BlogPostPage({
   const post = getPost(slug);
   if (!post) notFound();
   const faq = post.body.find((b) => b.type === "faq");
+  const author = AUTHORS[post.author ?? "founder"];
 
   // Two others to read next, never this one.
   const more = sortedPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
@@ -80,7 +82,14 @@ export default async function BlogPostPage({
             inLanguage: "en-GH",
             mainEntityOfPage: `https://www.getfold.org/blog/${post.slug}`,
             image: "https://www.getfold.org/og-default.png",
-            author: { "@type": "Organization", name: "Fold", url: "https://www.getfold.org" },
+            abstract: post.answer,
+            author: {
+              "@type": "Person",
+              name: author.name,
+              jobTitle: author.role,
+              url: `https://www.getfold.org${author.url}`,
+              worksFor: { "@type": "Organization", name: "Fold", url: "https://www.getfold.org" },
+            },
             publisher: {
               "@type": "Organization",
               name: "Fold",
@@ -152,10 +161,30 @@ export default async function BlogPostPage({
             <h1 className="mt-4 text-balance text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               {post.title}
             </h1>
-            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              {post.excerpt}
+            <p className="mt-4 text-sm text-muted-foreground">
+              By{" "}
+              <Link href={author.url} className="font-semibold text-foreground hover:underline">
+                {author.name}
+              </Link>
+              , {author.role}
             </p>
           </header>
+
+          {/*
+            The answer first. This box is what a search engine or an
+            assistant lifts, so it comes before any story or context.
+          */}
+          <section
+            aria-label="In short"
+            className="mt-8 rounded-xl border border-primary/25 bg-primary-soft p-5"
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+              In short
+            </p>
+            <p className="mt-2 text-[17px] leading-relaxed text-foreground">
+              <RichText text={post.answer} />
+            </p>
+          </section>
 
           <div className="mt-8 flex flex-col gap-5">
             {post.body.map((block, i) => {
@@ -260,12 +289,117 @@ export default async function BlogPostPage({
               }
               if (block.type === "quote") {
                 return (
-                  <blockquote
-                    key={i}
-                    className="m-0 border-l-2 border-primary bg-surface py-4 pl-5 pr-4 text-[17px] font-medium leading-relaxed text-foreground"
-                  >
-                    {block.text}
-                  </blockquote>
+                  <figure key={i} className="m-0 border-l-2 border-primary bg-surface py-4 pl-5 pr-4">
+                    <blockquote className="m-0 text-[17px] font-medium leading-relaxed text-foreground">
+                      {block.text}
+                    </blockquote>
+                    {block.by && (
+                      <figcaption className="mt-2 text-sm text-muted-foreground">
+                        {block.by}
+                        {block.role && `, ${block.role}`}
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              }
+              if (block.type === "table") {
+                return (
+                  <figure key={i} className="m-0 min-w-0">
+                    <div className="overflow-x-auto rounded-xl border border-border">
+                      <table className="w-full min-w-[28rem] text-left text-sm">
+                        <caption className="border-b border-border bg-surface px-4 py-3 text-left text-sm font-bold text-foreground">
+                          {block.caption}
+                        </caption>
+                        <thead className="bg-surface-soft text-xs uppercase tracking-wide text-muted-foreground">
+                          <tr>
+                            {block.head.map((h) => (
+                              <th key={h} scope="col" className="px-4 py-2.5 font-semibold">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {block.rows.map((row, r) => (
+                            <tr key={r} className="border-t border-border">
+                              {row.map((cell, c) =>
+                                c === 0 ? (
+                                  <th key={c} scope="row" className="px-4 py-2.5 font-medium text-foreground">
+                                    <RichText text={cell} />
+                                  </th>
+                                ) : (
+                                  <td key={c} className="px-4 py-2.5 text-foreground/85">
+                                    <RichText text={cell} />
+                                  </td>
+                                )
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {block.note && (
+                      <figcaption className="mt-2 text-xs text-muted-foreground">
+                        <RichText text={block.note} />
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              }
+              if (block.type === "image") {
+                return (
+                  <figure key={i} className="m-0 min-w-0">
+                    <Image
+                      src={block.src}
+                      alt={block.alt}
+                      width={block.width}
+                      height={block.height}
+                      sizes="(max-width: 672px) 100vw, 672px"
+                      className="h-auto w-full rounded-xl border border-border"
+                    />
+                    <figcaption className="mt-2 text-xs text-muted-foreground">
+                      {block.caption}
+                    </figcaption>
+                  </figure>
+                );
+              }
+              if (block.type === "chart") {
+                const max = Math.max(...block.rows.map((r) => r.value), 1);
+                return (
+                  <figure key={i} className="m-0 min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5">
+                    <figcaption className="text-sm font-bold text-foreground">{block.title}</figcaption>
+                    {/* A real table underneath, so a screen reader and a
+                        crawler get the numbers, not a picture of them. */}
+                    <table className="mt-4 w-full text-sm">
+                      <tbody>
+                        {block.rows.map((r) => (
+                          <tr key={r.label}>
+                            <th scope="row" className="w-2/5 py-1.5 pr-3 text-left align-middle font-normal text-foreground/85">
+                              {r.label}
+                            </th>
+                            <td className="py-1.5 align-middle">
+                              <span className="flex min-w-0 items-center gap-2">
+                                <span
+                                  aria-hidden="true"
+                                  className="h-3 shrink-0 rounded-sm bg-primary"
+                                  style={{ width: `${Math.max(2, (r.value / max) * 100) * 0.7}%` }}
+                                />
+                                <span className="font-numeric text-foreground">
+                                  {r.value.toLocaleString("en-GB")}
+                                  {block.unit}
+                                </span>
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {block.source && (
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        Source: <RichText text={block.source} />
+                      </p>
+                    )}
+                  </figure>
                 );
               }
               return (
@@ -273,11 +407,21 @@ export default async function BlogPostPage({
                   key={i}
                   className="text-[17px] leading-relaxed text-foreground/85"
                 >
-                  <RichText text={block.text} />
+                  <RichText text={(block as { text: string }).text} />
                 </p>
               );
             })}
           </div>
+
+          {/* Every post belongs to the pillar, and says so. */}
+          <p className="mt-10 rounded-xl border border-border bg-surface p-4 text-sm text-muted-foreground">
+            Part of{" "}
+            <Link href="/guide" className="font-semibold text-primary hover:underline">
+              Running a church in Ghana: the complete guide
+            </Link>
+            , which covers the register, attendance, giving, the statistical
+            return and more, each with free templates.
+          </p>
 
           {/* ---------- close ---------- */}
           <div className="mt-12 rounded-2xl border border-primary/25 bg-primary-soft p-6 sm:p-8">

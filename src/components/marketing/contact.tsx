@@ -3,6 +3,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { QueryBanner } from "@/components/marketing/query-banner";
 import { SUPPORT_PHONE } from "@/lib/contact";
+import { SourceFields } from "@/components/source-fields";
 
 /**
  * The enquiry section.
@@ -91,6 +92,7 @@ export function Contact() {
           <QueryBanner />
 
           <form action={submitEnquiry} className="mt-5 flex flex-col gap-4">
+            <SourceFields />
             {/* Honeypot: hidden from people, irresistible to bots. */}
             <div aria-hidden="true" className="absolute left-[-9999px]">
               <label htmlFor="website">Leave this empty</label>

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { friendly } from "@/lib/errors";
+import { sourceFrom } from "@/lib/attribution";
 import {
   isRateLimited,
   logAuthEvent,
@@ -90,7 +91,9 @@ export async function signUp(formData: FormData) {
     email,
     password,
     options: {
-      data: { full_name: fullName },
+      // Which page brought them, so the console can say which content
+      // brings churches. Read by platform_attribution() in migration 0051.
+      data: { full_name: fullName, ...sourceFrom(formData) },
       // The confirmation link signs them straight in and on to setting up
       // their church, rather than landing on the home page signed out.
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org"}/auth/callback?next=/onboarding`,

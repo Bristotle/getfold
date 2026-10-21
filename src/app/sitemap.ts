@@ -31,6 +31,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    // The pillar: every topic on the site, answered and linked in one place.
+    { url: `${BASE}/guide`, lastModified: new Date("2026-10-21"), changeFrequency: "monthly", priority: 0.9 },
+    // Original research. Weekly while answers are still arriving.
+    { url: `${BASE}/research/church-records-2026`, lastModified: new Date("2026-10-21"), changeFrequency: "weekly", priority: 0.8 },
     // Denomination pages rank above the generic ones, because a church
     // searching for its own denomination is far closer to buying.
     ...DENOMINATIONS.map((d) => ({

@@ -9,6 +9,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { Logo } from "@/components/marketing/logo";
 import { AuthPanel } from "@/components/marketing/auth-panel";
 import { signUp } from "../login/actions";
+import { SourceFields } from "@/components/source-fields";
 
 export const metadata: Metadata = {
   title: "Create your church account, Fold",
@@ -79,6 +80,7 @@ export default async function SignUpPage({
           </div>
 
           <form action={signUp} className="mt-6 flex flex-col gap-4">
+            <SourceFields />
             <Input
               label="Your full name"
               name="fullName"

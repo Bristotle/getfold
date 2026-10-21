@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 
-const PAGES = ["/", "/pricing", "/features", "/compare", "/about", "/getting-started",
+const PAGES = ["/", "/guide", "/research/church-records-2026", "/blog/what-mobile-money-costs-a-church", "/blog/church-management-software-in-ghana", "/pricing", "/features", "/compare", "/about", "/getting-started",
   "/blog", "/help", "/help/members/import-from-excel", "/contact", "/join", "/join/sales-partner",
   "/blog/what-mobile-money-costs-a-church",
   // The programmatic sets: one of each template, plus the pages with tables.

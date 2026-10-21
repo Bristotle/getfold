@@ -8,6 +8,7 @@ import { submitEnquiry } from "@/app/contact-actions";
 import { SectionBg } from "@/components/marketing/section-bg";
 import { QueryBanner } from "@/components/marketing/query-banner";
 import { SUPPORT_PHONE } from "@/lib/contact";
+import { SourceFields } from "@/components/source-fields";
 
 export const metadata: Metadata = {
   title: "Contact Fold, church software support in Ghana",
@@ -194,6 +195,7 @@ export default function ContactPage() {
                 <QueryBanner />
 
                 <form action={submitEnquiry} className="mt-5 flex flex-col gap-4">
+            <SourceFields />
                   <div aria-hidden="true" className="absolute left-[-9999px]">
                     <label htmlFor="c-website">Leave this empty</label>
                     <input

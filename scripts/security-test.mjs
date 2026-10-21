@@ -129,7 +129,7 @@ check("members table survived injection attempts", stillThere.error === null);
 const BASE = process.env.BASE ?? "https://www.getfold.org";
 
 console.log("=== 5. Routes that must not answer a stranger ===");
-const guarded = ["/dashboard","/members","/contributions","/billing","/payouts","/messages","/meetings","/funds","/insights","/settings","/admin/enquiries","/admin/churches","/branches","/activity","/profile"];
+const guarded = ["/dashboard","/members","/contributions","/billing","/payouts","/messages","/meetings","/funds","/insights","/settings","/admin/enquiries","/admin/churches","/admin/sources","/branches","/activity","/profile"];
 for (const r of guarded) {
   const res = await fetch(BASE+r, { redirect:"manual" });
   const ok = res.status === 307 || res.status === 302 || res.status === 404;

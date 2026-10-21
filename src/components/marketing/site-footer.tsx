@@ -13,6 +13,7 @@ import {
 import { Lock } from "lucide-react";
 import { subscribeNewsletter } from "@/app/newsletter-actions";
 import { SUPPORT_PHONE } from "@/lib/contact";
+import { SourceFields } from "@/components/source-fields";
 
 /**
  * The public footer.
@@ -46,6 +47,7 @@ const COLUMNS = [
       { label: "Pricing", href: "/pricing" },
       { label: "Compare", href: "/compare" },
       { label: "Getting started", href: "/getting-started" },
+      { label: "The complete guide", href: "/guide" },
       { label: "Help centre", href: "/help" },
       { label: "Log in", href: "/login" },
       { label: "Sign up", href: "/signup" },
@@ -266,6 +268,7 @@ export function SiteFooter() {
                 the same one the contact form uses.
               */}
               <form action={subscribeNewsletter} className="mt-4">
+            <SourceFields />
                 <input
                   type="text"
                   name="website"

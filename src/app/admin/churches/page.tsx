@@ -47,6 +47,9 @@ export default async function ChurchesPage({
       <div className="flex items-center justify-between gap-4">
         <Logo />
         <nav className="flex gap-4 text-sm">
+          <Link href="/admin/sources" className="text-muted-foreground hover:text-foreground">
+            Where churches come from
+          </Link>
           <Link href="/admin/enquiries" className="text-muted-foreground hover:text-foreground">
             Enquiries
           </Link>

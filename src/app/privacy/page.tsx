@@ -17,7 +17,7 @@ export const metadata: Metadata = {
  */
 export default function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy policy" updated="7 September 2026">
+    <LegalLayout title="Privacy policy" updated="21 October 2026">
       <p>
         Fold is church management software operated by Manuel Technologies.
         This policy explains what personal data we hold, why we hold it, and
@@ -115,6 +115,15 @@ export default function PrivacyPage() {
           a cookie. Each visit is identified by a hash of the request that
           expires the same day, no IP address is stored, and what we see is
           a total, never a person.
+        </p>
+        <p>
+          When you sign up, send us a message or join the newsletter, the
+          form also tells us which page of this site you were on when you
+          did, the name of the website that sent you if you came from
+          another one (google.com, for example, never the full address), and
+          any campaign tags in the link. It is how we learn which of our
+          articles are useful to churches. Nothing is stored in your browser
+          to do this.
         </p>
         <p>
           When you sign in, one cookie keeps you signed in. It is strictly

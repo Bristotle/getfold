@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { alertNewEnquiry } from "@/lib/alert";
 import { scoreEnquiry } from "@/lib/spam";
+import { sourceFrom } from "@/lib/attribution";
 
 /**
  * An enquiry from the public site.
@@ -87,6 +88,7 @@ export async function submitEnquiry(formData: FormData) {
     church: church.slice(0, 200) || null,
     message: message.slice(0, 4000) || null,
     source: source.slice(0, 40),
+    ...sourceFrom(formData),
     alerted_at: alert.ok ? new Date().toISOString() : null,
     alert_error: verdict.spam
       ? null
