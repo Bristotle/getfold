@@ -30,7 +30,7 @@ export function GET() {
     "",
     "> Fold is church management software built in Ghana for Ghanaian churches. It keeps the membership register, Bible classes and groups, attendance, tithes and offerings including mobile money, and produces the statistical return a society, circuit, district or diocese asks for. Made by Manuel Technologies. 30 day free trial, priced in cedis.",
     "",
-    "Every article answers its question in the first paragraph, marked \"In short\". Figures carry their sources. Product screenshots are real pages captured from a demonstration society.",
+    "Every article answers its question in its first paragraph. Figures carry their sources. Product screenshots are real pages captured from a demonstration society.",
     "",
     `Contact: ${SUPPORT_PHONE.display} (call or WhatsApp), ${BASE}/contact`,
     "",

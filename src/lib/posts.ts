@@ -88,10 +88,11 @@ export type Post = {
   updated?: string;
   excerpt: string;
   /*
-    The question in the title, answered in two or three sentences. Shown
-    first, above everything, in a box headed "In short", and given to
-    search engines as the article's abstract. It is the part an assistant
-    quotes, so it has to stand alone: no "as we will see", no pitch.
+    The question in the title, answered in two or three sentences. It is
+    the post's opening paragraph, in the writer's own voice with no label,
+    and is given to search engines as the article's abstract. It is the
+    part an assistant quotes, so it has to stand alone: no "as we will
+    see", no pitch.
   */
   answer: string;
   /** Who wrote it. Defaults to the founder. */

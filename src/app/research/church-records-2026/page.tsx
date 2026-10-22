@@ -94,14 +94,11 @@ export default async function SurveyPage({
               </Link>
               , {author.role}.
             </p>
-            <div className="mt-6 rounded-xl border border-primary/25 bg-primary-soft p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">In short</p>
-              <p className="mt-2 text-[17px] leading-relaxed text-foreground">
+            <p className="mt-6 text-lg leading-relaxed text-foreground">
                 {published
                   ? `${total} people who keep records for churches in Ghana answered ten questions on where the register is kept, how giving and mobile money are recorded, how attendance is taken and how long the statistical return takes. The full results are below, as shares of everyone who answered.`
                   : `Nobody has published how churches in Ghana actually keep their records, so we are asking. Ten questions, about two minutes, anonymous. Results are published here for anyone to use once ${MIN_RESPONSES} churches have answered; ${total} have so far.`}
               </p>
-            </div>
           </div>
         </section>
 

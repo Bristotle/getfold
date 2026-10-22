@@ -134,10 +134,7 @@ export default function GuidePage() {
               </Link>
               , {author.role}. Updated 21 October 2026.
             </p>
-            <div className="mt-6 rounded-xl border border-primary/25 bg-primary-soft p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">In short</p>
-              <p className="mt-2 text-[17px] leading-relaxed text-foreground">{GUIDE_ANSWER}</p>
-            </div>
+            <p className="mt-6 text-lg leading-relaxed text-foreground">{GUIDE_ANSWER}</p>
             <nav aria-label="Contents" className="mt-8">
               <ol className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2">
                 {GUIDE.map((t, n) => (

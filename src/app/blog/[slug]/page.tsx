@@ -171,20 +171,14 @@ export default async function BlogPostPage({
           </header>
 
           {/*
-            The answer first. This box is what a search engine or an
-            assistant lifts, so it comes before any story or context.
+            The post opens by answering its own question, in the writer's
+            voice rather than in a labelled box. It is the paragraph a
+            search engine or an assistant quotes, and also given to them as
+            the article's abstract above.
           */}
-          <section
-            aria-label="In short"
-            className="mt-8 rounded-xl border border-primary/25 bg-primary-soft p-5"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
-              In short
-            </p>
-            <p className="mt-2 text-[17px] leading-relaxed text-foreground">
-              <RichText text={post.answer} />
-            </p>
-          </section>
+          <p className="mt-8 text-lg leading-relaxed text-foreground">
+            <RichText text={post.answer} />
+          </p>
 
           <div className="mt-8 flex flex-col gap-5">
             {post.body.map((block, i) => {
