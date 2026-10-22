@@ -11,7 +11,7 @@ import {
   inviteMember,
   revokeInvitation,
   changeRole,
-  removeMember, resetChurch } from "./actions";
+  removeMember, resetChurch, resendInvitation } from "./actions";
 
 type MemberRow = {
   id: string;
@@ -110,9 +110,9 @@ export default async function TeamPage({
       <Card>
         <h2 className="text-sm font-bold text-foreground">Invite someone</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          They don&rsquo;t need an account yet. Invite the email address they
-          will sign up with, and they join this church automatically with the
-          role you pick.
+          They don&rsquo;t need an account yet. We email them a link to sign
+          up, and they join this church with the role you pick as soon as they
+          do.
         </p>
         <form
           action={inviteMember}
@@ -164,7 +164,8 @@ export default async function TeamPage({
               Pending invitations ({invites.length})
             </h2>
           </div>
-          <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[34rem] text-left text-sm">
             <tbody>
               {invites.map((i) => (
                 <tr key={i.id} className="border-b border-border last:border-0">
@@ -178,17 +179,30 @@ export default async function TeamPage({
                     Invited {dateFmt.format(new Date(i.created_at))}
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <form action={revokeInvitation}>
-                      <input type="hidden" name="id" value={i.id} />
-                      <Button type="submit" variant="destructive" size="xs">
+                    <span className="inline-flex items-center gap-1">
+                      <form action={resendInvitation}>
+                        <input type="hidden" name="id" value={i.id} />
+                        <SubmitButton variant="quiet" size="xs" pendingLabel="Sending…">
+                          Send again
+                        </SubmitButton>
+                      </form>
+                      <form action={revokeInvitation}>
+                        <input type="hidden" name="id" value={i.id} />
+                        <Button type="submit" variant="destructive" size="xs">
                           Revoke
                         </Button>
-                    </form>
+                      </form>
+                    </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
+          <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
+            Each person is emailed a link to sign up. They join this church as
+            soon as they sign up with the address you invited.
+          </p>
         </Card>
       )}
 

@@ -6,6 +6,69 @@ import { createClient } from "@/lib/supabase/server";
 import { getMembership } from "@/lib/org";
 import { can, assignableRoles } from "@/lib/permissions";
 import { friendly } from "@/lib/errors";
+import { sendEmail } from "@/lib/email";
+import { ROLE_LABELS, ROLE_DESCRIPTIONS } from "@/lib/permissions";
+
+/**
+ * Tells somebody they have been invited.
+ *
+ * Inviting only ever wrote a row: the person joined when they happened to
+ * sign up with that address, and nothing told them to. The first pastor to
+ * invite a team waited for people who had no idea they were expected. This
+ * is the email that should always have gone.
+ *
+ * Replies go to the person who invited them, not to Fold, because "is this
+ * really from you?" is the right question and the inviter is who answers.
+ */
+async function sendInvitation(i: {
+  email: string;
+  role: string;
+  church: string;
+  inviterName: string;
+  inviterEmail: string | null;
+}) {
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org";
+  const signup = `${site}/signup?email=${encodeURIComponent(i.email)}`;
+  const role = ROLE_LABELS[i.role] ?? i.role;
+  const what = ROLE_DESCRIPTIONS[i.role];
+
+  return sendEmail({
+    to: i.email,
+    replyTo: i.inviterEmail,
+    subject: `${i.inviterName} invited you to ${i.church} on Fold`,
+    text: [
+      `Hello,`,
+      ``,
+      `${i.inviterName} has invited you to help run ${i.church} on Fold, as ${/^[aeiou]/i.test(role) ? "an" : "a"} ${role}.${what ? ` ${what}` : ""}`,
+      ``,
+      `To accept, create your account with this email address, ${i.email}:`,
+      ``,
+      `  ${signup}`,
+      ``,
+      `Confirm the address from the email that follows, log in, and press "Join" on the first screen. You will be in ${i.church} straight away.`,
+      ``,
+      `Already have a Fold account with this address? Just log in at ${site}/login and you will be offered the invitation.`,
+      ``,
+      `If you were not expecting this, reply and ${i.inviterName} will see your message, or simply ignore it.`,
+      ``,
+      `Fold`,
+      `Church management software, made in Ghana`,
+    ].join("\n"),
+  });
+}
+
+/** Who is inviting, for the email: their name and the address replies go to. */
+async function inviter(userId: string) {
+  const supabase = await createClient();
+  const [{ data: me }, { data: auth }] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle<{ full_name: string | null }>(),
+    supabase.auth.getUser(),
+  ]);
+  return {
+    name: me?.full_name?.trim() || "Your pastor",
+    email: auth.user?.email ?? null,
+  };
+}
 
 // Which roles this caller may hand out depends on their own. Only the
 // person who holds the church can appoint another pastor, so an
@@ -50,11 +113,66 @@ export async function inviteMember(formData: FormData) {
     redirect(`/team?error=${encodeURIComponent(msg)}`);
   }
 
+  const who = await inviter(userId);
+  const sent = await sendInvitation({
+    email,
+    role,
+    church: membership.organization.name,
+    inviterName: who.name,
+    inviterEmail: who.email,
+  });
+
   revalidatePath("/team");
+  if (!sent.ok) {
+    redirect(
+      `/team?error=${encodeURIComponent(
+        `${email} is invited, but the email did not send (${sent.error}). Ask them to sign up at getfold.org/signup with that address, and they will join automatically.`
+      )}`
+    );
+  }
   redirect(
     `/team?message=${encodeURIComponent(
-      `${email} invited. They'll join automatically when they sign up with that address.`
+      `Invitation emailed to ${email}. Ask them to check their spam folder too. They join as soon as they sign up with that address.`
     )}`
+  );
+}
+
+/**
+ * Emails a pending invitation again. For anybody invited before invitations
+ * sent email at all, and for anybody whose first email went to spam.
+ */
+export async function resendInvitation(formData: FormData) {
+  const { userId, membership } = await getMembership();
+  if (!membership || !userId) redirect("/onboarding");
+  if (!can(membership.role, "org.manage")) {
+    redirect(`/team?error=${encodeURIComponent("Only an administrator can invite people.")}`);
+  }
+
+  const supabase = await createClient();
+  const { data: invite } = await supabase
+    .from("organization_invitations")
+    .select("email, role, accepted_at")
+    .eq("id", String(formData.get("id") ?? ""))
+    .eq("organization_id", membership.organization.id)
+    .maybeSingle<{ email: string; role: string; accepted_at: string | null }>();
+
+  if (!invite || invite.accepted_at) {
+    redirect(`/team?error=${encodeURIComponent("That invitation is no longer pending.")}`);
+  }
+
+  const who = await inviter(userId);
+  const sent = await sendInvitation({
+    email: invite.email,
+    role: invite.role,
+    church: membership.organization.name,
+    inviterName: who.name,
+    inviterEmail: who.email,
+  });
+
+  redirect(
+    sent.ok
+      ? `/team?message=${encodeURIComponent(`Invitation emailed to ${invite.email} again. Ask them to check their spam folder too.`)}`
+      : `/team?error=${encodeURIComponent(`The email did not send (${sent.error}). Ask ${invite.email} to sign up at getfold.org/signup with that address.`)}`
   );
 }
 

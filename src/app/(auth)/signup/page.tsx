@@ -29,9 +29,11 @@ export const metadata: Metadata = {
 export default async function SignUpPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; email?: string }>;
 }) {
-  const { error, message } = await searchParams;
+  // Filled in from the link in an invitation, so the address matches the
+  // one the invitation was sent to, which is what makes it join the church.
+  const { error, message, email: invited } = await searchParams;
 
   /*
     Somebody already signed in does not need to sign up.
@@ -93,6 +95,7 @@ export default async function SignUpPage({
               name="email"
               type="email"
               autoComplete="email"
+              defaultValue={invited?.slice(0, 200)}
               required
             />
             <PasswordInput
