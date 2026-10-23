@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
-import { Logo } from "@/components/marketing/logo";
+import { AdminHeader } from "@/components/admin/admin-header";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Enquiries, Fold", robots: { index: false, follow: false } };
@@ -100,15 +100,13 @@ export default async function EnquiriesPage({
 
   return (
     <main id="main" className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <div className="flex items-center justify-between gap-4">
-        <Logo />
-        <span className="font-numeric text-xs text-muted-foreground">
-          {rows.length} {rows.length === 1 ? "enquiry" : "enquiries"}
-        </span>
-      </div>
+      <AdminHeader current="/admin/enquiries" />
 
       <h1 className="mt-8 text-xl font-bold text-foreground">
-        {showSpam ? "Sales pitches" : "Enquiries"}
+        {showSpam ? "Sales pitches" : "Enquiries"}{" "}
+        <span className="font-numeric text-sm font-normal text-muted-foreground">
+          {rows.length}
+        </span>
       </h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {showSpam

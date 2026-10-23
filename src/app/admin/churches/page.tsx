@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
-import { Logo } from "@/components/marketing/logo";
+import { AdminHeader } from "@/components/admin/admin-header";
 import { STATUS_LABEL, ago, type DirectoryRow } from "@/lib/platform";
 
 export const dynamic = "force-dynamic";
@@ -44,20 +44,7 @@ export default async function ChurchesPage({
 
   return (
     <main id="main" className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <div className="flex items-center justify-between gap-4">
-        <Logo />
-        <nav className="flex gap-4 text-sm">
-          <Link href="/admin/sources" className="text-muted-foreground hover:text-foreground">
-            Where churches come from
-          </Link>
-          <Link href="/admin/enquiries" className="text-muted-foreground hover:text-foreground">
-            Enquiries
-          </Link>
-          <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
-            My church
-          </Link>
-        </nav>
-      </div>
+      <AdminHeader current="/admin/churches" />
 
       <h1 className="mt-8 text-xl font-bold text-foreground">Churches</h1>
       <p className="mt-1 text-sm text-muted-foreground">

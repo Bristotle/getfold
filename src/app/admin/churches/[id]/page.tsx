@@ -1,12 +1,11 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { Logo } from "@/components/marketing/logo";
+import { AdminHeader } from "@/components/admin/admin-header";
 import { ROLE_LABELS } from "@/lib/permissions";
 import { STATUS_LABEL, type DirectoryRow } from "@/lib/platform";
-import { openChurch, closeChurch } from "../actions";
+import { openChurch, closeChurch, recordPayment } from "../actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Church, Fold", robots: { index: false, follow: false } };
@@ -53,6 +52,85 @@ function Section({ title, count, children }: { title: string; count?: number; ch
   );
 }
 
+/*
+  For a church that paid outside the website: mobile money to Fold's
+  number, a bank transfer, cash in hand. Plain HTML, no JavaScript, so the
+  amount is typed rather than filled in from the band; the prices sit
+  beside it to copy from.
+*/
+function RecordPayment({ id, trialEndsAt }: { id: string; trialEndsAt: string | null }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const from =
+    trialEndsAt && new Date(trialEndsAt) > new Date() ? trialEndsAt.slice(0, 10) : today;
+  const field =
+    "h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40";
+  return (
+    <details className="mt-4 rounded-xl border border-border bg-surface p-4">
+      <summary className="cursor-pointer text-sm font-semibold text-foreground">
+        Record a payment made outside the website
+      </summary>
+      <p className="mt-2 text-xs text-muted-foreground">
+        For mobile money sent to Fold&rsquo;s number, a bank transfer or cash. It
+        marks the church as paid for the period, adds a paid invoice to their
+        Billing page, notes it in their activity log and emails the pastor a
+        receipt. Quarter: Society GHS 447, Society Plus GHS 897, Large Society
+        GHS 1,497. Year (ten months&rsquo; price): GHS 1,490, 2,990, 4,990.
+      </p>
+      <form action={recordPayment} className="mt-4 grid gap-3 sm:grid-cols-2">
+        <input type="hidden" name="id" value={id} />
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground">
+          Band
+          <select name="band" required defaultValue="Society Plus" className={field}>
+            <option>Society</option>
+            <option>Society Plus</option>
+            <option>Large Society</option>
+            <option>Circuit and above</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground">
+          For
+          <select name="months" defaultValue="3" className={field}>
+            <option value="3">A quarter (3 months)</option>
+            <option value="12">A year (12 months)</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground">
+          Amount received (GHS)
+          <input name="amount" inputMode="decimal" required placeholder="897" className={`${field} font-numeric`} />
+        </label>
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground">
+          Paid by
+          <select name="method" defaultValue="momo" className={field}>
+            <option value="momo">Mobile money</option>
+            <option value="bank">Bank transfer</option>
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground">
+          Transaction ID or reference
+          <input name="reference" maxLength={120} placeholder="From the MoMo message" className={`${field} font-numeric`} />
+        </label>
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground">
+          Paid on
+          <input name="paidOn" type="date" defaultValue={today} className={`${field} font-numeric`} />
+        </label>
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-foreground sm:col-span-2">
+          Cover starts
+          <input name="startsOn" type="date" defaultValue={from} className={`${field} font-numeric`} />
+          <span className="font-normal text-muted-foreground">
+            Defaults to the end of their trial or current cover, so no days they
+            already have are lost.
+          </span>
+        </label>
+        <div className="sm:col-span-2">
+          <SubmitButton pendingLabel="Recording…">Record payment</SubmitButton>
+        </div>
+      </form>
+    </details>
+  );
+}
+
 function Empty() {
   return <p className="text-muted-foreground">None.</p>;
 }
@@ -62,10 +140,10 @@ export default async function ChurchPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; message?: string }>;
 }) {
   const { id } = await params;
-  const { error } = await searchParams;
+  const { error, message } = await searchParams;
 
   const supabase = await createClient();
   const {
@@ -78,17 +156,15 @@ export default async function ChurchPage({
   const church = ((dir ?? []) as DirectoryRow[]).find((r) => r.organization_id === id);
   if (!church) notFound();
 
-  const { data: open } = await supabase.rpc("platform_view_orgs");
+  const [{ data: open }, { data: canBill }] = await Promise.all([
+    supabase.rpc("platform_view_orgs"),
+    supabase.rpc("can_record_payments"),
+  ]);
   const isOpen = ((open ?? []) as string[]).includes(id);
 
   const header = (
     <>
-      <div className="flex items-center justify-between gap-4">
-        <Logo />
-        <Link href="/admin/churches" className="text-sm text-muted-foreground hover:text-foreground">
-          All churches
-        </Link>
-      </div>
+      <AdminHeader current="/admin/churches" />
       <h1 className="mt-8 text-xl font-bold text-foreground">{church.name}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {STATUS_LABEL[church.subscription_status] ?? church.subscription_status}
@@ -99,6 +175,10 @@ export default async function ChurchPage({
       {error && (
         <p className="mt-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger-text">{error}</p>
       )}
+      {message && (
+        <p className="mt-4 rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">{message}</p>
+      )}
+      {canBill === true && <RecordPayment id={id} trialEndsAt={church.trial_ends_at} />}
     </>
   );
 
