@@ -15,7 +15,7 @@ export const metadata: Metadata = {
  */
 export default function TermsPage() {
   return (
-    <LegalLayout title="Terms and conditions" updated="7 September 2026">
+    <LegalLayout title="Terms and conditions" updated="24 October 2026">
       <p>
         These terms govern your church&rsquo;s use of Fold, provided by Manuel
         Technologies. By creating an account you accept them on behalf of your
@@ -53,6 +53,14 @@ export default function TermsPage() {
           the church and all its records are deleted. You will be told by
           text and email at each step, and choosing a plan at any point
           before then keeps everything.
+        </p>
+        <p>
+          Once you have paid, your plan covers the period you paid for. We
+          will remind you seven, three and one day before it ends. If it is
+          not renewed, full use continues for seven days after it ends, then
+          the account becomes read only: you can still sign in, see and
+          export everything, but nothing new can be recorded until you renew.
+          A church that has paid is never deleted because a renewal is late.
         </p>
       </Section>
 

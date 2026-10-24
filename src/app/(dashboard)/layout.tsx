@@ -42,12 +42,12 @@ export default async function DashboardLayout({
   ]);
   const fullName = me?.full_name ?? null;
   const t = (trial?.[0] ?? null) as
-    | { status: string; days_left: number }
+    | { status: string; days_left: number; has_paid: boolean }
     | null;
 
   return (
     <div className="min-h-screen">
-      {t && <TrialBanner status={t.status} daysLeft={t.days_left} />}
+      {t && <TrialBanner status={t.status} daysLeft={t.days_left} hasPaid={t.has_paid} />}
 
       <header className="border-b border-border bg-surface">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">

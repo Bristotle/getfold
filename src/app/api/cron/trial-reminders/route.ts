@@ -29,7 +29,37 @@ type Row = {
   ends_at: string;
   pastor_phone: string | null;
   pastor_email: string | null;
+  /** Has paid at least once, so this is a plan ending, not a free trial. */
+  paid: boolean;
 };
+
+/*
+  A paying church's milestones (0054). days_left counts down to the end of
+  the paid cover: 7, 3 and 1 before, the day itself, the day before access
+  goes (-6) and the day it does (-7). A church that has paid is never
+  deleted, so nothing here mentions deletion.
+*/
+function paidMessage(name: string, days: number, endsAt: string) {
+  const on = new Date(endsAt).toLocaleDateString("en-GB", { day: "numeric", month: "long" });
+  if (days <= -7) {
+    return `Fold: ${name} is now read only. Everything is still there and can be exported, but nothing new can be recorded until you renew at getfold.org/billing.`;
+  }
+  if (days <= -6) {
+    return `Fold: tomorrow ${name} becomes read only, as your plan ended a week ago. Renew today at getfold.org/billing and nothing changes.`;
+  }
+  if (days <= 0) {
+    return `Fold: your plan for ${name} has ended. You have 7 days of full use to renew at getfold.org/billing, then the account becomes read only.`;
+  }
+  return `Fold: your plan for ${name} ends in ${days} ${days === 1 ? "day" : "days"}, on ${on}. Renew at getfold.org/billing to keep recording without a break.`;
+}
+
+function paidEmail(name: string, days: number, endsAt: string) {
+  const on = new Date(endsAt).toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" });
+  if (days <= -7) return { subject: `${name} is now read only`, lead: `Your Fold plan for ${name} ended on ${on} and the seven days of grace have passed, so the account is now read only. Everything you recorded is still there and can be seen and exported, and nothing will be deleted. To record again, renew your plan.` };
+  if (days <= -6) return { subject: `${name} becomes read only tomorrow`, lead: `Your Fold plan for ${name} ended on ${on}. Tomorrow the account becomes read only: you will still see and export everything, but nothing new can be recorded until you renew.` };
+  if (days <= 0) return { subject: `Your Fold plan for ${name} has ended`, lead: `Your Fold plan for ${name} ended on ${on}. You keep full use for seven more days while you renew, after which the account becomes read only. Nothing is deleted.` };
+  return { subject: `Your Fold plan for ${name} ends in ${days} ${days === 1 ? "day" : "days"}`, lead: `Your Fold plan for ${name} ends on ${on}. Renew before then and nothing changes for your church.` };
+}
 
 /*
   One message per milestone. days_left counts down to the end of the trial
@@ -82,14 +112,17 @@ async function sendTrialEmail(
   church: string,
   days: number,
   endsAt: string,
-  deleted = false
+  deleted = false,
+  paid = false
 ): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
   if (!key) return false;
   const from = process.env.ALERT_FROM ?? "Fold <no-reply@getfold.org>";
   const ends = new Date(endsAt).toLocaleDateString("en-GH", { day: "numeric", month: "long", year: "numeric" });
 
-  const stage = deleted
+  const stage = paid
+    ? paidEmail(church, days, endsAt)
+    : deleted
     ? { subject: `${church} has been removed from Fold`, lead: `As we said we would, ${church} and every record in it were deleted this morning, ninety days after the free trial began and thirty days after the account became read only. Nothing of the church remains on our systems.` }
     : days <= -59
       ? { subject: `Final notice: ${church} will be deleted tomorrow`, lead: `Tomorrow ${church} and all its records will be deleted. To keep them, choose a plan today. To take them with you, export your register from the Members page now.` }
@@ -108,7 +141,9 @@ async function sendTrialEmail(
     stage.lead,
     ``,
     ...(deleted ? [] : [
-      `To keep going, open Billing in Fold and choose a band. It is billed every three months, by mobile money, card or bank transfer, and the price is held for twelve months from the day you start.`,
+      paid
+        ? `To renew, open Billing in Fold and pay for the next quarter or year, by mobile money, card or bank transfer. If you would rather pay us directly, reply to this email and we will record it for you.`
+        : `To keep going, open Billing in Fold and choose a band. It is billed every three months, by mobile money, card or bank transfer, and the price is held for twelve months from the day you start.`,
       ``,
       `  https://www.getfold.org/billing`,
       ``,
@@ -203,7 +238,9 @@ export async function GET(request: Request) {
 
   for (const row of rows) {
     const phone = row.pastor_phone ? toE164(row.pastor_phone) : null;
-    const text = message(row.organization_name, row.days_left);
+    const text = row.paid
+      ? paidMessage(row.organization_name, row.days_left, row.ends_at)
+      : message(row.organization_name, row.days_left);
 
     /*
       Text first, email second, and both where both exist.
@@ -227,7 +264,7 @@ export async function GET(request: Request) {
     }
 
     if (row.pastor_email) {
-      const ok = await sendTrialEmail(row.pastor_email, row.organization_name, row.days_left, row.ends_at);
+      const ok = await sendTrialEmail(row.pastor_email, row.organization_name, row.days_left, row.ends_at, false, row.paid);
       if (ok) {
         sentByEmail++;
         reached = true;

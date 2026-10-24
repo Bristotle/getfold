@@ -15,11 +15,16 @@ import { Clock, AlertTriangle } from "lucide-react";
 export function TrialBanner({
   status,
   daysLeft,
+  hasPaid = false,
 }: {
   status: string;
   daysLeft: number;
+  /** Has paid before, so this is a plan ending, not a free trial (0054). */
+  hasPaid?: boolean;
 }) {
-  if (status === "active" || status === "cancelled") return null;
+  if (status === "cancelled") return null;
+  if (hasPaid) return <PlanBanner status={status} daysLeft={daysLeft} />;
+  if (status === "active") return null;
 
   const over = daysLeft <= 0;
   /*
@@ -136,6 +141,63 @@ export function TrialBanner({
             </Link>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/*
+  For a church that has paid. Silent until the last week of cover, then:
+  the plan ends on a date, seven days of full use after it, then read only.
+  Nothing is ever deleted for a church that has paid, so it never says so.
+*/
+function PlanBanner({ status, daysLeft }: { status: string; daysLeft: number }) {
+  if (status === "active" && daysLeft > 7) return null;
+
+  const readOnly = status === "expired";
+  const over = daysLeft <= 0;
+  const graceLeft = daysLeft + 7;
+
+  return (
+    <div
+      role="status"
+      className={`border-b ${over ? "border-warning/40 bg-warning/10" : "border-primary/30 bg-primary-soft"}`}
+    >
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
+        <p className="flex items-start gap-2.5 text-sm">
+          <span aria-hidden="true" className={`mt-0.5 shrink-0 ${over ? "text-warning-text" : "text-primary"}`}>
+            {over ? <AlertTriangle size={16} strokeWidth={2} /> : <Clock size={16} strokeWidth={2} />}
+          </span>
+          <span className="text-foreground">
+            {readOnly ? (
+              <>
+                <strong className="font-semibold">Your account is read only.</strong> Your
+                plan has ended. Everything is still here and can be exported, and nothing
+                will be deleted, but nothing new can be recorded until you renew.
+              </>
+            ) : over ? (
+              <>
+                <strong className="font-semibold">Your plan has ended.</strong> You still
+                have full use for{" "}
+                {graceLeft > 1 ? `${graceLeft} more days` : "one more day"}, then the
+                account becomes read only until you renew.
+              </>
+            ) : (
+              <>
+                <strong className="font-semibold">
+                  Your plan ends in {daysLeft} {daysLeft === 1 ? "day" : "days"}.
+                </strong>{" "}
+                Renew before then and nothing changes.
+              </>
+            )}
+          </span>
+        </p>
+        <Link
+          href="/billing"
+          className="inline-flex min-h-9 shrink-0 items-center rounded-lg bg-primary px-3.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          Renew
+        </Link>
       </div>
     </div>
   );
