@@ -49,6 +49,12 @@ export default async function SignUpPage({
     somebody reading the pricing page came for.
   */
   const { email, membership } = await getMembership();
+
+  // The link in an invitation, opened by somebody already signed in. The
+  // dashboard offers the invitation; billing, below, does not, and an
+  // invited elder who already had a church of his own was sent there.
+  if (invited && membership) redirect("/dashboard");
+
   if (membership) {
     redirect(
       `/billing?message=${encodeURIComponent(
@@ -70,11 +76,18 @@ export default async function SignUpPage({
         </Link>
 
         <Card>
+          {/*
+            The invitation email links here with the address filled in. It
+            used to greet the invited elder with "Create your church account",
+            which told him to start a church of his own.
+          */}
           <h1 className="text-xl font-bold text-foreground">
-            Create your church account
+            {invited ? "Accept your invitation" : "Create your church account"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Free for 30 days. No credit card, and nothing to cancel.
+            {invited
+              ? "Create your account with the address your invitation was sent to. You join the church that invited you; you do not set up a new one."
+              : "Free for 30 days. No credit card, and nothing to cancel."}
           </p>
 
           <div className="mt-4 flex flex-col gap-2 empty:mt-0">
@@ -122,8 +135,9 @@ export default async function SignUpPage({
           </form>
 
           <p className="mt-6 border-t border-border pt-5 text-sm text-muted-foreground">
-            You name your church on the next step, so there is nothing else to
-            prepare.
+            {invited
+              ? "Confirm your address from the email that follows, log in, and press Join. Already have an account? Log in instead and you will be offered the invitation."
+              : "You name your church on the next step, so there is nothing else to prepare."}
           </p>
         </Card>
 

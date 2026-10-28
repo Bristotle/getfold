@@ -199,3 +199,32 @@ export async function loadTree(): Promise<{
 
   return { roots, flat };
 }
+
+export type PendingInvitation = {
+  id: string;
+  role: string;
+  organization_id: string;
+  church: string;
+};
+
+/**
+ * Invitations addressed to the signed-in person that they have not taken up.
+ *
+ * Asked for on every signed-in page, not only during onboarding. It used to
+ * be onboarding only, which assumed nobody is invited after they already
+ * have a church. An elder signed up a few minutes before his pastor sent
+ * the invitation, saw only "Set up your church", set one up, and from then
+ * on every click on the invitation put him in that empty church instead.
+ *
+ * Through my_invitations() (migration 0055), because an invitee cannot read
+ * the church they are invited to until they join it, and without the name
+ * the "Join" card was never shown to anybody.
+ */
+export async function pendingInvitations(
+  email: string | null
+): Promise<PendingInvitation[]> {
+  if (!email) return [];
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("my_invitations");
+  return (data ?? []) as PendingInvitation[];
+}

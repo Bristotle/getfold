@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getMembership } from "@/lib/org";
+import { cookies } from "next/headers";
+import { getMembership, pendingInvitations, ACTIVE_ORG_COOKIE } from "@/lib/org";
 import { can, assignableRoles } from "@/lib/permissions";
 import { friendly } from "@/lib/errors";
 import { sendEmail } from "@/lib/email";
@@ -271,16 +272,37 @@ export async function removeMember(formData: FormData) {
  * ends up.
  */
 export async function acceptInvitations() {
+  const { email, membership } = await getMembership();
+  const invites = await pendingInvitations(email);
+
+  // Somebody who already has a church is answered on their profile page,
+  // since onboarding sends them straight back out and the dashboard shows no
+  // messages, so the error would be lost.
+  const back = membership ? "/profile" : "/onboarding";
+
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("accept_pending_invitations");
 
   if (error) {
-    redirect(`/onboarding?error=${encodeURIComponent(friendly(error))}`);
+    redirect(`${back}?error=${encodeURIComponent(friendly(error))}`);
   }
   if (!data) {
     redirect(
-      `/onboarding?error=${encodeURIComponent("No pending invitation was found for your email address.")}`
+      `${back}?error=${encodeURIComponent("No pending invitation was found for your email address.")}`
     );
+  }
+
+  // Open the church they have just joined. Without this, somebody who
+  // already had a church of their own was put back in it, and joining
+  // looked as though it had done nothing.
+  if (invites[0]) {
+    (await cookies()).set(ACTIVE_ORG_COOKIE, invites[0].organization_id, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
   }
 
   redirect("/dashboard");

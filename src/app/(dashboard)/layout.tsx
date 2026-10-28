@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getMembership } from "@/lib/org";
+import { getMembership, pendingInvitations } from "@/lib/org";
+import { acceptInvitations } from "@/app/(dashboard)/team/actions";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { signOut } from "@/app/(auth)/login/actions";
 import { Nav } from "@/components/nav";
 import { ROLE_LABELS } from "@/lib/permissions";
@@ -29,7 +31,7 @@ export default async function DashboardLayout({
     profile read beside it is the person's own name for the header, which
     falls back to the address they sign in with until they set one.
   */
-  const [{ data: trial }, { data: me }, { data: platformViewer }] = await Promise.all([
+  const [{ data: trial }, { data: me }, { data: platformViewer }, invites] = await Promise.all([
     supabase.rpc("trial_status", { org_id: organization.id }),
     supabase
       .from("profiles")
@@ -39,7 +41,10 @@ export default async function DashboardLayout({
     // Fold staff only. The answer comes from app_admins in the database,
     // so the link appears for exactly the people the console admits.
     supabase.rpc("is_platform_viewer"),
+    pendingInvitations(email),
   ]);
+  // Ignores an invitation to the church they are already in.
+  const invite = invites.find((i) => i.organization_id !== organization.id);
   const fullName = me?.full_name ?? null;
   const t = (trial?.[0] ?? null) as
     | { status: string; days_left: number; has_paid: boolean }
@@ -48,6 +53,23 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen">
       {t && <TrialBanner status={t.status} daysLeft={t.days_left} hasPaid={t.has_paid} />}
+
+      {invite && (
+        <div className="border-b border-primary/30 bg-primary/5 px-4 py-3 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="min-w-0 text-sm text-foreground">
+              <span className="font-bold">You have been invited to {invite.church}</span>{" "}
+              as {(ROLE_LABELS[invite.role] ?? invite.role).toLowerCase()}. Join to
+              see it here; {organization.name} stays yours as well.
+            </p>
+            <form action={acceptInvitations}>
+              <SubmitButton size="sm" pendingLabel="Joining…">
+                Join {invite.church}
+              </SubmitButton>
+            </form>
+          </div>
+        </div>
+      )}
 
       <header className="border-b border-border bg-surface">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">

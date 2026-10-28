@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Card } from "@/components/ui/card";
-import { getMembership } from "@/lib/org";
+import { getMembership, pendingInvitations } from "@/lib/org";
 import { signOut } from "@/app/(auth)/login/actions";
 import { createOrganization } from "./actions";
 import { acceptInvitations } from "@/app/(dashboard)/team/actions";
-import { createClient } from "@/lib/supabase/server";
 import { ROLE_LABELS } from "@/lib/permissions";
 
 const inputClass =
@@ -35,20 +34,8 @@ export default async function OnboardingPage({
   if (membership) redirect("/dashboard");
 
   // Someone invited by an existing church should be joining it, not starting
-  // a second one. The RLS policy on organization_invitations lets a user read
-  // rows addressed to their own verified email.
-  const supabase = await createClient();
-  const { data: invites } = await supabase
-    .from("organization_invitations")
-    .select("id, role, organizations ( name )")
-    .is("accepted_at", null);
-
-  const invite = (invites?.[0] ?? null) as
-    | { id: string; role: string; organizations: { name: string } | { name: string }[] | null }
-    | null;
-  const inviteOrg = Array.isArray(invite?.organizations)
-    ? invite?.organizations[0]
-    : invite?.organizations;
+  // a second one.
+  const invite = (await pendingInvitations(email))[0] ?? null;
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
@@ -57,12 +44,12 @@ export default async function OnboardingPage({
           Step 1 of 1
         </p>
         <h1 className="mt-1 text-xl font-bold text-foreground">
-          Set up your church
+          {invite ? `Join ${invite.church}` : "Set up your church"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          This creates your church and puts it in your hands. You can invite
-          administrators, elders and class leaders afterwards, and decide what
-          each of them can see.
+          {invite
+            ? "Your church has invited you. Join it below; there is nothing to set up."
+            : "This creates your church and puts it in your hands. You can invite administrators, elders and class leaders afterwards, and decide what each of them can see."}
         </p>
 
         {error && (
@@ -71,21 +58,34 @@ export default async function OnboardingPage({
           </p>
         )}
 
-        {invite && inviteOrg && (
+        {invite && (
           <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
             <p className="text-sm font-bold text-foreground">
-              You&rsquo;ve been invited to {inviteOrg.name}
+              You&rsquo;ve been invited to {invite.church}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               Joining as {(ROLE_LABELS[invite.role] ?? invite.role).toLowerCase()}.
               You don&rsquo;t need to create a church.
             </p>
             <form action={acceptInvitations} className="mt-3">
-              <SubmitButton>Join {inviteOrg.name}</SubmitButton>
+              <SubmitButton size="lg" pendingLabel="Joining…">
+                Join {invite.church}
+              </SubmitButton>
             </form>
           </div>
         )}
 
+        {/*
+          Behind a fold when there is an invitation. Shown open beside it, the
+          form read as the thing to do, and an invited elder set up a second,
+          empty copy of his own church.
+        */}
+        <details open={!invite} className="mt-6">
+          {invite && (
+            <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+              Set up a different church of your own instead
+            </summary>
+          )}
         <form action={createOrganization} className="mt-6 flex flex-col gap-4">
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium text-foreground">
@@ -214,6 +214,7 @@ export default async function OnboardingPage({
             Create church
           </SubmitButton>
         </form>
+        </details>
 
         <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
           <span className="text-xs text-muted-foreground">
