@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { STATUS_LABEL, ago, type DirectoryRow } from "@/lib/platform";
+import { STATUS_LABEL, ago, reasonToCall, type DirectoryRow } from "@/lib/platform";
+import { ChurchContacts } from "@/components/admin/church-contacts";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Churches, Fold", robots: { index: false, follow: false } };
@@ -26,9 +27,10 @@ const day = new Intl.DateTimeFormat("en-GB", {
 export default async function ChurchesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ message?: string }>;
+  searchParams: Promise<{ message?: string; show?: string }>;
 }) {
-  const { message } = await searchParams;
+  const { message, show } = await searchParams;
+  const all = show === "all";
   const supabase = await createClient();
   const {
     data: { user },
@@ -40,7 +42,14 @@ export default async function ChurchesPage({
   // page does not confirm its own existence.
   if (error) redirect("/dashboard");
 
-  const rows = (data ?? []) as DirectoryRow[];
+  const everyone = (data ?? []) as DirectoryRow[];
+  // Most urgent first is the order the rules in reasonToCall are written in,
+  // so a church's place in the list is simply the order it joined.
+  const toCall = everyone
+    .map((r) => ({ r, reason: reasonToCall(r) }))
+    .filter((x): x is { r: DirectoryRow; reason: string } => x.reason !== null);
+  const rows = all ? everyone : toCall.map((x) => x.r);
+  const reasons = new Map(toCall.map((x) => [x.r.organization_id, x.reason]));
 
   return (
     <main id="main" className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -54,16 +63,42 @@ export default async function ChurchesPage({
       </p>
 
       <p className="mt-3 text-sm text-foreground">
-        <span className="font-numeric">{rows.length}</span> churches ·{" "}
+        <span className="font-numeric">{everyone.length}</span> churches ·{" "}
         <span className="font-numeric">
-          {rows.filter((r) => r.changes_this_week > 0).length}
+          {everyone.filter((r) => r.changes_this_week > 0).length}
         </span>{" "}
         active this week ·{" "}
         <span className="font-numeric">
-          {rows.reduce((n, r) => n + Number(r.member_count), 0)}
+          {everyone.reduce((n, r) => n + Number(r.member_count), 0)}
         </span>{" "}
         members in all
       </p>
+
+      <div className="mt-4 flex gap-2 text-sm">
+        {[
+          { href: "/admin/churches", label: `Needs a call (${toCall.length})`, on: !all },
+          { href: "/admin/churches?show=all", label: `All churches (${everyone.length})`, on: all },
+        ].map((t) => (
+          <Link
+            key={t.href}
+            href={t.href as "/admin/churches"}
+            className={
+              t.on
+                ? "rounded-lg bg-surface-soft px-3 py-1.5 font-medium text-foreground"
+                : "rounded-lg px-3 py-1.5 text-muted-foreground hover:text-foreground"
+            }
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+      {!all && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Trials ending, churches that have stopped recording, and ones that never brought
+          their register in. A church leaves this list for seven days once a call is noted
+          on its page.
+        </p>
+      )}
 
       {message && (
         <p className="mt-4 rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">
@@ -71,10 +106,14 @@ export default async function ChurchesPage({
         </p>
       )}
 
+      {rows.length === 0 && (
+        <p className="mt-6 text-sm text-muted-foreground">Nobody needs a call right now.</p>
+      )}
+      {rows.length > 0 && (
       <Card className="mt-6 p-0">
         <ul className="divide-y divide-border">
           {rows.map((r) => (
-            <li key={r.organization_id}>
+            <li key={r.organization_id} className="min-w-0">
               <Link
                 href={`/admin/churches/${r.organization_id}`}
                 className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4 hover:bg-surface-soft"
@@ -91,6 +130,11 @@ export default async function ChurchesPage({
                     signed in {ago(r.last_sign_in_at)} ·{" "}
                     <span className="font-numeric">{r.team_count}</span> on the team
                   </span>
+                  {r.last_contacted_at && (
+                    <span className="block truncate text-xs text-muted-foreground">
+                      Contacted {ago(r.last_contacted_at)}: {r.last_contact_note}
+                    </span>
+                  )}
                 </span>
                 <span className="flex items-center gap-3 text-xs">
                   <span className="font-numeric text-muted-foreground">
@@ -101,10 +145,17 @@ export default async function ChurchesPage({
                   </span>
                 </span>
               </Link>
+              {!all && (
+                <div className="min-w-0 px-5 pb-4 text-sm">
+                  <p className="mb-2 text-warning-text">{reasons.get(r.organization_id)}</p>
+                  <ChurchContacts church={r} />
+                </div>
+              )}
             </li>
           ))}
         </ul>
       </Card>
+      )}
     </main>
   );
 }

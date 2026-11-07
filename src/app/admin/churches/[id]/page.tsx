@@ -4,8 +4,9 @@ import { Card } from "@/components/ui/card";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { ROLE_LABELS } from "@/lib/permissions";
-import { STATUS_LABEL, type DirectoryRow } from "@/lib/platform";
-import { openChurch, closeChurch, recordPayment } from "../actions";
+import { STATUS_LABEL, reasonToCall, type DirectoryRow } from "@/lib/platform";
+import { openChurch, closeChurch, recordPayment, noteOutreach } from "../actions";
+import { ChurchContacts } from "@/components/admin/church-contacts";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Church, Fold", robots: { index: false, follow: false } };
@@ -156,10 +157,17 @@ export default async function ChurchPage({
   const church = ((dir ?? []) as DirectoryRow[]).find((r) => r.organization_id === id);
   if (!church) notFound();
 
-  const [{ data: open }, { data: canBill }] = await Promise.all([
+  const [{ data: open }, { data: canBill }, { data: notes }] = await Promise.all([
     supabase.rpc("platform_view_orgs"),
     supabase.rpc("can_record_payments"),
+    supabase
+      .from("platform_outreach")
+      .select("id, note, created_by, created_at")
+      .eq("organization_id", id)
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
+  const reason = reasonToCall(church);
   const isOpen = ((open ?? []) as string[]).includes(id);
 
   const header = (
@@ -178,6 +186,50 @@ export default async function ChurchPage({
       {message && (
         <p className="mt-4 rounded-lg bg-success/10 px-3 py-2 text-sm text-success-text">{message}</p>
       )}
+
+      <Section title="Who to contact">
+        {reason && (
+          <p className="mb-3 rounded-lg bg-warning/10 px-3 py-2 text-warning-text">{reason}</p>
+        )}
+        <ChurchContacts church={church} />
+      </Section>
+
+      <div id="outreach">
+        <Section title="Calls and messages" count={(notes ?? []).length}>
+          <form action={noteOutreach} className="flex flex-col gap-2">
+            <input type="hidden" name="id" value={id} />
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs text-muted-foreground">
+                What was said. Only Fold staff see these notes; the church does not.
+              </span>
+              <textarea
+                name="note"
+                required
+                maxLength={1000}
+                rows={2}
+                placeholder="Spoke to Rev Mensah. Busy with harvest, will import the register next week."
+                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </label>
+            <SubmitButton size="sm" className="self-start" pendingLabel="Saving…">
+              Save note
+            </SubmitButton>
+          </form>
+          {(notes ?? []).length > 0 && (
+            <ul className="mt-4 divide-y divide-border">
+              {((notes ?? []) as { id: string; note: string; created_by: string; created_at: string }[]).map((n) => (
+                <li key={n.id} className="py-2">
+                  <p className="whitespace-pre-line text-foreground">{n.note}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {stamp.format(new Date(n.created_at))} · {n.created_by}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Section>
+      </div>
+
       {canBill === true && <RecordPayment id={id} trialEndsAt={church.trial_ends_at} />}
     </>
   );

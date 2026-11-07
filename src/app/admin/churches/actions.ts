@@ -106,3 +106,22 @@ export async function recordPayment(formData: FormData) {
     )}`
   );
 }
+
+/**
+ * Notes a call or message to a church, so the next person at Fold knows it
+ * was made and what was said. Only Fold staff can write or read these, by
+ * the policies on platform_outreach in migration 0056.
+ */
+export async function noteOutreach(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  if (!UUID.test(id)) redirect("/admin/churches");
+  const note = String(formData.get("note") ?? "").trim().slice(0, 1000);
+  if (!note) {
+    redirect(`/admin/churches/${id}?error=${encodeURIComponent("Write what was said before saving the note.")}`);
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("platform_outreach").insert({ organization_id: id, note });
+  if (error) redirect(`/admin/churches/${id}?error=${encodeURIComponent(friendly(error))}`);
+  redirect(`/admin/churches/${id}?message=${encodeURIComponent("Noted. This church leaves the call list for seven days.")}#outreach`);
+}

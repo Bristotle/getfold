@@ -503,31 +503,149 @@ export const CATEGORIES: Category[] = [
         slug: "statistical-return",
         title: "Produce your statistical return",
         summary:
-          "Membership, attendance, vital records and income for any period, ready to print.",
+          "Membership, attendance, vital records, visitors and income for any period, ready to print.",
         body: [
+          {
+            type: "p",
+            text: "Open Reports, then Statistical return, choose the period, and the return is filled in from what your team has already recorded. Print it or save it as a PDF and it is ready to send to the circuit, the district or the head office.",
+          },
           {
             type: "steps",
             items: [
-              "Open Reports.",
-              "Choose the period, for example 1 January to 30 September.",
-              "The return fills itself in from what your team already recorded.",
-              "Print it, or save it as a PDF from the print dialogue.",
+              "In the menu, open Reports, then Statistical return.",
+              "Choose the period. The quick choices are This month, This quarter, This year and Last year, or set any two dates. It opens on this year so far.",
+              "Read through the figures. Each one comes from a record somebody made during the period, so a figure that looks wrong points to a record to check, not a sum to redo.",
+              "Print it, or choose Save as PDF in the print window. The menus and buttons are left off the printed page, so what prints is the return alone.",
             ],
           },
           { type: "h2", text: "What it contains" },
           {
             type: "list",
             items: [
-              "Total active members, split by male and female, and broken down by class",
-              "Members who joined in the period",
-              "Average attendance across the services actually held",
-              "Baptisms, confirmations and weddings recorded in the period",
-              "Total income, split by tithe, offering and fund",
+              "Membership: active members, men and women, members who joined in the period, and members transferred out",
+              "Attendance: services recorded, total attendance, and the average per service",
+              "Vital records: baptisms, confirmations, weddings and deaths in the period",
+              "Visitors: how many came, and how many of them have since become members",
+              "Income: tithes, offerings, other giving such as pledges and donations, and the total",
+              "Membership by class or group, the breakdown a circuit usually asks for beside the totals",
+            ],
+          },
+          { type: "h2", text: "Who can open it" },
+          {
+            type: "p",
+            text: "The pastor, administrators, finance officers, elders and class leaders can all open the return. Only the pastor, administrators and finance officers see the income section. For everybody else it is left off the page, and the printed return says so at the foot, so an elder can prepare the return without seeing what anybody gave.",
+          },
+          {
+            type: "note",
+            text: "Nothing is entered twice. The return is only as complete as the records behind it, so a church that records each Sunday's attendance and each baptism the week it happens has its return ready whenever it is asked for.",
+          },
+        ],
+      },
+      {
+        slug: "how-the-figures-are-counted",
+        title: "How the figures in your return are counted",
+        summary:
+          "The rule behind every number, including the two that surprise people.",
+        body: [
+          {
+            type: "p",
+            text: "Every figure in the return is counted by a fixed rule, so the same figure means the same thing every quarter. Two of the rules are worth knowing before you send a return: the member total is today's, and giving is counted by the day it was entered.",
+          },
+          { type: "h2", text: "Membership" },
+          {
+            type: "list",
+            items: [
+              "Active members, men and women, and the class breakdown are your members as they stand today, whichever period you choose. If you prepare last year's return in March, the membership figure is March's. Prepare each return at the end of its period and the two agree.",
+              "Not stated counts active members with no gender recorded. A large figure there is a sign the register needs tidying, not a separate group of people.",
+              "Joined in period counts members whose joining date falls inside the period. A member brought over from an old register keeps the joining date you gave them, not the day they were typed in.",
+              "Transferred out counts transfers to another church that were approved during the period.",
+            ],
+          },
+          { type: "h2", text: "Attendance" },
+          {
+            type: "list",
+            items: [
+              "Services recorded counts each service entered with a date inside the period.",
+              "Total attendance adds up the men and women counted at those services.",
+              "The average is the total divided by the services actually recorded, not by the Sundays on the calendar, so a Sunday lost to a funeral or a storm does not pull it down.",
+            ],
+          },
+          { type: "h2", text: "Vital records and visitors" },
+          {
+            type: "list",
+            items: [
+              "Baptisms, confirmations, weddings and deaths are counted by the date of the event, whenever it was entered.",
+              "Visitors are counted by the date of their visit. Became members counts the visitors from the period who have since been made members, so this figure can grow after the period has ended.",
+            ],
+          },
+          { type: "h2", text: "Income" },
+          {
+            type: "list",
+            items: [
+              "Giving is counted by the day it was recorded in Fold, not the Sunday it was given. Record each Sunday's giving that week; a quarter's envelopes typed in during the next quarter will count in the next quarter.",
+              "Tithes and offerings are their own lines. Everything else, pledges, donations, harvest and the like, is added together as other giving.",
+              "Mobile money given through Fold is recorded by itself the moment it is paid, so it is already in the figures and must not be entered again by hand.",
+            ],
+          },
+        ],
+      },
+      {
+        slug: "reports-across-branches",
+        title: "Figures across your branches, circuit or diocese",
+        summary:
+          "A head church sees the totals of every church beneath it, read only.",
+        body: [
+          {
+            type: "p",
+            text: "A church that has branches, or a circuit, diocese or head office set up above its societies, sees the totals of every church beneath it on its dashboard, under Across everything under your church's name. Each branch keeps its own register and its own return.",
+          },
+          {
+            type: "list",
+            items: [
+              "The totals are members, this week's attendance, this month's tithe for those allowed to see giving, and transfers waiting for approval.",
+              "Each figure is the sum of the churches beneath, so the branches add up to the total above them.",
+              "Leaders above can look, not change. A regional overseer sees every assembly beneath them and cannot edit any of their records. The database enforces this, not the screens.",
+              "Each branch prepares its own statistical return. If you also belong to a branch, open Branches and choose Switch to this, then open Reports there; a branch you only oversee is seen through the totals on your dashboard.",
             ],
           },
           {
             type: "note",
-            text: "Nothing is entered twice. Every figure comes from a record somebody already made during the quarter, which is why the evening you used to spend assembling this disappears.",
+            text: "If a total looks short, the usual reason is that a branch is not set up beneath your church yet, or that you do not hold a leadership role above it. Only leaders above a church see its figures.",
+          },
+        ],
+      },
+      {
+        slug: "who-stopped-coming",
+        title: "See who has stopped coming",
+        summary:
+          "Insights compares each member with their own usual attendance.",
+        body: [
+          {
+            type: "p",
+            text: "Open Attendance, then Insights, to see members who used to come regularly and have quietly stopped. Each member is compared with their own past pattern, not with the congregation, so a faithful member who misses three Sundays shows up and an occasional one does not.",
+          },
+          {
+            type: "list",
+            items: [
+              "It needs attendance marked by name. A head count of men and women is enough for the return but cannot say who was missing.",
+              "It needs a few weeks of named attendance before it says anything, because a member has to have a usual pattern before they can fall away from it.",
+              "Reach out to them queues a short text, saying the church has missed them, to everybody on the list who has a phone number. Anybody texted in the last fortnight is skipped, so nobody is nagged.",
+            ],
+          },
+        ],
+      },
+      {
+        slug: "download-your-register",
+        title: "Download your register as a spreadsheet",
+        summary: "One file, in the same columns the import reads.",
+        body: [
+          {
+            type: "p",
+            text: "Open Members and choose Export CSV to download the register as a CSV file, which opens in Excel, Google Sheets and Numbers. The columns have the same names the import reads, so a register can be taken out, corrected in a spreadsheet and brought back in without renaming anything.",
+          },
+          {
+            type: "p",
+            text: "The statistical return itself is printed or saved as a PDF from the print window. There is no spreadsheet download of the return yet.",
           },
         ],
       },

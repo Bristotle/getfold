@@ -72,7 +72,10 @@ const GROUPS = [
     label: "Reports",
     icon: "chart",
     items: [
-      { href: "/reports", label: "Statistical return", cap: "finance.view" },
+      // Every role that records attendance. The page leaves the income
+      // section out for a role that may not see giving, so an elder or a
+      // class leader can prepare the return without seeing the money.
+      { href: "/reports", label: "Statistical return", cap: "people.write" },
     ],
   },
   {

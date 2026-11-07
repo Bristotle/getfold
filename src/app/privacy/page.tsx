@@ -17,7 +17,7 @@ export const metadata: Metadata = {
  */
 export default function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy policy" updated="21 October 2026">
+    <LegalLayout title="Privacy policy" updated="7 November 2026">
       <p>
         Fold is church management software operated by Manuel Technologies.
         This policy explains what personal data we hold, why we hold it, and
@@ -43,7 +43,14 @@ export default function PrivacyPage() {
         <p>
           <strong className="text-foreground">From church staff:</strong> the
           name, email address and password you provide when creating an
-          account, and a record of what your account does inside the software.
+          account, the phone number you give for your church, and a record of
+          what your account does inside the software.
+        </p>
+        <p>
+          We use these to run your account, and someone at Fold may phone,
+          WhatsApp or email the pastor and administrators who run your church
+          on Fold, to ask how it is going or to help with something. We never
+          use your members&rsquo; details to contact them ourselves.
         </p>
         <p>
           <strong className="text-foreground">About members:</strong> whatever
