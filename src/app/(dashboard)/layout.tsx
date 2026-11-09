@@ -5,7 +5,8 @@ import { acceptInvitations } from "@/app/(dashboard)/team/actions";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { signOut } from "@/app/(auth)/login/actions";
 import { Nav } from "@/components/nav";
-import { ROLE_LABELS } from "@/lib/permissions";
+import { ROLE_LABELS, can } from "@/lib/permissions";
+import { savePhone } from "@/app/(dashboard)/profile/actions";
 import { TrialBanner } from "@/components/trial-banner";
 import { createClient } from "@/lib/supabase/server";
 
@@ -35,9 +36,9 @@ export default async function DashboardLayout({
     supabase.rpc("trial_status", { org_id: organization.id }),
     supabase
       .from("profiles")
-      .select("full_name")
+      .select("full_name, phone")
       .eq("id", userId ?? "")
-      .maybeSingle<{ full_name: string | null }>(),
+      .maybeSingle<{ full_name: string | null; phone: string | null }>(),
     // Fold staff only. The answer comes from app_admins in the database,
     // so the link appears for exactly the people the console admits.
     supabase.rpc("is_platform_viewer"),
@@ -46,6 +47,9 @@ export default async function DashboardLayout({
   // Ignores an invitation to the church they are already in.
   const invite = invites.find((i) => i.organization_id !== organization.id);
   const fullName = me?.full_name ?? null;
+  // Fold supports churches on WhatsApp. Signup asks for a number now; the
+  // leaders who signed up before it did are asked here, once each.
+  const askPhone = can(role, "org.manage") && !me?.phone?.trim();
   const t = (trial?.[0] ?? null) as
     | { status: string; days_left: number; has_paid: boolean }
     | null;
@@ -53,6 +57,35 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen">
       {t && <TrialBanner status={t.status} daysLeft={t.days_left} hasPaid={t.has_paid} />}
+
+      {askPhone && (
+        <div className="border-b border-border bg-surface-soft px-4 py-3 sm:px-6">
+          <form action={savePhone} className="flex flex-wrap items-end gap-3">
+            <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm sm:max-w-md">
+              <span className="font-semibold text-foreground">
+                What is your WhatsApp number?
+              </span>
+              <span className="text-xs text-muted-foreground">
+                So we can help {organization.name} when you need it. Never shared,
+                and never used to send adverts.
+              </span>
+              <input
+                name="phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                required
+                minLength={9}
+                placeholder="0244 000 000"
+                className="mt-1 h-10 rounded-lg border border-border bg-surface px-3 font-numeric text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </label>
+            <SubmitButton size="sm" pendingLabel="Saving…">
+              Save
+            </SubmitButton>
+          </form>
+        </div>
+      )}
 
       {invite && (
         <div className="border-b border-primary/30 bg-primary/5 px-4 py-3 sm:px-6">

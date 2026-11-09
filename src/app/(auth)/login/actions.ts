@@ -80,10 +80,19 @@ export async function signUp(formData: FormData) {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
   const fullName = String(formData.get("fullName"));
+  const phone = String(formData.get("phone") ?? "").trim().slice(0, 40);
 
   if (await isRateLimited(email)) {
     await logAuthEvent(email, "rate_limited", "signUp");
     redirect(`/signup?error=${encodeURIComponent(RATE_LIMIT_MESSAGE)}`);
+  }
+
+  // A number somebody could actually be reached on: nine digits at least,
+  // which a Ghanaian number has without its leading zero.
+  if (phone.replace(/\D/g, "").length < 9) {
+    redirect(
+      `/signup?error=${encodeURIComponent("Put in the WhatsApp number we can reach you on, for example 0244 000 000.")}`
+    );
   }
 
   const supabase = await createClient();
@@ -93,7 +102,8 @@ export async function signUp(formData: FormData) {
     options: {
       // Which page brought them, so the console can say which content
       // brings churches. Read by platform_attribution() in migration 0051.
-      data: { full_name: fullName, ...sourceFrom(formData) },
+      // `phone` becomes the profile's number in handle_new_user() (0057).
+      data: { full_name: fullName, phone, ...sourceFrom(formData) },
       // The confirmation link signs them straight in and on to setting up
       // their church, rather than landing on the home page signed out.
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getfold.org"}/auth/callback?next=/onboarding`,

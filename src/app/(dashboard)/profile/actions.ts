@@ -45,6 +45,26 @@ export async function updateProfile(formData: FormData) {
 }
 
 /**
+ * Only the phone number, from the request at the top of every page for a
+ * pastor or administrator who signed up before signup asked for one.
+ */
+export async function savePhone(formData: FormData) {
+  const { userId } = await getMembership();
+  if (!userId) redirect("/login");
+
+  const phone = String(formData.get("phone") ?? "").trim().slice(0, 40);
+  if (phone.replace(/\D/g, "").length < 9) {
+    back({ error: "Put in the WhatsApp number we can reach you on, for example 0244 000 000." });
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").update({ phone }).eq("id", userId);
+  if (error) back({ error: friendly(error) });
+
+  redirect("/dashboard");
+}
+
+/**
  * A new password.
  *
  * Supabase requires a live session to change a password, which this has,

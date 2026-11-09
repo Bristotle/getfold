@@ -111,6 +111,23 @@ export default async function SignUpPage({
               defaultValue={invited?.slice(0, 200)}
               required
             />
+            {/*
+              Asked for because Fold supports churches on WhatsApp. Of the
+              first fifteen church leaders, one had a number on record, and
+              there was no way to reach the rest when their churches went
+              quiet.
+            */}
+            <Input
+              label="Your WhatsApp number"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              placeholder="0244 000 000"
+              minLength={9}
+              hint="So we can help you set up on WhatsApp. Never shared, and never used to send adverts."
+              required
+            />
             <PasswordInput
               label="Password"
               name="password"
